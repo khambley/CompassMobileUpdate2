@@ -113,6 +113,15 @@
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon20.png">
       <Visible>false</Visible>
     </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\ComEdLogo.imageset\comed_logo_hrz_sm_wht_rgb%402x.png" />
+    <ImageAsset Include="Assets.xcassets\ComEdLogo.imageset\comed_logo_hrz_sm_wht_rgb.png" />
+    <ImageAsset Include="Assets.xcassets\ComEdLogo.imageset\comed_logo_hrz_sm_wht_rgb%403x.png" />
+    <ImageAsset Include="Assets.xcassets\ComEdLogo.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\CompassLogo.imageset\COMPASSLogo%402x.png" />
+    <ImageAsset Include="Assets.xcassets\CompassLogo.imageset\COMPASSLogo%403x.png" />
+    <ImageAsset Include="Assets.xcassets\CompassLogo.imageset\COMPASSLogo.png" />
+    <ImageAsset Include="Assets.xcassets\CompassLogo.imageset\Contents.json" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -132,5 +141,16 @@
       <Project>{555FD90F-9829-42D4-9936-0D3DED440630}</Project>
       <Name>CompassMobileUpdate</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\search.png" />
+    <BundleResource Include="Resources\search%402x.png" />
+    <BundleResource Include="Resources\search%403x.png" />
+    <BundleResource Include="Resources\barcode.png" />
+    <BundleResource Include="Resources\barcode%402x.png" />
+    <BundleResource Include="Resources\barcode%403x.png" />
+    <BundleResource Include="Resources\map.png" />
+    <BundleResource Include="Resources\map%402x.png" />
+    <BundleResource Include="Resources\map%403x.png" />
   </ItemGroup>
 </Project>
