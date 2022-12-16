@@ -10,7 +10,11 @@ namespace CompassMobileUpdate
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            var navigationPage = new NavigationPage(Resolver.Resolve<MainPage>());
+            navigationPage.BarBackgroundColor = Color.FromHex("#CC0033");
+            navigationPage.BarTextColor = Color.White;
+            MainPage = navigationPage;
+            
         }
 
         protected override void OnStart ()

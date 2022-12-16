@@ -2,7 +2,8 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CompassMobileUpdate.MainPage"
-             BackgroundColor="#CC0033">
+             BackgroundColor="#CC0033"
+             Title="COMPASS">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -12,20 +13,25 @@
         </Grid.RowDefinitions>
         
         <Button Grid.Row="0"
+                BackgroundColor="#CC0033"
                 ImageSource="search.png"
                 Text="Search"
                 FontSize="Large"
                 TextColor="White"
+                Scale="0.65"
                 ContentLayout="Top,10" />
 
         <Button Grid.Row="1"
+                BackgroundColor="#CC0033"
                 ImageSource="barcode.png"
                 Text="Scan"
                 FontSize="Large"
                 TextColor="White"
+                Scale="0.65"
                 ContentLayout="Top,10" />
 
         <Button Grid.Row="2"
+                BackgroundColor="#CC0033"
                 ImageSource="map.png"
                 Text="Map"
                 FontSize="Large"
