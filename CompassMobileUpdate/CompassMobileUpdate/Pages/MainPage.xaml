@@ -4,8 +4,40 @@
              x:Class="CompassMobileUpdate.MainPage"
              BackgroundColor="#CC0033"
              Title="COMPASS">
+    <StackLayout x:Name="outerStack"
+                 Spacing="20"
+                 Padding="10"
+                 Orientation="Vertical"
+                 VerticalOptions="CenterAndExpand">
 
-    <Grid>
+        <Button x:Name="searchButton"
+                BackgroundColor="#CC0033"
+                ImageSource="search.png"
+                Text="Search"
+                FontSize="Large"
+                TextColor="White"
+                Padding="20"
+                ContentLayout="Top,12" />
+
+        <Button x:Name="scanButton"
+                BackgroundColor="#CC0033"
+                ImageSource="barcode.png"
+                Text="Scan"
+                FontSize="Large"
+                TextColor="White"
+                ContentLayout="Top,26" />
+
+        <Button x:Name="mapButton"
+                BackgroundColor="#CC0033"
+                ImageSource="map.png"
+                Text="Map"
+                FontSize="Large"
+                TextColor="White"
+                Scale="0.65"
+                ContentLayout="Top,10" />
+
+    </StackLayout>
+    <!--<Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.33*" />
             <RowDefinition Height="0.33*" />
@@ -38,7 +70,7 @@
                 TextColor="White"
                 Scale="0.65"
                 ContentLayout="Top,10" />
-    </Grid>
+    </Grid>-->
 
 </ContentPage>
 
