@@ -4,6 +4,33 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="CompassMobileUpdate.Pages.MeterSearchPage"
     Title="Meter Search">
-    
+    <StackLayout x:Name="outerStack" Orientation="Vertical" VerticalOptions="Start">
+        <StackLayout Orientation="Horizontal">
+
+            <SearchBar x:Name="meterSearchBar"
+                       Placeholder="Meter ID or Customer Name"
+                       PlaceholderColor="Gray"
+                       HorizontalOptions="Start"/>
+
+            <Button x:Name="scanButton"
+                    ImageSource="ic_barcode.png"
+                    HorizontalOptions="End" />
+       
+        </StackLayout>
+        <StackLayout IsVisible="{Binding LocalMetersIsVisible}">
+            <ListView x:Name="custResultsList"
+                      ItemsSource="{Binding LocalMeters}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextCell Text="{Binding CustomerName}"
+                              Detail="{Binding CustomerAddress}"
+                              TextColor="Black" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        </StackLayout>
+                   
+    </StackLayout>    
 </ContentPage>
 

@@ -21,9 +21,11 @@
     <None Remove="ViewModels\" />
     <None Remove="PropertyChanged.Fody" />
     <None Remove="Autofac" />
+    <None Remove="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Pages\" />
     <Folder Include="ViewModels\" />
+    <Folder Include="Models\" />
   </ItemGroup>
 </Project>

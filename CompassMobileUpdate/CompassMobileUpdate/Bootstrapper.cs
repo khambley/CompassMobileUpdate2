@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Xamarin.Forms;
 using CompassMobileUpdate.ViewModels;
+using CompassMobileUpdate.Pages;
 
 namespace CompassMobileUpdate
 {
