@@ -23,7 +23,7 @@
 	<key>MinimumOSVersion</key>
 	<string>8.0</string>
 	<key>CFBundleDisplayName</key>
-	<string>Compass</string>
+	<string>COMPASS</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.exeloncorp.comed.aps.CompassMobile</string>
 	<key>CFBundleVersion</key>

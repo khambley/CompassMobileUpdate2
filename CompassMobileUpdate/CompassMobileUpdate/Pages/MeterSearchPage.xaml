@@ -14,7 +14,8 @@
 
             <Button x:Name="scanButton"
                     ImageSource="ic_barcode.png"
-                    HorizontalOptions="End" />
+                    HorizontalOptions="End"
+                    BackgroundColor="White" />
        
         </StackLayout>
         <StackLayout IsVisible="{Binding LocalMetersIsVisible}">
