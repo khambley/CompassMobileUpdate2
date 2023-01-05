@@ -52,29 +52,107 @@
 
             <Grid x:Name="gridDetails"
                   ColumnSpacing="40"
+                  RowSpacing="25"
                   HorizontalOptions="Center"
                   Padding="30,5,0,5">
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="0.5*" />
                     <ColumnDefinition Width="0.5*" />
                 </Grid.ColumnDefinitions>
+                
+
+                <Label x:Name="lblMeterStateName"
+                       Grid.Column="0"
+                       Grid.Row="0"
+                       Text="Meter State"
+                       HorizontalTextAlignment="End" />
+
+                <Label x:Name="lblMeterStateValue"
+                       Grid.Column="1"
+                       Grid.Row="0"
+                       Text="Active"
+                       HorizontalTextAlignment="Start"
+                       TextColor="Green" />
+
+                <!--put Meter State Activity Indicator here 1,0 -->
+
+                <Label x:Name="lblLastCommunicationName"
+                       Grid.Column="0"
+                       Grid.Row="1"
+                       Text="Last Comm"
+                       HorizontalTextAlignment="End" />
+
+                <Label x:Name="lblLastCommunicationValue"
+                       Grid.Column="1"
+                       Grid.Row="1"
+                       Text="Jan 05 08:17"
+                       HorizontalTextAlignment="Start" />
+
+                <!--put Last Comm Activity Indicator here 1,1 -->
+
+                <Grid x:Name="gridOutage"
+                      ColumnSpacing="10"
+                      Grid.Column="0"
+                      Grid.Row="2"
+                      HorizontalOptions="EndAndExpand">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3.0*" />
+                        <ColumnDefinition Width="0.5*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label x:Name="lblOutagesName"
+                           Grid.Column="0"
+                           Grid.Row="0"
+                           Text="Outages: "
+                           HorizontalTextAlignment="End" />
+
+                    <Label x:Name="lblOutagesValue"
+                           Grid.Column="1"
+                           Grid.Row="0"
+                           Text="0"
+                           HorizontalTextAlignment="End" />
+                </Grid>
+
+                <Grid x:Name="gridRestore"
+                      ColumnSpacing="0"
+                      Grid.Column="1"
+                      Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1.5*" />
+                        <ColumnDefinition Width="0.5*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label x:Name="lblRestoresName"
+                           Grid.Column="0"
+                           Grid.Row="0"
+                           Text="Restores: "
+                           HorizontalTextAlignment="Start" />
+
+                    <Label x:Name="lblRestoresValue"
+                           Grid.Column="1"
+                           Grid.Row="0"
+                           Text="0"
+                           HorizontalTextAlignment="Start" />
+                </Grid>
+
+                <Label x:Name="lblMeterStatusName"
+                       Grid.Column="0"
+                       Grid.Row="3"
+                       Text="Meter Status"
+                       HorizontalTextAlignment="End" />
+
+                <!--put Meter Status Activity Indicator here C1,R3 -->
+
+                <Image x:Name="imgMeterStatusValue"
+                       Grid.Column="1"
+                       Grid.Row="3"
+                       Source="status_good.png"
+                       WidthRequest="25"
+                       HorizontalOptions="Start"/>
             </Grid>
 
-            <Grid x:Name="gridOutage"
-                  ColumnSpacing="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="0.5*" />
-                    <ColumnDefinition Width="0.5*" />
-                </Grid.ColumnDefinitions>
-            </Grid>
-
-            <Grid x:Name="gridRestore"
-                  ColumnSpacing="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="0.5*" />
-                    <ColumnDefinition Width="0.5*" />
-                </Grid.ColumnDefinitions>
-            </Grid>
+            
 
             <Grid x:Name="gridVoltages"
                   HorizontalOptions="End"
