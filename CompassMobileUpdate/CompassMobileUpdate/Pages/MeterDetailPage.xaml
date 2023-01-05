@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="CompassMobileUpdate.Pages.MeterDetailPage"
+    Title="Meter Detail"
+    BackgroundColor="#ECECEC">
+
+    <ScrollView x:Name="svContent">
+        <StackLayout x:Name="sl"
+                     Padding="0,10,10,0"
+                     HorizontalOptions="Center">
+
+            <Grid x:Name="imgLayout">     
+                <Image x:Name="imgMeter"
+                       Aspect="AspectFit"
+                       HorizontalOptions="Center"
+                       WidthRequest="175"
+                       Source="meter_default.png"/>
+
+                <!--see L530 on MeterDetailPage (old) chg image based on IsFavorite -->
+                <ImageButton x:Name="btnFavorite"
+                             BackgroundColor="#ECECEC"
+                             HorizontalOptions="End"
+                             VerticalOptions="Start"
+                             Source="star_gray.png"
+                             WidthRequest="50"
+                             AbsoluteLayout.LayoutFlags="PositionProportional" />
+            </Grid>
+
+            <Label x:Name="lblMeterTypeNumber"
+                   HorizontalOptions="Center"
+                   Text="GE Meter #G230296247" />
+
+            <Label x:Name="lblCustomerName"
+                   HorizontalOptions="Center"
+                   Text="BAXTER CREDIT UNION" />
+
+            <Label x:Name="lblCustomerStreet"
+                   HorizontalOptions="Center"
+                   Text="300 N MILWAUKEE AVE VERNON HILLS" />
+
+            <Label x:Name="lblCustomerContactNumber"
+                   HorizontalOptions="Center"
+                   Text="847-932-8670"
+                   TextColor="Blue">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="tapPhone_Tapped" />
+                </Label.GestureRecognizers>
+
+            </Label>
+
+            <Grid x:Name="gridDetails"
+                  ColumnSpacing="40"
+                  HorizontalOptions="Center"
+                  Padding="30,5,0,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.5*" />
+                    <ColumnDefinition Width="0.5*" />
+                </Grid.ColumnDefinitions>
+            </Grid>
+
+            <Grid x:Name="gridOutage"
+                  ColumnSpacing="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.5*" />
+                    <ColumnDefinition Width="0.5*" />
+                </Grid.ColumnDefinitions>
+            </Grid>
+
+            <Grid x:Name="gridRestore"
+                  ColumnSpacing="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.5*" />
+                    <ColumnDefinition Width="0.5*" />
+                </Grid.ColumnDefinitions>
+            </Grid>
+
+            <Grid x:Name="gridVoltages"
+                  HorizontalOptions="End"
+                  Padding="0,0,7,0">
+            </Grid>
+
+        </StackLayout>
+
+    </ScrollView>
+</ContentPage>
+

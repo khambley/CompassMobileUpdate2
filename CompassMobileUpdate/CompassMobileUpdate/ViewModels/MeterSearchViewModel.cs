@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CompassMobileUpdate.Models;
+using CompassMobileUpdate.Pages;
 using Xamarin.Forms;
 
 namespace CompassMobileUpdate.ViewModels
@@ -25,13 +26,14 @@ namespace CompassMobileUpdate.ViewModels
             PerformCustomerSearch();
         });
 
-        private void PerformCustomerSearch()
+        private async void PerformCustomerSearch()
         {
             //popup for testing purposes
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                App.Current.MainPage.DisplayAlert("PerformCustomerSearch method test", "The PerformCustomerSearch method was called successfully", "OK");
-            });
+            //Device.BeginInvokeOnMainThread(() =>
+            //{
+            //    App.Current.MainPage.DisplayAlert("PerformCustomerSearch method test", "The PerformCustomerSearch method was called successfully", "OK");
+            //});
+            await Navigation.PushAsync(Resolver.Resolve<MeterDetailPage>());
         }
 
         private async Task LoadData()

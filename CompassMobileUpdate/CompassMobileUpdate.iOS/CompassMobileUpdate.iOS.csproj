@@ -159,5 +159,13 @@
     <BundleResource Include="Resources\ic_barcode.png" />
     <BundleResource Include="Resources\ic_barcode%402x.png" />
     <BundleResource Include="Resources\ic_barcode%403x.png" />
+    <BundleResource Include="Resources\meter_default.png" />
+    <BundleResource Include="Resources\meter_default%402x.png" />
+    <BundleResource Include="Resources\meter_g.png" />
+    <BundleResource Include="Resources\meter_g%402x.png" />
+    <BundleResource Include="Resources\star_gray.png" />
+    <BundleResource Include="Resources\star_yellow.png" />
+    <BundleResource Include="Resources\status_error.png" />
+    <BundleResource Include="Resources\status_good.png" />
   </ItemGroup>
 </Project>
