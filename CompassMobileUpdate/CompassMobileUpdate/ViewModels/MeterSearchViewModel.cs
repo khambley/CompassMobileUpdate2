@@ -2,23 +2,39 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using CompassMobileUpdate.Models;
+using Xamarin.Forms;
 
 namespace CompassMobileUpdate.ViewModels
 {
 	public class MeterSearchViewModel : ViewModelBase
 	{
-		public bool LocalMetersIsVisible { get; set; }
+		public bool CustomerResultsIsVisible { get; set; }
+
         public ObservableCollection<LocalMeter> LocalMeters { get; set; }
 
 		public MeterSearchViewModel()
 		{
-            LocalMetersIsVisible = true;
+            CustomerResultsIsVisible = false;
             LocalMeters = new ObservableCollection<LocalMeter>();
 			Task.Run(async () => await LoadData());
 		}
+        public ICommand PerformSearch => new Command(() =>
+        {
+            PerformCustomerSearch();
+        });
 
-		private async Task LoadData()
+        private void PerformCustomerSearch()
+        {
+            //popup for testing purposes
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                App.Current.MainPage.DisplayAlert("PerformCustomerSearch method test", "The PerformCustomerSearch method was called successfully", "OK");
+            });
+        }
+
+        private async Task LoadData()
 		{
             LocalMeters.Add(new LocalMeter
             {
@@ -35,6 +51,8 @@ namespace CompassMobileUpdate.ViewModels
                 CustomerAddress = "5931 S MOODY AVE CHICAGO IL 60638"
             });
         }
+
+
 	}
 }
 

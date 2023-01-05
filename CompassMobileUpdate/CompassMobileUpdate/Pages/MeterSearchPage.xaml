@@ -10,7 +10,8 @@
             <SearchBar x:Name="meterSearchBar"
                        Placeholder="Meter ID or Customer Name"
                        PlaceholderColor="Gray"
-                       HorizontalOptions="Start"/>
+                       HorizontalOptions="Start"
+                       SearchCommand="{Binding PerformSearch}" />
 
             <Button x:Name="scanButton"
                     ImageSource="ic_barcode.png"
@@ -18,7 +19,11 @@
                     BackgroundColor="White" />
        
         </StackLayout>
-        <StackLayout IsVisible="{Binding LocalMetersIsVisible}">
+
+        <Label Text="Recent Meters" HorizontalTextAlignment="Center" FontSize="Large" Margin="0,12,0,12" />
+
+        <StackLayout IsVisible="{Binding CustomerResultsIsVisible}">
+            
             <ListView x:Name="custResultsList"
                       ItemsSource="{Binding LocalMeters}">
             <ListView.ItemTemplate>
