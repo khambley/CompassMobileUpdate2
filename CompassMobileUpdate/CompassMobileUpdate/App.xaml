@@ -4,6 +4,10 @@
              x:Class="CompassMobileUpdate.App">
     <Application.Resources>
         <ResourceDictionary>
+            <Style TargetType="ContentPage">
+                <Setter Property="BackgroundColor" Value="#ECECEC" />
+
+            </Style>
             <Style TargetType="Label">
                 <Setter Property="FontSize" Value="Large" />
                 <Setter Property="FontAttributes" Value="Bold" />

@@ -35,7 +35,8 @@
                 FontSize="Large"
                 TextColor="White"
                 Scale="0.65"
-                ContentLayout="Top,10" />
+                ContentLayout="Top,10"
+                Command="{Binding GoToMapSearchPageCommand}"/>
 
     </StackLayout>
 </ContentPage>

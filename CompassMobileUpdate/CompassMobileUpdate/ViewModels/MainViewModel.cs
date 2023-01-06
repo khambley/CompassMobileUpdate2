@@ -12,6 +12,12 @@ namespace CompassMobileUpdate.ViewModels
             var meterSearchPage = Resolver.Resolve<MeterSearchPage>();
             await Navigation.PushAsync(meterSearchPage);
         });
+
+        public ICommand GoToMapSearchPageCommand => new Command(async () =>
+        {
+            var mapSearchPage = Resolver.Resolve<MapSearchPage>();
+            await Navigation.PushAsync(Resolver.Resolve<MapSearchPage>());
+        });
     }
 }
 
