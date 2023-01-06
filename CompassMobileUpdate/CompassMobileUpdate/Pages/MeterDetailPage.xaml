@@ -150,15 +150,57 @@
                        Source="status_good.png"
                        WidthRequest="25"
                        HorizontalOptions="Start"/>
+
+                <Label x:Name="lblPingStatusName"
+                       Grid.Column="0"
+                       Grid.Row="4"
+                       Text="Ping"
+                       HorizontalTextAlignment="End" />
+
+                <!--put Ping Status Activity Indicator here C1,R4 -->
+
+                <Image x:Name="imgPingStatusValue"
+                       Grid.Column="1"
+                       Grid.Row="4"
+                       Source="status_good.png"
+                       WidthRequest="25"
+                       HorizontalOptions="Start"/>
+
+                <Label x:Name="lblVoltageStatusName"
+                       Grid.Column="0"
+                       Grid.Row="5"
+                       Text="Voltage"
+                       HorizontalTextAlignment="End" />
+
+                <!--put Ping Status Activity Indicator here C1,R4 -->
+
+                <Image x:Name="imgVoltageStatusValue"
+                       Grid.Column="1"
+                       Grid.Row="5"
+                       Source="status_good.png"
+                       WidthRequest="25"
+                       HorizontalOptions="Start"/>
+
+                 <Grid x:Name="gridVoltages"
+                       HorizontalOptions="End"
+                       Padding="0,0,7,0"
+                       Grid.Column="0"
+                       Grid.Row="6"
+                       Grid.ColumnSpan="2">
+                    <Label x:Name="lblVoltageAValue"
+                           HorizontalOptions="End"
+                           Text="284 283"
+                           TextColor="Green" />
+                </Grid>
             </Grid>
-
-            
-
-            <Grid x:Name="gridVoltages"
-                  HorizontalOptions="End"
-                  Padding="0,0,7,0">
-            </Grid>
-
+            <Button x:Name="btnCheckStatus"
+                    Text="Check Status"
+                    Margin="20"
+                    VerticalOptions="EndAndExpand"
+                    BackgroundColor="#CC0033"
+                    TextColor="White"
+                    Opacity="1"
+                    HorizontalOptions="FillAndExpand" />
         </StackLayout>
 
     </ScrollView>
