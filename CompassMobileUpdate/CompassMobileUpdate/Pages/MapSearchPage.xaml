@@ -4,6 +4,34 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="CompassMobileUpdate.Pages.MapSearchPage"
     Title="Search by Location">
-    
+    <StackLayout x:Name="slContent">
+        <StackLayout x:Name="stackUnderSearch"
+                     VerticalOptions="Center"
+                     Orientation="Horizontal">
+
+            <StackLayout x:Name="messageAndIndicator"
+                         Padding="4,0,0,0"
+                         VerticalOptions="Center"
+                         HorizontalOptions="CenterAndExpand"
+                         Orientation="Horizontal">
+
+                <Label x:Name="lblMessage"
+                       Text="160 Meters Found"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+
+                <!-- Add Activity Indicator Searching For Meters here -->
+
+            </StackLayout>
+            <StackLayout x:Name="stackToggle"
+                         VerticalOptions="Center"
+                         HorizontalOptions="EndAndExpand"
+                         Orientation="Horizontal">
+                
+            </StackLayout>
+
+        </StackLayout>
+
+    </StackLayout>
 </ContentPage>
 
