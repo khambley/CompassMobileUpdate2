@@ -5,6 +5,13 @@
     x:Class="CompassMobileUpdate.Pages.MapSearchPage"
     Title="Search by Location">
     <StackLayout x:Name="slContent">
+
+        <SearchBar x:Name="sBar"
+                   Placeholder="Search"
+                   HorizontalTextAlignment="Center"
+                   SearchCommand="{Binding PerformSearch}"
+                   PlaceholderColor="Gray" />
+
         <StackLayout x:Name="stackUnderSearch"
                      VerticalOptions="Center"
                      Orientation="Horizontal">
@@ -18,20 +25,37 @@
                 <Label x:Name="lblMessage"
                        Text="160 Meters Found"
                        HorizontalOptions="Center"
-                       VerticalOptions="Center" />
+                       VerticalOptions="Center"
+                       FontSize="Small" />
 
                 <!-- Add Activity Indicator Searching For Meters here -->
+            </StackLayout> <!--end messageAndIndicator-->
 
-            </StackLayout>
             <StackLayout x:Name="stackToggle"
-                         VerticalOptions="Center"
-                         HorizontalOptions="EndAndExpand"
-                         Orientation="Horizontal">
-                
-            </StackLayout>
+                             VerticalOptions="Center"
+                             HorizontalOptions="EndAndExpand"
+                             Orientation="Horizontal"
+                             IsVisible="False">
 
-        </StackLayout>
+                    <Label x:Name="lblFollowMovementLabel"
+                           Text="Auto-Follow"
+                           FontSize="Small"
+                           VerticalOptions="Center" />
 
-    </StackLayout>
+                    <Switch x:Name="switchFollowMovement" IsToggled="True" />
+
+                </StackLayout> <!--end stackToggle-->
+
+        </StackLayout> <!--end stackUnderSearch-->
+
+        <!--TODO: Need an ItemSource set on viewmodel-->
+        <ListView x:Name="lvSearchResults"
+                          CachingStrategy="RecycleElement"
+                          SelectedItem="{Binding SelectedItem}"
+                          IsVisible="{Binding SearchResultsIsVisible}">
+        </ListView>
+
+        
+    </StackLayout> <!--end end slContent-->
 </ContentPage>
 
