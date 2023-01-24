@@ -29,10 +29,10 @@ namespace CompassMobileUpdate.ViewModels
         private async void PerformCustomerSearch()
         {
             //popup for testing purposes
-            //Device.BeginInvokeOnMainThread(() =>
-            //{
-            //    App.Current.MainPage.DisplayAlert("PerformCustomerSearch method test", "The PerformCustomerSearch method was called successfully", "OK");
-            //});
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                App.Current.MainPage.DisplayAlert("PerformCustomerSearch method test", "The PerformCustomerSearch method was called successfully", "OK");
+            });
             await Navigation.PushAsync(Resolver.Resolve<MeterDetailPage>());
         }
 
