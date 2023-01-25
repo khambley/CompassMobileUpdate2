@@ -16,6 +16,7 @@ namespace CompassMobileUpdate.Droid
 
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
+            Xamarin.FormsMaps.Init(this, savedInstanceState);
             Bootstrapper.Init();
             LoadApplication(new App());
         }

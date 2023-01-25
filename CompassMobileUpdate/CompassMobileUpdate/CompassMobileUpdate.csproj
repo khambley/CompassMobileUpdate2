@@ -15,6 +15,7 @@
     <PackageReference Include="Xamarin.Essentials" Version="1.7.4" />
     <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
     <PackageReference Include="Autofac" Version="6.5.0" />
+    <PackageReference Include="Xamarin.Forms.Maps" Version="5.0.0.2545" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Pages\" />
@@ -23,6 +24,7 @@
     <None Remove="Autofac" />
     <None Remove="Models\" />
     <None Remove="Services\" />
+    <None Remove="Xamarin.Forms.Maps" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Pages\" />
