@@ -16,6 +16,8 @@ namespace CompassMobileUpdate.ViewModels
             }
         }
         public INavigation Navigation { get; set; }
+
+        public bool IsBusy { get; set; }
     }
 }
 

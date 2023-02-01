@@ -27,9 +27,14 @@
                        Text="160 Meters Found"
                        HorizontalOptions="Center"
                        VerticalOptions="Center"
-                       FontSize="Small" />
+                       FontSize="Small"
+                       IsVisible="{Binding IsVisibleMessage}" />
 
-                <!-- Add Activity Indicator Searching For Meters here -->
+                <ActivityIndicator x:Name="aiSearchingForMeters"
+                                               IsRunning="{Binding IsBusy}"
+                                               VerticalOptions="Center"
+                                               HorizontalOptions="Center" />
+
             </StackLayout> <!--end messageAndIndicator-->
 
             <StackLayout x:Name="stackToggle"
@@ -55,7 +60,7 @@
                           SelectedItem="{Binding SelectedItem}"
                           IsVisible="{Binding SearchResultsIsVisible}">
         </ListView>
-
+        <maps:Map x:Name="map" />
         
     </StackLayout> <!--end end slContent-->
 </ContentPage>
