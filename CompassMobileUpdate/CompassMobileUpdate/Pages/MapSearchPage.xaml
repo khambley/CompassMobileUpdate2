@@ -3,22 +3,26 @@
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:maps="clr-namespace:Xamarin.Forms.Maps;assembly=Xamarin.Forms.Maps"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
     x:Class="CompassMobileUpdate.Pages.MapSearchPage"
     Title="Search by Location">
+
     <StackLayout x:Name="slContent">
 
         <SearchBar x:Name="sBar"
                    Placeholder="Search"
                    HorizontalTextAlignment="Center"
                    SearchCommand="{Binding PerformSearch}"
-                   PlaceholderColor="Gray" />
+                   PlaceholderColor="Gray"
+                   FontSize="Large"
+                   />
 
         <StackLayout x:Name="stackUnderSearch"
                      VerticalOptions="Center"
                      Orientation="Horizontal">
 
             <StackLayout x:Name="messageAndIndicator"
-                         Padding="4,0,0,0"
+                         Padding="0,0,0,0"
                          VerticalOptions="Center"
                          HorizontalOptions="CenterAndExpand"
                          Orientation="Horizontal">
@@ -58,10 +62,67 @@
         <ListView x:Name="lvSearchResults"
                           CachingStrategy="RecycleElement"
                           SelectedItem="{Binding SelectedItem}"
-                          IsVisible="{Binding SearchResultsIsVisible}">
+                          IsVisible="{Binding IsVisibleSearchResults}">
         </ListView>
-        <maps:Map x:Name="map" />
-        
+
+        <maps:Map x:Name="meterMap" />
+
+        <ActivityIndicator x:Name="aiMeterListLoading"
+                                       IsRunning="{Binding IsBusy}" />
+
+        <ListView x:Name="lvMeters"
+                          IsVisible="{Binding IsVisibleListViewMeters}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextCell Text="{Binding CustomerNameAndDeviceUtilityID}"
+                                     Detail="{Binding DistanceAndCustomerAddress}"
+                                     Command="{Binding DeviceUtilityID}"
+                                     TextColor="Black" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <Grid x:Name="gridMapType">
+            <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.25*" />
+                    <ColumnDefinition Width="0.25*" />
+                    <ColumnDefinition Width="0.25*" />
+                    <ColumnDefinition Width="0.25*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                    <RowDefinition Height="50" />
+            </Grid.RowDefinitions>
+
+            <Button x:Name="btnHybrid"
+                            Text="Hybrid"
+                            Grid.Column="0"
+                            Grid.Row="0"
+                           TextColor="White"
+                           BackgroundColor="#CC0033" />
+
+            <Button x:Name="btnSatellite"
+                            Text="Satellite"
+                            Grid.Column="1"
+                            Grid.Row="0"
+                           TextColor="White"
+                           BackgroundColor="#CC0033" />
+
+            <Button x:Name="btnStreet"
+                            Text="Street"
+                            Grid.Column="2"
+                            Grid.Row="0"
+                           TextColor="White"
+                           BackgroundColor="#CC0033" />
+
+            <Button x:Name="btnToggleView"
+                              Text="List"
+                              Grid.Column="3"
+                              Grid.Row="0"
+                              HorizontalOptions="FillAndExpand"
+                              TextColor="White"
+                              BackgroundColor="#CC0033" />
+        </Grid>
     </StackLayout> <!--end end slContent-->
 </ContentPage>
 

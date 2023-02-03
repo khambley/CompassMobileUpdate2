@@ -34,11 +34,13 @@
 	<string>Compass Mobile</string>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/AppIcon.appiconset</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>The app would like to access location services.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>The app would like to use location services.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>The app would like to use location services.</string>
+	<string>Can we use your location at all times?</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Can we use your location when your application is being used?</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Can we use your location at all times?</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Can we use your device&apos;s location?</string>
 </dict>
 </plist>

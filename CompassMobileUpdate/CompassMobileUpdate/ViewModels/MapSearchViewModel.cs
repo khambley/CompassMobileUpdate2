@@ -9,9 +9,15 @@ namespace CompassMobileUpdate.ViewModels
 	{
        public bool IsVisibleMessage { get; set; }
 
+        public bool IsVisibleSearchResults { get; set; }
+
+        public bool IsVisibleListViewMeters { get; set; }
+
         public MapSearchViewModel()
         {
             IsVisibleMessage = false;
+            IsVisibleSearchResults = false;
+            IsVisibleListViewMeters = false;
         }
 
 		public ICommand PerformSearch => new Command(async () =>
