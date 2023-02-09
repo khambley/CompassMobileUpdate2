@@ -61,6 +61,9 @@
     <PackageReference Include="Xamarin.Forms.Maps">
       <Version>5.0.0.2545</Version>
     </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.2</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
