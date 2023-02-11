@@ -5,6 +5,7 @@ using System.Reflection;
 using Xamarin.Forms;
 using CompassMobileUpdate.ViewModels;
 using CompassMobileUpdate.Pages;
+using CompassMobileUpdate.Services;
 
 namespace CompassMobileUpdate
 {
@@ -28,6 +29,7 @@ namespace CompassMobileUpdate
 			{
 				ContainerBuilder.RegisterType(type.AsType());
 			}
+			ContainerBuilder.RegisterType<MeterService>().SingleInstance();
 		}
 
 		private void FinishInitialization()

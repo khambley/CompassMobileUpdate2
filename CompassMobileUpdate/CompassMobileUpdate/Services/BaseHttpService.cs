@@ -7,6 +7,11 @@ using Newtonsoft.Json;
 
 namespace CompassMobileUpdate.Services
 {
+	/// <summary>
+	/// Base Http Service - abstract class that takes in required Url and
+	/// optional HttpMethod, IDictionary headers collection, and object data parameters
+	/// to construct the Http Request.
+	/// </summary>
 	public abstract class BaseHttpService
 	{
 		protected async Task<T> SendRequestAsync<T>(Uri url, HttpMethod httpMethod = null, IDictionary<string, string> headers = null, object requestData = null)
