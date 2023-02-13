@@ -30,7 +30,8 @@ namespace CompassMobileUpdate
 				ContainerBuilder.RegisterType(type.AsType());
 			}
 			ContainerBuilder.RegisterType<MeterService>().SingleInstance();
-		}
+            ContainerBuilder.RegisterType<AuthService>().SingleInstance();
+        }
 
 		private void FinishInitialization()
 		{

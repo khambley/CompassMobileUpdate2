@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using CompassMobileUpdate.Models;
 using CompassMobileUpdate.Pages;
+using CompassMobileUpdate.Services;
 using Xamarin.Forms;
 
 namespace CompassMobileUpdate.ViewModels
@@ -15,8 +16,14 @@ namespace CompassMobileUpdate.ViewModels
 
         public ObservableCollection<LocalMeter> LocalMeters { get; set; }
 
-		public MeterSearchViewModel()
+        private readonly AuthService _authService;
+
+        private readonly MeterService _meterService;
+
+		public MeterSearchViewModel(MeterService meterService)
 		{
+            //_authService = authService;
+            _meterService = meterService;
             CustomerResultsIsVisible = false;
             LocalMeters = new ObservableCollection<LocalMeter>();
 			Task.Run(async () => await LoadData());
@@ -25,6 +32,21 @@ namespace CompassMobileUpdate.ViewModels
         {
             PerformCustomerSearch();
         });
+        public ICommand GetAPITokenCommand => new Command(async () =>
+        {
+            //await GetAPIToken();
+        });
+
+        public ICommand GetMeterByDeviceUtilityIDCommand => new Command(async () =>
+        {
+            await _meterService.GetMeterByDeviceUtilityIDAsync("G270280650");
+        });
+
+        public async Task<AuthResponse> GetAPIToken()
+        {
+            var authRespone = await _authService.GetAPIToken();
+            return authRespone;
+        }
 
         private async void PerformCustomerSearch()
         {

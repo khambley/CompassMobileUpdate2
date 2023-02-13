@@ -22,6 +22,10 @@
 
         <Label Text="Recent Meters" HorizontalTextAlignment="Center" FontSize="Large" Margin="0,12,0,12" />
 
+        <Button Text="Test API Token" Command="{Binding GetAPITokenCommand}" />
+
+        <Button Text="Test Meter Service" Command="{Binding GetMeterByDeviceUtilityIDCommand}" />
+
         <StackLayout IsVisible="{Binding CustomerResultsIsVisible}">
             
             <ListView x:Name="custResultsList"
