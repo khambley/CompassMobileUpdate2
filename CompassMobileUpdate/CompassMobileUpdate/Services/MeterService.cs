@@ -27,28 +27,18 @@ namespace CompassMobileUpdate.Services
 
         public async Task<List<Meter>> GetMetersByCustomerName(string name, string firstName = null, string lastName = null)
         {
-            var authResponse = await _authService.GetAPIToken();
-            var meters = new List<Meter>();
-            if(authResponse != null)
-            {
+                //TODO: Add error handling, invalid or null auth token here.
+
+                var authResponse = await _authService.GetAPIToken();
+            
                 var url = new Uri(_baseUri, $"meter?name={name}&firstName={firstName}&lastName={lastName}");
 
-                var request = new HttpRequestMessage(HttpMethod.Get, url);
+                _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
 
-                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authResponse.AccessToken);
+                var response = await SendRequestAsync<List<Meter>>(url, HttpMethod.Get, _headers);
 
-                using (var client = new HttpClient())
-                using (var response = await client.SendAsync(request, HttpCompletionOption.ResponseContentRead))
-                {
-                    var content = response.Content == null ? null : await response.Content.ReadAsStringAsync();
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        meters = JsonConvert.DeserializeObject<List<Meter>>(content);
-                    }
-                }
-            }
-            return meters;   
+                return response;
+            
         }
 
         public async Task<Meter> GetMeterByDeviceUtilityIDAsync(string deviceUtilityID)
