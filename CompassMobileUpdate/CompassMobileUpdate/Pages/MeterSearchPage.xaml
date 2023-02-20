@@ -4,14 +4,16 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="CompassMobileUpdate.Pages.MeterSearchPage"
     Title="Meter Search">
-    <StackLayout x:Name="outerStack" Orientation="Vertical" VerticalOptions="Start">
-        <StackLayout Orientation="Horizontal">
+    <StackLayout x:Name="slContent" Orientation="Vertical" VerticalOptions="Start">
 
-            <SearchBar x:Name="meterSearchBar"
+        <StackLayout x:Name="slTopBar" Orientation="Horizontal">
+
+            <SearchBar x:Name="sBar"
                        Placeholder="Meter ID or Customer Name"
                        PlaceholderColor="Gray"
                        HorizontalOptions="Start"
-                       SearchCommand="{Binding PerformSearch}" />
+                       SearchCommand="{Binding PerformSearchCommand}"
+                       SearchCommandParameter="{Binding Text, Source={x:Reference sBar}}"/>
 
             <Button x:Name="scanButton"
                     ImageSource="ic_barcode.png"
@@ -20,16 +22,20 @@
        
         </StackLayout>
 
-        <Label Text="Recent Meters" HorizontalTextAlignment="Center" FontSize="Large" Margin="0,12,0,12" />
+        <ActivityIndicator x:Name="aiCustomerSearch"
+                                       IsVisible="{Binding IsVisibleCustomerSearch}"
+                                       IsRunning="{Binding IsRunningCustomerSearch}" />
 
-        <Button Text="Test API Token" Command="{Binding GetAPITokenCommand}" />
+        <Label Text="Recent Meters"
+                     HorizontalTextAlignment="Center"
+                     FontSize="Large"
+                     Margin="0,12,0,12"
+                     IsVisible="{Binding IsVisibleRecentMetersLabel}" />
 
-        <Button Text="Test Meter Service" Command="{Binding GetMeterByDeviceUtilityIDCommand}" />
-
-        <StackLayout IsVisible="{Binding CustomerResultsIsVisible}">
+        <StackLayout IsVisible="{Binding IsVisibleCustomerResults}">
             
-            <ListView x:Name="custResultsList"
-                      ItemsSource="{Binding LocalMeters}">
+            <ListView x:Name="lvCustomerResults"
+                             ItemsSource="{Binding Meters}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <TextCell Text="{Binding CustomerName}"

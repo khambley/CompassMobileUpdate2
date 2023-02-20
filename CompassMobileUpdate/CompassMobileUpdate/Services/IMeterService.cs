@@ -8,7 +8,7 @@ namespace CompassMobileUpdate.Services
 {
     public interface IMeterService
     {
-        Task<IList<Meter>> GetMetersByCustomerName(string name, string firstName, string lastName);
+        Task<List<Meter>> GetMetersByCustomerName(string name, string firstName, string lastName);
     }
 }
 

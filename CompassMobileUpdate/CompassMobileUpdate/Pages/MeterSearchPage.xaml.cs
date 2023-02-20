@@ -24,7 +24,7 @@ namespace CompassMobileUpdate.Pages
         {
             base.OnSizeAllocated(width, height);
 
-            meterSearchBar.WidthRequest = width - scanButton.Width - 10;
+            sBar.WidthRequest = width - scanButton.Width - 10;
         }
     }
 }
