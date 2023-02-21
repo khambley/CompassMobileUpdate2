@@ -17,6 +17,7 @@
     <PackageReference Include="Autofac" Version="6.5.0" />
     <PackageReference Include="Xamarin.Forms.Maps" Version="5.0.0.2545" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Pages\" />
@@ -27,6 +28,7 @@
     <None Remove="Services\" />
     <None Remove="Xamarin.Forms.Maps" />
     <None Remove="Newtonsoft.Json" />
+    <None Remove="sqlite-net-pcl" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Pages\" />

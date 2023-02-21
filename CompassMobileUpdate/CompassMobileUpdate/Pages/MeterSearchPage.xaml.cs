@@ -8,7 +8,7 @@ using Xamarin.Forms;
 
 namespace CompassMobileUpdate.Pages
 {	
-	public partial class MeterSearchPage : ContentPage
+	public partial class MeterSearchPage : BasePage
 	{
         private double width;
         private double height;

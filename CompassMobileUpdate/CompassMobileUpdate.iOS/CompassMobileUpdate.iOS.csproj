@@ -173,5 +173,8 @@
     <BundleResource Include="Resources\star_yellow.png" />
     <BundleResource Include="Resources\status_error.png" />
     <BundleResource Include="Resources\status_good.png" />
+    <BundleResource Include="Resources\ic_settings.png" />
+    <BundleResource Include="Resources\ic_settings%402x.png" />
+    <BundleResource Include="Resources\ic_settings%403x.png" />
   </ItemGroup>
 </Project>

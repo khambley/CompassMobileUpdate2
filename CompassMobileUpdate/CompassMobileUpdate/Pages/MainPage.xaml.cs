@@ -9,7 +9,7 @@ using Xamarin.Forms;
 
 namespace CompassMobileUpdate
 {
-    public partial class MainPage : ContentPage
+    public partial class MainPage : Pages.BasePage
     {
         private double width;
         private double height;
