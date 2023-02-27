@@ -87,20 +87,24 @@ namespace CompassMobileUpdate.ViewModels
         {
             searchText = searchText.Trim();
             SerialNumberFormatException ex;
-            
-            if(_meterService.IsValidSerialNumber(searchText, out ex))
+
+            if(searchText.Any(c => char.IsDigit(c)))
             {
-                // get meter by deviceutilityId
-                var meter = await _meterService.GetMeterByDeviceUtilityIDAsync(searchText);
-                await NavigateToMeterDetail(meter);
-            }
-            else
-            {
-                Device.BeginInvokeOnMainThread(() =>
+                if (_meterService.IsValidSerialNumber(searchText, out ex))
                 {
-                    App.Current.MainPage.DisplayAlert("Input Error", $"{ex.Message}", "OK");
-                });
+                    // get meter by deviceutilityId
+                    var meter = await _meterService.GetMeterByDeviceUtilityIDAsync(searchText);
+                    await NavigateToMeterDetail(meter);
+                }
+                else
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        App.Current.MainPage.DisplayAlert("Input Error", $"{ex.Message}", "OK");
+                    });
+                }
             }
+            
             if (!searchText.Any(c => char.IsDigit(c)))
             {
                 
