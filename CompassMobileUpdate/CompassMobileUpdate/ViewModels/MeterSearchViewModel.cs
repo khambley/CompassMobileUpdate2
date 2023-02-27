@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using CompassMobileUpdate.Exceptions;
 using CompassMobileUpdate.Models;
 using CompassMobileUpdate.Pages;
 using CompassMobileUpdate.Services;
@@ -26,6 +27,8 @@ namespace CompassMobileUpdate.ViewModels
         public List<LocalMeter> RecentMeters { get; set; }
 
         public List<Meter> Meters { get; set; }
+
+        //public Meter SelectedMeterItem { get; set; }
         
         bool UseFirstAndLastName { get; set; }
 
@@ -54,12 +57,53 @@ namespace CompassMobileUpdate.ViewModels
         {
             await _meterService.GetMeterByDeviceUtilityIDAsync("G270280650");
         });
+        public Meter SelectedMeterItem
+        {
+            get { return null; }
+            set
+            {
+                Device.BeginInvokeOnMainThread(async () => await NavigateToMeterDetail(value));
+                OnPropertyChanged(nameof(SelectedMeterItem));
+            }
+        }
+
+        private async Task NavigateToMeterDetail(Meter meter)
+        {
+            if (meter == null)
+            {
+                return;
+            }
+
+            var meterDetailpage = Resolver.Resolve<MeterDetailPage>();
+
+            var vm = meterDetailpage.BindingContext as MeterDetailViewModel;
+
+            vm.MeterItem = meter;
+
+            await Navigation.PushAsync(meterDetailpage);        
+        }
 
         private async Task PerformCustomerSearch(string searchText)
         {
+            searchText = searchText.Trim();
+            SerialNumberFormatException ex;
+            
+            if(_meterService.IsValidSerialNumber(searchText, out ex))
+            {
+                // get meter by deviceutilityId
+                var meter = await _meterService.GetMeterByDeviceUtilityIDAsync(searchText);
+                await NavigateToMeterDetail(meter);
+            }
+            else
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    App.Current.MainPage.DisplayAlert("Input Error", $"{ex.Message}", "OK");
+                });
+            }
             if (!searchText.Any(c => char.IsDigit(c)))
             {
-                searchText = searchText.Trim();
+                
                 if (searchText.Replace(" ", "").Length > 5)
                 {
                     string name, lastName, firstName;

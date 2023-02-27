@@ -36,7 +36,8 @@
             
             <ListView x:Name="lvCustomerResults"
                              ItemsSource="{Binding Meters}"
-                             RowHeight="60">
+                             RowHeight="60"
+                             SelectedItem="{Binding SelectedMeterItem}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>

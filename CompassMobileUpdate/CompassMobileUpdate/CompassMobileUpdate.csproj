@@ -29,11 +29,13 @@
     <None Remove="Xamarin.Forms.Maps" />
     <None Remove="Newtonsoft.Json" />
     <None Remove="sqlite-net-pcl" />
+    <None Remove="Exceptions\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Pages\" />
     <Folder Include="ViewModels\" />
     <Folder Include="Models\" />
     <Folder Include="Services\" />
+    <Folder Include="Exceptions\" />
   </ItemGroup>
 </Project>
