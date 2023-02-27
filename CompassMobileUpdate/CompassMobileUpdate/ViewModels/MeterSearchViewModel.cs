@@ -59,7 +59,8 @@ namespace CompassMobileUpdate.ViewModels
         {
             if (!searchText.Any(c => char.IsDigit(c)))
             {
-                if (searchText.Trim().Replace(" ", "").Length > 5)
+                searchText = searchText.Trim();
+                if (searchText.Replace(" ", "").Length > 5)
                 {
                     string name, lastName, firstName;
                     firstName = lastName = null;
