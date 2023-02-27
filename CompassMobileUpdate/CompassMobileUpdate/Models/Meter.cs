@@ -28,6 +28,13 @@ namespace CompassMobileUpdate.Models
         public string NICSoftwareVersion { get; set; }
         public string NICSoftwareRevision { get; set; }
         public string NICSoftwarePatch { get; set; }
+        public string CustomerNameAndDeviceUtilityId
+        {
+            get
+            {
+                return CustomerName + " - " + DeviceUtilityID;
+            }
+        }
     }
 }
 

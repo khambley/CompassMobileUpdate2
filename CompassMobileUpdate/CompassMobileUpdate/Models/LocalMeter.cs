@@ -25,7 +25,7 @@ namespace CompassMobileUpdate.Models
         {
             get
             {
-                return CustomerName + " " + DeviceUtilityID;
+                return CustomerName + " - " + DeviceUtilityID;
             }
         }
     }

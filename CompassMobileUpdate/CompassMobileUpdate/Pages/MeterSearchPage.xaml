@@ -35,12 +35,21 @@
         <StackLayout IsVisible="{Binding IsVisibleCustomerResults}">
             
             <ListView x:Name="lvCustomerResults"
-                             ItemsSource="{Binding Meters}">
+                             ItemsSource="{Binding Meters}"
+                             RowHeight="60">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <TextCell Text="{Binding CustomerNameAndDeviceUtilityId}"
-                              Detail="{Binding CustomerAddress}"
-                              TextColor="Black" />
+                    <ViewCell>
+                        <StackLayout Orientation="Vertical" Padding="10,0,0,10">
+                            <Label Text="{Binding CustomerNameAndDeviceUtilityId}"
+                                         FontSize="20"
+                                         FontAttributes="Bold" />
+                            <Label Text="{Binding CustomerAddress}"
+                                         TextColor="Gray"
+                                         FontSize="Small" />
+                        </StackLayout>
+
+                    </ViewCell>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
