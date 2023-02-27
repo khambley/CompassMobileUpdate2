@@ -90,6 +90,10 @@ namespace CompassMobileUpdate.ViewModels
                         {
                             Meters = await _meterService.GetMetersByCustomerName(name, firstName, lastName);
                         }
+                        else
+                        {
+                            Meters = await _meterService.GetMetersByCustomerName(name);
+                        }
                     }
                     catch (Exception e)
                     {
