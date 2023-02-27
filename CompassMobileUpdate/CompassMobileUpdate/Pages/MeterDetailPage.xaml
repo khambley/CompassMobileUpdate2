@@ -30,19 +30,19 @@
 
             <Label x:Name="lblMeterTypeNumber"
                    HorizontalOptions="Center"
-                   Text="GE Meter #G230296247" />
+                   Text="None" />
 
             <Label x:Name="lblCustomerName"
                    HorizontalOptions="Center"
-                   Text="BAXTER CREDIT UNION" />
+                   Text="{Binding MeterItem.CustomerName}" />
 
             <Label x:Name="lblCustomerStreet"
                    HorizontalOptions="Center"
-                   Text="300 N MILWAUKEE AVE VERNON HILLS" />
+                   Text="{Binding MeterItem.CustomerAddress}" />
 
             <Label x:Name="lblCustomerContactNumber"
                    HorizontalOptions="Center"
-                   Text="847-932-8670"
+                   Text="{Binding MeterItem.CustomerContactNumber}"
                    TextColor="Blue">
                 <Label.GestureRecognizers>
                     <TapGestureRecognizer Tapped="tapPhone_Tapped" />
@@ -71,7 +71,7 @@
                 <Label x:Name="lblMeterStateValue"
                        Grid.Column="1"
                        Grid.Row="0"
-                       Text="Active"
+                       Text="{Binding MeterItem.Status}"
                        HorizontalTextAlignment="Start"
                        TextColor="Green" />
 
@@ -86,7 +86,7 @@
                 <Label x:Name="lblLastCommunicationValue"
                        Grid.Column="1"
                        Grid.Row="1"
-                       Text="Jan 05 08:17"
+                       Text="None"
                        HorizontalTextAlignment="Start" />
 
                 <!--put Last Comm Activity Indicator here 1,1 -->

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using CompassMobileUpdate.Exceptions;
 using CompassMobileUpdate.Models;
 using Newtonsoft.Json;
 
@@ -66,6 +68,49 @@ namespace CompassMobileUpdate.Services
                 }
             }
             return result;
+        }
+
+        public bool IsValidSerialNumber(string serialNumber, out SerialNumberFormatException ex)
+        {
+            int temp;
+            ex = null;
+
+            if (serialNumber.Length != 10)
+            {
+                ex = new SerialNumberFormatException("Meter ID should have the Manufacturer Letter followed by 9 digits");
+                return false;
+            }
+
+            if (int.TryParse(serialNumber, out temp))
+            {
+                ex = new SerialNumberFormatException("Meter number needs to be preceded with the Manufacturer letter");
+            }
+            else
+            {
+                Regex regEx = new Regex("[a-zA-Z]"); //any character a to z or A to Z
+                if (regEx.IsMatch(serialNumber.Substring(0, 1)))
+                {
+                    string manufacturerLetter = serialNumber[0].ToString();
+                    string tempMeterNumber = serialNumber.Substring(1, serialNumber.Length - 1);
+                    if (!int.TryParse(tempMeterNumber, out temp))
+                    {
+                        ex = new SerialNumberFormatException("Meter ID should have the Manufacturer Letter followed by 9 digits");
+                    }
+                    else
+                    {
+                        ex = null;
+                    }
+                }
+                else
+                {
+                    ex = new SerialNumberFormatException("Meter number needs to be preceded with the Manufacturer letter");
+                }
+            }
+            if (ex == null)
+                return true;
+            else
+                return false;
+
         }
     }
 }
