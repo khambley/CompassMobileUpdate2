@@ -6,7 +6,7 @@ using Xamarin.Essentials;
 
 namespace CompassMobileUpdate.Pages
 {
-    public partial class MeterDetailPage : ContentPage
+    public partial class MeterDetailPage : BasePage
     {
         public MeterDetailPage(MeterDetailViewModel viewModel)
         {
