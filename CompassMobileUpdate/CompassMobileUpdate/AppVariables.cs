@@ -10,10 +10,10 @@ namespace CompassMobileUpdate
         static DateTimeOffset _startTime;
         //static List<VoltageRule> _voltageRules = new List<VoltageRule>();
 
-        static AppVariables()
-		{
-
-		}
-	}
+        public static String MilitaryFormatStringShort
+        {
+            get { return "MMM dd HH:mm"; }
+        }
+    }
 }
 

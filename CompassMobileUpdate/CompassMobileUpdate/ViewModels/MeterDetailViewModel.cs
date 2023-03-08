@@ -11,6 +11,12 @@ namespace CompassMobileUpdate.ViewModels
         public Meter MeterItem { get; set; }
 
         public string MeterTypeNumber { get; set; }
+
+        public MeterAttributesResponse MeterAttributes { get; set; }
+
+        public string StatusDate { get; set; }
+
+        public string CustomerContactNumber { get; set; }
 		
 		public MeterDetailViewModel(MeterService meterService)
 		{

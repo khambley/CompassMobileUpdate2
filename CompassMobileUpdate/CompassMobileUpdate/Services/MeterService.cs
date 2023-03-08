@@ -27,6 +27,26 @@ namespace CompassMobileUpdate.Services
             // TODO: Add header with auth-based token
 		}
 
+        public async Task<MeterAttributesResponse> GetMeterAttributesAsync(Meter meter)
+        {
+            //TODO: Add Application logging
+            //AppLogger.Debug("  AppService.GetMeterAttributes: MethodStart");
+
+            MeterAttributesResponse response = null;
+            Exception e = null;
+
+            var authResponse = await _authService.GetAPIToken();
+
+            var url = new Uri(_baseUri, $"MeterAttributes/{meter.DeviceSSNID}");
+
+            _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
+
+            response = await SendRequestAsync<MeterAttributesResponse>(url, HttpMethod.Get, _headers);
+
+            return response;
+
+        }
+
         public async Task<List<Meter>> GetMetersByCustomerName(string name, string firstName = null, string lastName = null)
         {
                 //TODO: Add error handling, invalid or null auth token here.
