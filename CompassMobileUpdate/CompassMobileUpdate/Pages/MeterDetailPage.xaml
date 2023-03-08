@@ -38,6 +38,7 @@
 
             <Label x:Name="lblCustomerStreet"
                    HorizontalOptions="Center"
+                   HorizontalTextAlignment="Center"
                    Text="{Binding MeterItem.CustomerAddress}" />
 
             <Label x:Name="lblCustomerContactNumber"
