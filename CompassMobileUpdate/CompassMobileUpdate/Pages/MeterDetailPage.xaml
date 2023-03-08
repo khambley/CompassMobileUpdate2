@@ -30,7 +30,7 @@
 
             <Label x:Name="lblMeterTypeNumber"
                    HorizontalOptions="Center"
-                   Text="None" />
+                   Text="{Binding MeterTypeNumber}" />
 
             <Label x:Name="lblCustomerName"
                    HorizontalOptions="Center"
