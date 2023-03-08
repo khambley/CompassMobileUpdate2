@@ -77,8 +77,16 @@ namespace CompassMobileUpdate.ViewModels
             var vm = meterDetailpage.BindingContext as MeterDetailViewModel;
 
             vm.MeterItem = meter;
-            vm.MeterTypeNumber = meter.ManufacturerName + " Meter #" + meter.DeviceUtilityID;
 
+            // set MeterTypeNumber on MeterDetail
+            if (string.IsNullOrWhiteSpace(meter.DeviceUtilityIDWithLocation))
+            {
+                vm.MeterTypeNumber = meter.ManufacturerName + " Meter #" + meter.DeviceUtilityID;
+            }
+            else
+            {
+                vm.MeterTypeNumber = meter.ManufacturerName + " Meter #" + meter.DeviceUtilityIDWithLocation;
+            }
             await Navigation.PushAsync(meterDetailpage);        
         }
 
