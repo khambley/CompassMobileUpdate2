@@ -1,15 +1,21 @@
 ﻿using System;
 using CompassMobileUpdate.Models;
+using CompassMobileUpdate.Services;
 
 namespace CompassMobileUpdate.ViewModels
 {
 	public class MeterDetailViewModel : ViewModelBase
 	{
-		public Meter MeterItem { get; set; }
+        private readonly MeterService _meterService;
 
-		public MeterDetailViewModel()
+        public Meter MeterItem { get; set; }
+
+        public string MeterTypeNumber { get; set; }
+		
+		public MeterDetailViewModel(MeterService meterService)
 		{
-		}
-	}
+            _meterService = meterService;
+        }
+    }
 }
 

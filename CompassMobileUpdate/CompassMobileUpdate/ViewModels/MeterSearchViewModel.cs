@@ -27,8 +27,6 @@ namespace CompassMobileUpdate.ViewModels
         public List<LocalMeter> RecentMeters { get; set; }
 
         public List<Meter> Meters { get; set; }
-
-        //public Meter SelectedMeterItem { get; set; }
         
         bool UseFirstAndLastName { get; set; }
 
@@ -79,6 +77,7 @@ namespace CompassMobileUpdate.ViewModels
             var vm = meterDetailpage.BindingContext as MeterDetailViewModel;
 
             vm.MeterItem = meter;
+            vm.MeterTypeNumber = meter.ManufacturerName + " Meter #" + meter.DeviceUtilityID;
 
             await Navigation.PushAsync(meterDetailpage);        
         }
