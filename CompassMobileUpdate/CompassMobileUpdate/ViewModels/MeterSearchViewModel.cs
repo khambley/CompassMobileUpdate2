@@ -90,13 +90,14 @@ namespace CompassMobileUpdate.ViewModels
             }
 
             // set Meter Attributes on MeterDetail - which includes Meter State (MeterAttributes.Status)
-            vm.MeterAttributes = await _meterService.GetMeterAttributesAsync(meter);
+            //vm.MeterAttributes = await _meterService.GetMeterAttributesAsync(meter);
 
             //set Last Comm on MeterDetail
-            vm.StatusDate = vm.MeterAttributes.StatusDate.ToLocalTime().ToString(AppVariables.MilitaryFormatStringShort);
+            //vm.StatusDate = vm.MeterAttributes.StatusDate.ToLocalTime().ToString(AppVariables.MilitaryFormatStringShort);
 
             await Navigation.PushAsync(meterDetailpage);        
         }
+
 
         private async Task PerformCustomerSearch(string searchText)
         {

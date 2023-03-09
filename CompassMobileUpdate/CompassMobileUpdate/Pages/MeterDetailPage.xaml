@@ -73,7 +73,7 @@
                        Grid.Row="0"
                        Text="{Binding MeterAttributes.Status}"
                        HorizontalTextAlignment="Start"
-                       TextColor="Green" />
+                       TextColor="{Binding MeterStateTextColor}" />
 
                 <ActivityIndicator x:Name="aiMeterState"
                                                Grid.Column="1"

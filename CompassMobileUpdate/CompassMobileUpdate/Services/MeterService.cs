@@ -26,8 +26,9 @@ namespace CompassMobileUpdate.Services
 
             // TODO: Add header with auth-based token
 		}
+        public delegate void GetMeterAttributesCompletedHandler(MeterAttributesResponse meter, Exception ex);
 
-        public async Task<MeterAttributesResponse> GetMeterAttributesAsync(Meter meter)
+        public async Task<MeterAttributesResponse> GetMeterAttributesAsync(Meter meter, GetMeterAttributesCompletedHandler handler, CancellationToken token)
         {
             //TODO: Add Application logging
             //AppLogger.Debug("  AppService.GetMeterAttributes: MethodStart");
@@ -42,6 +43,44 @@ namespace CompassMobileUpdate.Services
             _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
 
             response = await SendRequestAsync<MeterAttributesResponse>(url, HttpMethod.Get, _headers);
+
+            return response;
+        }
+
+        public delegate void GetMeterStatusCompletedHandler(MeterStatusResponse response, Exception ex);
+
+        public async void GetMeterStatusAsync(Meter meter, int? activityID, GetMeterStatusCompletedHandler handler, CancellationToken token)
+        {
+            //AppLogger.Debug("  AppService.GetMeterStatus: MethodStart");
+
+            string correlationID = "unknown";
+            if (activityID.HasValue)
+            {
+                correlationID = activityID.Value.ToString();
+            }
+
+            MeterStatusResponse response = null;
+            Exception e = null;
+            var authResponse = await _authService.GetAPIToken();
+
+            var url = new Uri(_baseUri, $"MeterStatus?meterMACID={meter.MacID}&deviceSSNID={meter.DeviceSSNID}&correlationID={correlationID}&source={AppVariables.SourceForAMICalls}");
+
+            _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
+
+            response = await SendRequestAsync<MeterStatusResponse>(url, HttpMethod.Get, _headers);
+
+            handler(response, e);
+        }
+
+        public async Task<ActivityMessage.ActivityResponse> PerformActivityRequest(ActivityMessage.ActivityRequest requestBody)
+        {
+            var authResponse = await _authService.GetAPIToken();
+
+            var url = new Uri(_baseUri, $"Activity/{requestBody.ActionName}");
+
+            _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
+
+            var response = await SendRequestAsync<ActivityMessage.ActivityResponse>(url, HttpMethod.Post, _headers);
 
             return response;
 
@@ -130,8 +169,9 @@ namespace CompassMobileUpdate.Services
                 return true;
             else
                 return false;
-
         }
+
+        
     }
 }
 
