@@ -27,6 +27,18 @@ namespace CompassMobileUpdate.Pages
                 }
             }
         }
+
+        async void tapOutages_Tapped(System.Object sender, System.EventArgs e)
+        {
+            var availabilityEventsPage = Resolver.Resolve<AvailabilityEventsPage>();
+            await Navigation.PushAsync(availabilityEventsPage);
+        }
+
+        async void tapRestores_Tapped(System.Object sender, System.EventArgs e)
+        {
+            var availabilityEventsPage = Resolver.Resolve<AvailabilityEventsPage>();
+            await Navigation.PushAsync(availabilityEventsPage);
+        }
     }
 }
 
