@@ -11,6 +11,10 @@ namespace CompassMobileUpdate.ViewModels
 	{
         private readonly MeterService _meterService;
 
+        public bool IsVisibleMeterStateIndicator { get; set; }
+
+        public bool IsRunningMeterStateIndicator { get; set; }
+
         public Meter MeterItem { get; set; }
 
         public string MeterTypeNumber { get; set; }
@@ -30,6 +34,16 @@ namespace CompassMobileUpdate.ViewModels
 		public MeterDetailViewModel(MeterService meterService)
 		{
             _meterService = meterService;
+        }
+        protected void StartAllIndicators()
+        {
+            IsVisibleMeterStateIndicator = true;
+            IsRunningMeterStateIndicator = true;
+        }
+        protected void StopAllIndicators()
+        {
+            IsVisibleMeterStateIndicator = false;
+            IsRunningMeterStateIndicator = false;
         }
     }
 }

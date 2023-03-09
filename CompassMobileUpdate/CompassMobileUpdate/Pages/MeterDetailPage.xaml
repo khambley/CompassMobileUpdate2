@@ -75,7 +75,11 @@
                        HorizontalTextAlignment="Start"
                        TextColor="Green" />
 
-                <!--put Meter State Activity Indicator here 1,0 -->
+                <ActivityIndicator x:Name="aiMeterState"
+                                               Grid.Column="1"
+                                               Grid.Row="0"
+                                               IsVisible="{Binding IsVisibleMeterStateIndicator}"
+                                               IsRunning="{Binding IsRunningMeterStateIndicator}" />
 
                 <Label x:Name="lblLastCommunicationName"
                        Grid.Column="0"
