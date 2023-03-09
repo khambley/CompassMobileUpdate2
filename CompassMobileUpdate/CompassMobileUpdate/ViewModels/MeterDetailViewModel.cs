@@ -88,7 +88,7 @@ namespace CompassMobileUpdate.ViewModels
                 }
 
                 // set Meter Attributes on MeterDetail - which includes Meter State (MeterAttributes.Status)
-                MeterAttributes = await _meterService.GetMeterAttributesAsync(meter);
+                MeterAttributes = await _meterService.GetMeterAttributesAsync(meter, handleGetMeterAttributesCompleted, _ctsMeterAttributes.Token);
 
                 //set Last Comm on MeterDetail
                 StatusDate = MeterAttributes.StatusDate.ToLocalTime().ToString(AppVariables.MilitaryFormatStringShort);
