@@ -48,7 +48,6 @@
                 <Label.GestureRecognizers>
                     <TapGestureRecognizer Tapped="tapPhone_Tapped" />
                 </Label.GestureRecognizers>
-
             </Label>
 
             <Grid x:Name="gridDetails"
@@ -106,13 +105,22 @@
                            Grid.Column="0"
                            Grid.Row="0"
                            Text="Outages: "
-                           HorizontalTextAlignment="End" />
+                           HorizontalTextAlignment="End">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding TapOutageRestoreCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
 
                     <Label x:Name="lblOutagesValue"
                            Grid.Column="1"
                            Grid.Row="0"
                            Text="0"
-                           HorizontalTextAlignment="End" />
+                           HorizontalTextAlignment="End">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding TapOutageRestoreCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                    
                 </Grid>
 
                 <Grid x:Name="gridRestore"
@@ -128,13 +136,22 @@
                            Grid.Column="0"
                            Grid.Row="0"
                            Text="Restores: "
-                           HorizontalTextAlignment="Start" />
+                           HorizontalTextAlignment="Start">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding TapOutageRestoreCommand}" />
+                        </Label.GestureRecognizers>
+
+                    </Label>
 
                     <Label x:Name="lblRestoresValue"
                            Grid.Column="1"
                            Grid.Row="0"
                            Text="0"
-                           HorizontalTextAlignment="Start" />
+                           HorizontalTextAlignment="Start">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding TapOutageRestoreCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
                 </Grid>
 
                 <Label x:Name="lblMeterStatusName"
