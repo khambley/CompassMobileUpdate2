@@ -222,7 +222,9 @@
                     BackgroundColor="#CC0033"
                     TextColor="White"
                     Opacity="1"
-                    HorizontalOptions="FillAndExpand" />
+                    HorizontalOptions="FillAndExpand"
+                    Command="{Binding CheckStatusButtonCommand}"
+                    IsEnabled="{Binding IsEnabledCheckStatusButton}" />
         </StackLayout>
 
     </ScrollView>

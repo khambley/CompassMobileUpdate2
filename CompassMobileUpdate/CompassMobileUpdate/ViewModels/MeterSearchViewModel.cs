@@ -55,6 +55,7 @@ namespace CompassMobileUpdate.ViewModels
         {
             await _meterService.GetMeterByDeviceUtilityIDAsync("G270280650");
         });
+
         public Meter SelectedMeterItem
         {
             get { return null; }

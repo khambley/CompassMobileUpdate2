@@ -47,9 +47,8 @@
                                          FontAttributes="Bold" />
                             <Label Text="{Binding CustomerAddress}"
                                          TextColor="Gray"
-                                         FontSize="Small" />
+                                         FontSize="Small" />                          
                         </StackLayout>
-
                     </ViewCell>
                 </DataTemplate>
             </ListView.ItemTemplate>

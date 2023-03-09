@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using CompassMobileUpdate.Models;
 using CompassMobileUpdate.Pages;
@@ -11,9 +12,7 @@ namespace CompassMobileUpdate.ViewModels
 	{
         private readonly MeterService _meterService;
 
-        public bool IsVisibleMeterStateIndicator { get; set; }
-
-        public bool IsRunningMeterStateIndicator { get; set; }
+        public bool IsEnabledCheckStatusButton { get; set; }
 
         public Meter MeterItem { get; set; }
 
@@ -30,21 +29,44 @@ namespace CompassMobileUpdate.ViewModels
             var availabilityEventsPage = Resolver.Resolve<AvailabilityEventsPage>();
             await Navigation.PushAsync(availabilityEventsPage);
         });
-		
-		public MeterDetailViewModel(MeterService meterService)
+
+        public ICommand CheckStatusButtonCommand => new Command(async () =>
+        {
+            await LoadMeterData();
+        });
+
+        public MeterDetailViewModel(MeterService meterService)
 		{
             _meterService = meterService;
+            IsEnabledCheckStatusButton = true;
         }
-        protected void StartAllIndicators()
+
+        private async Task LoadMeterData()
         {
-            IsVisibleMeterStateIndicator = true;
-            IsRunningMeterStateIndicator = true;
-        }
-        protected void StopAllIndicators()
-        {
-            IsVisibleMeterStateIndicator = false;
-            IsRunningMeterStateIndicator = false;
-        }
+            IsEnabledCheckStatusButton = false;
+            var meter = await _meterService.GetMeterByDeviceUtilityIDAsync(MeterItem.DeviceUtilityID);
+            if (meter != null)
+            {
+                MeterItem = meter;
+                // set MeterTypeNumber on MeterDetail
+                if (string.IsNullOrWhiteSpace(meter.DeviceUtilityIDWithLocation))
+                {
+                    MeterTypeNumber = meter.ManufacturerName + " Meter #" + meter.DeviceUtilityID;
+                }
+                else
+                {
+                    MeterTypeNumber = meter.ManufacturerName + " Meter #" + meter.DeviceUtilityIDWithLocation;
+                }
+
+                // set Meter Attributes on MeterDetail - which includes Meter State (MeterAttributes.Status)
+                MeterAttributes = await _meterService.GetMeterAttributesAsync(meter);
+
+                //set Last Comm on MeterDetail
+                StatusDate = MeterAttributes.StatusDate.ToLocalTime().ToString(AppVariables.MilitaryFormatStringShort);
+
+                IsEnabledCheckStatusButton = true;
+            }
+        }       
     }
 }
 
