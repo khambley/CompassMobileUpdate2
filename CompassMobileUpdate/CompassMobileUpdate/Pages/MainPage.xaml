@@ -27,7 +27,8 @@
                 Text="Scan"
                 FontSize="Large"
                 TextColor="White"
-                ContentLayout="Top,26" />
+                ContentLayout="Top,26"
+                Command="{Binding GoToScannerPageCommand}" />
 
         <Button x:Name="mapButton"
                 BackgroundColor="#CC0033"
