@@ -107,7 +107,7 @@
                            Text="Outages: "
                            HorizontalTextAlignment="End">
                         <Label.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="tapOutages_Tapped" />
+                            <TapGestureRecognizer Command="{Binding TapOutageRestoreCommand}" />
                         </Label.GestureRecognizers>
                     </Label>
 
@@ -117,7 +117,7 @@
                            Text="0"
                            HorizontalTextAlignment="End">
                         <Label.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="tapOutages_Tapped" />
+                            <TapGestureRecognizer Command="{Binding TapOutageRestoreCommand}" />
                         </Label.GestureRecognizers>
                     </Label>
                     
@@ -138,7 +138,7 @@
                            Text="Restores: "
                            HorizontalTextAlignment="Start">
                         <Label.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="tapRestores_Tapped" />
+                            <TapGestureRecognizer Command="{Binding TapOutageRestoreCommand}" />
                         </Label.GestureRecognizers>
 
                     </Label>
@@ -149,7 +149,7 @@
                            Text="0"
                            HorizontalTextAlignment="Start">
                         <Label.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="tapRestores_Tapped" />
+                            <TapGestureRecognizer Command="{Binding TapOutageRestoreCommand}" />
                         </Label.GestureRecognizers>
                     </Label>
                 </Grid>
