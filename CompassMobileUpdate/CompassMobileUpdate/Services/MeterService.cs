@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using CompassMobileUpdate.Exceptions;
+using CompassMobileUpdate.Helpers;
 using CompassMobileUpdate.Models;
 using Newtonsoft.Json;
 
@@ -28,7 +29,7 @@ namespace CompassMobileUpdate.Services
 		}
         public delegate void GetMeterAttributesCompletedHandler(MeterAttributesResponse meter, Exception ex);
 
-        public async Task<MeterAttributesResponse> GetMeterAttributesAsync(Meter meter, GetMeterAttributesCompletedHandler handler, CancellationToken token)
+        public async Task GetMeterAttributesAsync(Meter meter, GetMeterAttributesCompletedHandler handler, CancellationToken token)
         {
             //TODO: Add Application logging
             //AppLogger.Debug("  AppService.GetMeterAttributes: MethodStart");
@@ -36,15 +37,31 @@ namespace CompassMobileUpdate.Services
             MeterAttributesResponse response = null;
             Exception e = null;
 
-            var authResponse = await _authService.GetAPIToken();
+            try
+            {
+                var authResponse = await _authService.GetAPIToken();
 
-            var url = new Uri(_baseUri, $"MeterAttributes/{meter.DeviceSSNID}");
+                var url = new Uri(_baseUri, $"MeterAttributes/{meter.DeviceSSNID}");
 
-            _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
+                _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
 
-            response = await SendRequestAsync<MeterAttributesResponse>(url, HttpMethod.Get, _headers);
-
-            return response;
+                response = await SendRequestAsync<MeterAttributesResponse>(url, HttpMethod.Get, _headers);
+            }
+            catch (Exception ex)
+            {
+                if (AppHelper.ContainsNullResponseException(ex))
+                {
+                    e = new MeterNotFoundException(AppVariables.MeterNotFound);
+                }
+                else
+                {
+                    e = ex;
+                }
+            }
+            if (!token.IsCancellationRequested)
+            {
+                handler(response, e);
+            }
         }
 
         public delegate void GetMeterStatusCompletedHandler(MeterStatusResponse response, Exception ex);

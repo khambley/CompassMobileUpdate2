@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using CompassMobileUpdate.Exceptions;
 using CompassMobileUpdate.Models;
 using CompassMobileUpdate.Pages;
 using CompassMobileUpdate.Services;
@@ -87,8 +88,8 @@ namespace CompassMobileUpdate.ViewModels
                     MeterTypeNumber = meter.ManufacturerName + " Meter #" + meter.DeviceUtilityIDWithLocation;
                 }
 
-                // set Meter Attributes on MeterDetail - which includes Meter State (MeterAttributes.Status)
-                MeterAttributes = await _meterService.GetMeterAttributesAsync(meter, handleGetMeterAttributesCompleted, _ctsMeterAttributes.Token);
+                // set MeterAttributes on MeterDetail in handler
+                await _meterService.GetMeterAttributesAsync(meter, handleGetMeterAttributesCompleted, _ctsMeterAttributes.Token);
 
                 //set Last Comm on MeterDetail
                 StatusDate = MeterAttributes.StatusDate.ToLocalTime().ToString(AppVariables.MilitaryFormatStringShort);
@@ -130,24 +131,51 @@ namespace CompassMobileUpdate.ViewModels
 
         }
 
+        protected void HandleApplicationMaintenance()
+        {
+            //AppLogger.Debug("HandleApplicationMaintenance: Begin");
+            //cancelAllServiceCalls(false);
+            //if (!_AppMaintenanceInitiated)
+            //{
+            //    AppLogger.Debug("_AppMaintenanceInitiated is false, showing app maintenance");
+            //    _AppMaintenanceInitiated = true;
+            //    this.ShowApplicationMaintenance();
+            //}
+            //else
+            //{
+            //    AppLogger.Debug("_AppMaintenanceInitiated already set to true");
+            //}
+            //AppLogger.Debug("HandleApplicationMaintenance: End");
+        }
+
+        protected void HandleAuthorizationRequired()
+        {
+            //cancelAllServiceCalls(false);
+            //this.LoginRequired(true);
+        }
+
         public async void handleGetMeterAttributesCompleted(MeterAttributesResponse meterAttributesResponse, Exception ex)
         {
             try
             {
-                //if (ex != null)
-                //{
-                //    if (ex.GetType() == typeof(AuthenticationRequiredException))
-                //    {
-                //        HandleAuthorizationRequired();
-                //        return;
-                //    }
-                //    else if (ex is ApplicationMaintenanceException)
-                //    {
-                //        HandleApplicationMaintenance();
-                //        return;
-                //    }
-                //}
+                if (ex != null)
+                {
+                    if (ex.GetType() == typeof(AuthenticationRequiredException))
+                    {
+                        HandleAuthorizationRequired();
+                        return;
+                    }
+                    else if (ex is ApplicationMaintenanceException)
+                    {
+                        HandleApplicationMaintenance();
+                        return;
+                    }
+                }
+                //TODO: Logging
                 //AppLogger.Debug("  GetMeterAttributesCompleted: Method Start");
+
+                //TODO: implement method L1320
+                //stopMeterAttributesAnimations(false);
 
                 _isWebServiceRunningDictionary[_getMeterAttributes] = false;
 
@@ -159,6 +187,7 @@ namespace CompassMobileUpdate.ViewModels
 
                     if (MeterItem.StatusDate != DateTimeOffset.MinValue)
                     {
+                        //sets Meter Last Comm date (Status Date)
                         MeterItem.StatusDate.ToLocalTime().ToString(AppVariables.MilitaryFormatStringShort);
                     }
 

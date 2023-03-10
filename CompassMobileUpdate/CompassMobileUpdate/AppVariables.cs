@@ -9,8 +9,13 @@ namespace CompassMobileUpdate
 		static bool isInitialized = false;
         static int _defaultFadeMs;
         static DateTimeOffset _startTime;
+
+        public static string MeterNotFound = "Meter not found";
+        public static string MeterCustomerNotFound = "Customer not found";
+        public static string MeterAttributesNotFound = "Meter attributes not found";
         public static string TimeZoneID { get; private set; }
         public static AppUser User { get; set; }
+
         //static List<VoltageRule> _voltageRules = new List<VoltageRule>();
 
         public static DateTimeOffset GetConfiguredTimeZone(DateTimeOffset dto)
