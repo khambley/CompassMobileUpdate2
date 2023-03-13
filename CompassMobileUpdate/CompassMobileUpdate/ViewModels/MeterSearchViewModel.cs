@@ -79,22 +79,8 @@ namespace CompassMobileUpdate.ViewModels
 
             vm.MeterItem = meter;
 
-            // set MeterTypeNumber on MeterDetail
-            if (string.IsNullOrWhiteSpace(meter.DeviceUtilityIDWithLocation))
-            {
-                vm.MeterTypeNumber = meter.ManufacturerName + " Meter #" + meter.DeviceUtilityID;
-            }
-            else
-            {
-                vm.MeterTypeNumber = meter.ManufacturerName + " Meter #" + meter.DeviceUtilityIDWithLocation;
-            }
-
-            // set Meter Attributes on MeterDetail - which includes Meter State (MeterAttributes.Status)
-            //vm.MeterAttributes = await _meterService.GetMeterAttributesAsync(meter);
-
-            //set Last Comm on MeterDetail
-            //vm.StatusDate = vm.MeterAttributes.StatusDate.ToLocalTime().ToString(AppVariables.MilitaryFormatStringShort);
-
+            await vm.GetAllMeterInfo();
+            
             await Navigation.PushAsync(meterDetailpage);        
         }
 

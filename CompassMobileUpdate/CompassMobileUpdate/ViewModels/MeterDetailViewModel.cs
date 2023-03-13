@@ -62,7 +62,7 @@ namespace CompassMobileUpdate.ViewModels
 
         public ICommand CheckStatusButtonCommand => new Command(async () =>
         {
-            await LoadMeterData();
+            await GetAllMeterInfo();
         });
 
         public MeterDetailViewModel(MeterService meterService)
@@ -71,7 +71,7 @@ namespace CompassMobileUpdate.ViewModels
             IsEnabledCheckStatusButton = true;
         }
 
-        private async Task LoadMeterData()
+        public async Task GetAllMeterInfo()
         {
             IsEnabledCheckStatusButton = false;
             var meter = await _meterService.GetMeterByDeviceUtilityIDAsync(MeterItem.DeviceUtilityID);
@@ -88,35 +88,12 @@ namespace CompassMobileUpdate.ViewModels
                     MeterTypeNumber = meter.ManufacturerName + " Meter #" + meter.DeviceUtilityIDWithLocation;
                 }
 
+                _ctsMeterAttributes = new CancellationTokenSource();
+
                 // set MeterAttributes on MeterDetail in handler
-                await _meterService.GetMeterAttributesAsync(meter, handleGetMeterAttributesCompleted, _ctsMeterAttributes.Token);
-
-                //set Last Comm on MeterDetail
-                StatusDate = MeterAttributes.StatusDate.ToLocalTime().ToString(AppVariables.MilitaryFormatStringShort);
-
+                await _meterService.GetMeterAttributesAsync(meter, HandleGetMeterAttributesCompleted, _ctsMeterAttributes.Token);
+                           
                 IsEnabledCheckStatusButton = true;
-            }
-        }
-        public void CopyMeterAttributeValues(MeterAttributesResponse source)
-        {
-            if (source == null)
-                return;
-
-            lock (_lockMeter)
-            {
-                MeterItem.MacID = source.MacID;
-                MeterItem.Status = source.Status;
-                MeterItem.StatusDate = AppVariables.GetConfiguredTimeZone(source.StatusDate);
-                MeterItem.Form = source.Form;
-                MeterItem.Version = source.Version;
-                MeterItem.Model = source.Model;
-                MeterItem.ManufacturerName = Manufacturer.UIQ_ManufacturerName = source.ManufacturerName;
-                MeterItem.Latitude = source.Latitude;
-                MeterItem.Longitude = source.Longitude;
-                MeterItem.TypeName = source.TypeName;
-                MeterItem.Type = source.Type;
-                IsPingable = source.IsPingable;
-                AllowsPQRs = source.IsPQRCapable;
             }
         }
 
@@ -154,62 +131,44 @@ namespace CompassMobileUpdate.ViewModels
             //this.LoginRequired(true);
         }
 
-        public async void handleGetMeterAttributesCompleted(MeterAttributesResponse meterAttributesResponse, Exception ex)
+        public async void HandleGetMeterAttributesCompleted(MeterAttributesResponse meterAttributesResponse, Exception ex)
         {
             try
             {
-                if (ex != null)
+
+                MeterAttributes = meterAttributesResponse;
+
+                if (MeterAttributes.StatusDate != DateTimeOffset.MinValue)
                 {
-                    if (ex.GetType() == typeof(AuthenticationRequiredException))
-                    {
-                        HandleAuthorizationRequired();
-                        return;
-                    }
-                    else if (ex is ApplicationMaintenanceException)
-                    {
-                        HandleApplicationMaintenance();
-                        return;
-                    }
+                    //sets Meter Last Comm date (Status Date)
+                    StatusDate = MeterAttributes.StatusDate.ToLocalTime().ToString(AppVariables.MilitaryFormatStringShort);
                 }
+
                 //TODO: Logging
                 //AppLogger.Debug("  GetMeterAttributesCompleted: Method Start");
 
                 //TODO: implement method L1320
                 //stopMeterAttributesAnimations(false);
 
-                _isWebServiceRunningDictionary[_getMeterAttributes] = false;
-
-                _isPingActivityRequestCompleted = false;
-
-                if (ex == null)
+                if (MeterAttributes.IsPingable)
                 {
-                    CopyMeterAttributeValues(meterAttributesResponse);
-
-                    if (MeterItem.StatusDate != DateTimeOffset.MinValue)
+                    MeterStateTextColor = Color.Green;
+                    try
                     {
-                        //sets Meter Last Comm date (Status Date)
-                        MeterItem.StatusDate.ToLocalTime().ToString(AppVariables.MilitaryFormatStringShort);
-                    }
+                        //var response = await _meterService.PerformActivityRequest(GetLogActivityAndMeterPingActivityRequest());
+                        //ActivityID = response.Value;
 
-                    if (IsPingable)
+                        //_meterService.GetMeterStatusAsync(MeterItem, this.ActivityID, handleGetMeterStatusCompleted, _ctsMeterStatus.Token);
+
+                    }
+                    catch
                     {
-                        MeterStateTextColor = Color.Green;
-                        if (_userState != null)
-                        {
-                            try
-                            {
-                                var response = await _meterService.PerformActivityRequest(GetLogActivityAndMeterPingActivityRequest());
-                                ActivityID = response.Value;
 
-                                _meterService.GetMeterStatusAsync(MeterItem, this.ActivityID, handleGetMeterStatusCompleted, _ctsMeterStatus.Token);
-                                
-                            }
-                            catch
-                            {
-
-                            }
-                        }
                     }
+                }
+                else
+                {
+                    MeterStateTextColor = Color.Red;
                 }
             }
             catch
