@@ -186,9 +186,7 @@ namespace CompassMobileUpdate.Services
                 return true;
             else
                 return false;
-        }
-
-        
+        }      
     }
 }
 

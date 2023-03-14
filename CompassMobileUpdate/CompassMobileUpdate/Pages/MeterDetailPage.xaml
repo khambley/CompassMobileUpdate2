@@ -171,7 +171,7 @@
                        Grid.Row="3"
                        Source="status_good.png"
                        WidthRequest="25"
-                       HorizontalOptions="Start"/>
+                       HorizontalOptions="Start" />
 
                 <Label x:Name="lblPingStatusName"
                        Grid.Column="0"

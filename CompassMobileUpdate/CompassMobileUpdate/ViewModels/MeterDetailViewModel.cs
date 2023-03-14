@@ -105,7 +105,19 @@ namespace CompassMobileUpdate.ViewModels
             request.MeterState = MeterItem.Status;
 
             return request;
+        }
 
+        public ActivityMessage.PostMeterPingActivityCompleteRequest GetPostMeterPingActivityCompleteRequest()
+        {
+            ActivityMessage.PostMeterPingActivityCompleteRequest request = new ActivityMessage.PostMeterPingActivityCompleteRequest();
+            if (ActivityID.HasValue)
+            {
+                request.ActivityID = this.ActivityID.Value;
+            }
+
+            request.MeterDeviceUtilityID = MeterItem.DeviceUtilityID;
+
+            return request;
         }
 
         protected void HandleApplicationMaintenance()
@@ -155,10 +167,12 @@ namespace CompassMobileUpdate.ViewModels
                     MeterStateTextColor = Color.Green;
                     try
                     {
-                        //var response = await _meterService.PerformActivityRequest(GetLogActivityAndMeterPingActivityRequest());
-                        //ActivityID = response.Value;
+                        var response = await _meterService.PerformActivityRequest(GetLogActivityAndMeterPingActivityRequest());
+                        ActivityID = response.Value;
 
-                        //_meterService.GetMeterStatusAsync(MeterItem, this.ActivityID, handleGetMeterStatusCompleted, _ctsMeterStatus.Token);
+                        _ctsMeterStatus = new CancellationTokenSource();
+
+                        _meterService.GetMeterStatusAsync(MeterItem, this.ActivityID, HandleGetMeterStatusCompleted, _ctsMeterStatus.Token);
 
                     }
                     catch
@@ -177,9 +191,9 @@ namespace CompassMobileUpdate.ViewModels
             }
         }
 
-        protected async void handleGetMeterStatusCompleted(MeterStatusResponse response, Exception ex)
+        protected async void HandleGetMeterStatusCompleted(MeterStatusResponse response, Exception ex)
         {
-            throw new NotImplementedException();
+            var pingActionRequest = GetPostMeterPingActivityCompleteRequest();
         }
     }
 }
