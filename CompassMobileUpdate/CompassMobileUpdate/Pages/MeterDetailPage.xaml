@@ -73,9 +73,13 @@
                        Grid.Row="0"
                        Text="{Binding MeterAttributes.Status}"
                        HorizontalTextAlignment="Start"
-                       TextColor="Green" />
+                       TextColor="{Binding MeterStateTextColor}" />
 
-                <!--put Meter State Activity Indicator here 1,0 -->
+                <ActivityIndicator x:Name="aiMeterState"
+                                               Grid.Column="1"
+                                               Grid.Row="0"
+                                               IsVisible="{Binding IsVisibleMeterStateIndicator}"
+                                               IsRunning="{Binding IsRunningMeterStateIndicator}" />
 
                 <Label x:Name="lblLastCommunicationName"
                        Grid.Column="0"
@@ -167,7 +171,7 @@
                        Grid.Row="3"
                        Source="status_good.png"
                        WidthRequest="25"
-                       HorizontalOptions="Start"/>
+                       HorizontalOptions="Start" />
 
                 <Label x:Name="lblPingStatusName"
                        Grid.Column="0"
@@ -218,7 +222,9 @@
                     BackgroundColor="#CC0033"
                     TextColor="White"
                     Opacity="1"
-                    HorizontalOptions="FillAndExpand" />
+                    HorizontalOptions="FillAndExpand"
+                    Command="{Binding CheckStatusButtonCommand}"
+                    IsEnabled="{Binding IsEnabledCheckStatusButton}" />
         </StackLayout>
 
     </ScrollView>

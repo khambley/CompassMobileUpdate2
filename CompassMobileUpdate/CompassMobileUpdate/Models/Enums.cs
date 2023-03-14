@@ -9,6 +9,13 @@ namespace CompassMobileUpdate.Models
             Residential,
             Commercial
         }
+        public enum Manufacturers
+        {
+            Elster,
+            GE,
+            LandG,
+            Unknown
+        }
     }
 }
 

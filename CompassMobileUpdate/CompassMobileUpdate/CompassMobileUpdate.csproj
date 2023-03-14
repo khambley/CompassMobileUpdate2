@@ -18,6 +18,7 @@
     <PackageReference Include="Xamarin.Forms.Maps" Version="5.0.0.2545" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
+    <PackageReference Include="Xamarin.Auth" Version="1.7.0" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Pages\" />
@@ -30,6 +31,7 @@
     <None Remove="Newtonsoft.Json" />
     <None Remove="sqlite-net-pcl" />
     <None Remove="Exceptions\" />
+    <None Remove="Helpers\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Pages\" />
@@ -37,5 +39,6 @@
     <Folder Include="Models\" />
     <Folder Include="Services\" />
     <Folder Include="Exceptions\" />
+    <Folder Include="Helpers\" />
   </ItemGroup>
 </Project>
