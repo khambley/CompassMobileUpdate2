@@ -15,9 +15,9 @@ namespace CompassMobileUpdate.Services
         public async Task<AuthResponse> GetAPIToken()
         {
             var grantType = "grant_type=client_credentials";
-            var clientId = "client_id=B5WblNmqWHpzgD37K1VvlUhWBLwf3QZB";
+            var clientId = "client_id=hMYFMivXirIwAZ3Kw1RBxxqSW0MWOHrX";
             var separator = "&";
-            var clientSecret = "client_secret=W8eOnXchNqHuKGZb";
+            var clientSecret = "client_secret=kfpMonMoBMTogFKg";
             var myParameters = grantType + separator + clientId + separator + clientSecret;
 
             var webclient = new WebClient();
