@@ -35,21 +35,32 @@ namespace CompassMobileUpdate.Models
             await _database.CreateTableAsync<LocalVoltageRule>();
         }
 
-        public AppUser GetAppUser()
+        public async Task<bool> AddUser(AppUser appUser)
         {
-            Task.Run(async () => await CreateConnection());
+            await CreateConnection();
+            await _database.DeleteAllAsync<AppUser>();
+            await _database.InsertAsync(new AppUser(appUser.UserID));
+            //SetLastUserID(appUser.UserID);
+            return true;
+        }
 
-            var appUsers = Task.Run(async () => await _database.Table<AppUser>().ToListAsync()).Result;
+        public async Task<AppUser> GetAppUserAsync()
+        {
+            await CreateConnection();
 
-            if (appUsers.Count > 0)
+            var appUsers = await _database.Table<AppUser>().ToListAsync();
+
+            AppUser appUser = new AppUser();
+
+            if (await _database.Table<AppUser>().CountAsync() > 0)
             {
-                return appUsers[0];
+                appUser = appUsers[0];
+                return appUser;
             }
             else
             {
                 return null;
-            }
-            
+            }        
         }
 
         public async Task<DateTime> GetLastVoltageSyncTime()
@@ -189,6 +200,15 @@ namespace CompassMobileUpdate.Models
                 //AppVariables.AppService.LogApplicationError("LocalSQl.cs", e);
                 return false;
             }
+        }
+
+        public async void SetLastUserID(string userID)
+        {
+            await CreateConnection();
+            //await _database.DeleteAllAsync<LastUserID>();
+            var lastUserId = new LastUserID();
+            lastUserId.UserID = userID;
+            await _database.InsertAsync(lastUserId);
         }
 
         public async Task<bool> UpdateMeterIsFavorite(string deviceUtilityID, bool isFavorite)

@@ -28,11 +28,14 @@ namespace CompassMobileUpdate.Models
         }
 
         public string JWT { get; set; }
+
         public DateTime JWTExpirationUTC { get; set; }
+
         public AppUser()
         {
 
         }
+
         public AppUser(string userID)
         {
             UserID = userID;

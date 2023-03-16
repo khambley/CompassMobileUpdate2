@@ -29,7 +29,8 @@
                     FontSize="Large"
                     TextColor="White"
                     BackgroundColor="#CC0033"
-                    Opacity="1" />
+                    Opacity="1"
+                    Clicked="btnLogin_Clicked" />
 
             <ActivityIndicator x:Name="aiIsAuthenticating" />
 

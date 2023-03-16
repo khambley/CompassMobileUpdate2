@@ -7,7 +7,7 @@ namespace CompassMobileUpdate.Models
 	public class LocalVoltageRule : VoltageRule
 	{
         [PrimaryKey]
-        public int Id { get; set; }
+        public int ID { get; set; }
 
         [Indexed]
         public DateTime CreatedTime { get; set; }

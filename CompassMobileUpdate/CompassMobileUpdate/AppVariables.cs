@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using CompassMobileUpdate.Models;
 using CompassMobileUpdate.Services;
@@ -12,18 +13,35 @@ namespace CompassMobileUpdate
 	{
 		static bool isInitialized = false;
         static int _defaultFadeMs;
-        static LocalSql _localSql;
-        
+        //static LocalSql _localSql;
+
         public static App Application { get; set; }
+
         public static MeterService MeterService { get; set; }
-        public static LocalSql LocalAppSql{ get { return _localSql; } }
+
+        public static string JWTSymmetricKey = "790A5F23BAF44D8851034DF88D1597FBDB6BB716BA029733077C55EB44C6EA58E399943BACEB0D3DA4EF2FCE1D7769B0DD2C5FF8AB4054567616DFBBB4DB792F229473F6FAD716C2296606FC93064D8F875BF08C2979052DF3B282A0EC34B731ECFB88F2290FD2F34702B919DFA241024C034166D33A31878AACD8A9D7604E69";
+
+        public static byte[] JWTSecretKey { get { return ASCIIEncoding.ASCII.GetBytes(JWTSymmetricKey); }}
+
+        public static LocalSql LocalAppSql { get; set; }
+
         public static string MeterNotFound = "Meter not found";
         public static string MeterCustomerNotFound = "Customer not found";
         public static string MeterAttributesNotFound = "Meter attributes not found";
         public static DateTimeOffset StartTime { get; set; }
         public static string TimeZoneID { get; private set; }
+        public static int TokenLifeInMinutes { get; private set; }
+        public static int TokenMaxMinutesSinceCreation { get; private set; }
+        public static int TokenRefreshThresholdInMinutes { get; private set; }
+
         public static AppUser User { get; set; }
+
         public static List<VoltageRule> VoltageRules { get; set; }
+
+        #region Constants
+        public const string JWTIssuer = "COMPASSMobile";
+        public const string JWTAudience = "http://compassmobile.exeloncorp.com";
+        #endregion
 
         //static List<VoltageRule> _voltageRules = new List<VoltageRule>();
 

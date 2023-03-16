@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using CompassMobileUpdate.Models;
 using CompassMobileUpdate.Pages;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -11,18 +12,31 @@ namespace CompassMobileUpdate
         bool JWTIsExpired = false;
         public App ()
         {
+            InitializeComponent();
             try
             {
                 AppVariables.StartTime = DateTimeOffset.Now;
                 AppVariables.Application = this;
-                InitializeComponent();
+                
 
                 var RootPage = new NavigationPage(Resolver.Resolve<MainPage>());
                 RootPage.BarBackgroundColor = Color.FromHex("#CC0033");
                 RootPage.BarTextColor = Color.White;
 
-                var appUser = AppVariables.LocalAppSql.GetAppUser();
-                AppVariables.User = appUser;
+                //var loginPage = Resolver.Resolve<LoginPage>();
+                //MainPage = loginPage;
+                var localSql = new LocalSql();
+                var appUser = Task.Run(async () => await localSql.GetAppUserAsync());
+                //var appUser = AppVariables.LocalAppSql.GetAppUser();
+                if (appUser.Result != null)
+                {
+                    AppVariables.User = appUser.Result;
+                }
+                else
+                {
+                    AppVariables.User = null;
+                }
+                
                 CheckJWTExpiration();
 
                 if (AppVariables.User == null || JWTIsExpired)
@@ -35,6 +49,7 @@ namespace CompassMobileUpdate
                     Task.Run(async () => await AppVariables.ResetVoltageRules(false));
                     MainPage = RootPage;
                 }
+
             }
             catch (Exception e)
             {
