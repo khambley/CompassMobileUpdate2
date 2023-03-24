@@ -3,26 +3,31 @@
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="CompassMobileUpdate.Pages.LoginPage">
+
     <StackLayout x:Name="slContent"
-                            Padding="10,40,10,10"
+                            Padding="15,60,15,15"
                             BackgroundColor="White">
 
         <Label x:Name="lblTitle"
                     Text="COMPASS"
                     TextColor="#CC0033"
-                     FontSize="Large"
+                     FontSize="34"
                      FontAttributes="Bold"
-                     HorizontalOptions="Center" />
+                     HorizontalOptions="Center"
+                     VerticalOptions="StartAndExpand" />
 
-        <StackLayout Margin="20">
+        <StackLayout Margin="0" VerticalOptions="Center">
+
             <Entry x:Name="tbUserID"
                    Placeholder="Exelon ID"
-                   PlaceholderColor="Gray" />
+                   PlaceholderColor="Gray"
+                   FontSize="Large" />
 
             <Entry x:Name="tbPassword"
                    Placeholder="Exelon Password"
                    IsPassword="True"
-                   PlaceholderColor="Gray" />
+                   PlaceholderColor="Gray"
+                   FontSize="Large" />
 
             <Button x:Name="btnLogin"
                     Text="Login"
@@ -32,16 +37,18 @@
                     Opacity="1"
                     Clicked="btnLogin_Clicked" />
 
-            <ActivityIndicator x:Name="aiIsAuthenticating" />
-
-            <Label x:Name="lblVersion"
-                   Text="Version: "
-                   VerticalOptions="End"
-                   HorizontalOptions="Start" /> 
+            <ActivityIndicator x:Name="aiIsAuthenticating" Margin="20" Scale="2" />
 
         </StackLayout>
 
+        <StackLayout VerticalOptions="EndAndExpand">
 
+            <Label x:Name="lblVersion"
+                   Text="Version: 2.0"
+                   VerticalOptions="End"
+                   HorizontalOptions="Start" />
+
+        </StackLayout>
     </StackLayout>
 </ContentPage>
 

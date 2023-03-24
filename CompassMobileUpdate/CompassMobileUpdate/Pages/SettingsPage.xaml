@@ -3,9 +3,19 @@
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="CompassMobileUpdate.Pages.SettingsPage"
-    Title="Settings">
+    Title="Settings"
+     BackgroundColor="White">
 
-    <Label Text="This is the Settings page" />
+    <StackLayout Margin="20">
+
+        <Button x:Name="btnLogout"
+                       Text="Logout"
+                        HorizontalOptions="FillAndExpand"
+                        BackgroundColor="#CC0033"
+                        TextColor="White"
+                        Command="{Binding LogoutCommand}" />
+
+    </StackLayout>
 
 </pages:BasePage>
 

@@ -3,7 +3,8 @@
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="CompassMobileUpdate.Pages.BasePage"
-    Title="COMPASS">
+    Title="COMPASS"
+    BackgroundColor="#CC0033">
    <ContentPage.ToolbarItems>
         <ToolbarItem Text="Settings"
                                 IconImageSource="ic_settings.png"

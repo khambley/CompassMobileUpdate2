@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.ServiceModel.Channels;
+using System.Text;
 using System.Threading;
 using CompassMobileUpdate.Helpers;
 using CompassMobileUpdate.Models;
@@ -64,20 +65,22 @@ namespace CompassMobileUpdate.Pages
 
                     if (response.IsAuthenticated)
                     {
+                        var currentTime = DateTime.Now;
                         user.UserID = userID;
                         user.JWT = response.Token;
-                        user.JWTExpirationUTC = JWTHelper.GetExpirationTimeFromJWT(response.Token);
+                        user.JWTExpirationUTC = currentTime.AddMinutes(30);
                         
                         AppVariables.User = user;
                         var localSql = new LocalSql();
                         await localSql.AddUser(AppVariables.User);
-                        await AppVariables.ResetVoltageRules(false);
+                        //await AppVariables.ResetVoltageRules(false);
 
                         if (App.Current.MainPage is LoginPage)
                         {
-                            //App.Current.MainPage = Resolver.Resolve<MainPage>();
-                            var mainPage = Resolver.Resolve<MainPage>();
-                            await Navigation.PushAsync(mainPage);
+                            var mainPage = new NavigationPage(Resolver.Resolve<MainPage>());
+                            mainPage.BarBackgroundColor = Color.FromHex("#CC0033");
+                            mainPage.BarTextColor = Color.White;
+                            App.Current.MainPage = mainPage;
                         }
                         else
                         {

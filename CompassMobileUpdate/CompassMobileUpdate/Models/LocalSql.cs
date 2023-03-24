@@ -39,8 +39,16 @@ namespace CompassMobileUpdate.Models
         {
             await CreateConnection();
             await _database.DeleteAllAsync<AppUser>();
+            var tempUser = appUser;
             await _database.InsertAsync(new AppUser(appUser.UserID));
             //SetLastUserID(appUser.UserID);
+            return true;
+        }
+
+        public async Task<bool> DeleteUsers()
+        {
+            await CreateConnection();
+            await _database.DeleteAllAsync<AppUser>();
             return true;
         }
 

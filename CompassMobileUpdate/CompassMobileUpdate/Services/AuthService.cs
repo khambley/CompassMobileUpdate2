@@ -47,7 +47,7 @@ namespace CompassMobileUpdate.Services
 
             var response = await SendRequestAsync<AuthLoginResponse>(url, HttpMethod.Post, null, requestData);
 
-            if (response == null || (response.IsAuthenticated == false && response.Messages == null))
+            if (response == null || (response.IsAuthenticated == false && response.Message == null))
             {
                 var reason = "MCOE Authentication Response was null";
 

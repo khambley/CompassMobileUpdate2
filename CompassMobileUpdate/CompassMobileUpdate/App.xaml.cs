@@ -36,7 +36,9 @@ namespace CompassMobileUpdate
                 {
                     AppVariables.User = null;
                 }
-                
+                //TODO: take out in prod, for testing purposes only
+                //AppVariables.User = null;
+
                 CheckJWTExpiration();
 
                 if (AppVariables.User == null || JWTIsExpired)
