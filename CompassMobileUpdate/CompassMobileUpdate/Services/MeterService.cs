@@ -11,8 +11,10 @@ using Newtonsoft.Json;
 
 namespace CompassMobileUpdate.Services
 {
-	public class MeterService : BaseHttpService, IMeterService
-	{
+    using VoltageRule = LocalVoltageRule;
+
+    public class MeterService : BaseHttpService, IMeterService
+    {
         // Apigee 
         readonly Uri _baseUri = new Uri("https://apir-integration.exeloncorp.com/comed/compassmobile/");
 
@@ -20,13 +22,13 @@ namespace CompassMobileUpdate.Services
 
         private AuthService _authService;
 
-		public MeterService(AuthService authService)
-		{
+        public MeterService(AuthService authService)
+        {
             _authService = authService;
             _headers = new Dictionary<string, string>();
 
             // TODO: Add header with auth-based token
-		}
+        }
         public delegate void GetMeterAttributesCompletedHandler(MeterAttributesResponse meter, Exception ex);
 
         public async Task GetMeterAttributesAsync(Meter meter, GetMeterAttributesCompletedHandler handler, CancellationToken token)
@@ -105,18 +107,18 @@ namespace CompassMobileUpdate.Services
 
         public async Task<List<Meter>> GetMetersByCustomerName(string name, string firstName = null, string lastName = null)
         {
-                //TODO: Add error handling, invalid or null auth token here.
+            //TODO: Add error handling, invalid or null auth token here.
 
-                var authResponse = await _authService.GetAPIToken();
-            
-                var url = new Uri(_baseUri, $"meter?name={name}&firstName={firstName}&lastName={lastName}");
+            var authResponse = await _authService.GetAPIToken();
 
-                _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
+            var url = new Uri(_baseUri, $"meter?name={name}&firstName={firstName}&lastName={lastName}");
 
-                var response = await SendRequestAsync<List<Meter>>(url, HttpMethod.Get, _headers);
+            _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
 
-                return response;
-            
+            var response = await SendRequestAsync<List<Meter>>(url, HttpMethod.Get, _headers);
+
+            return response;
+
         }
 
         public async Task<Meter> GetMeterByDeviceUtilityIDAsync(string deviceUtilityID)
@@ -125,7 +127,7 @@ namespace CompassMobileUpdate.Services
             var result = new Meter();
             if (apiAccessToken != null)
             {
-                
+
                 var url = new Uri(_baseUri, $"Meter/{deviceUtilityID}");
 
                 var request = new HttpRequestMessage(HttpMethod.Get, url);
@@ -144,6 +146,19 @@ namespace CompassMobileUpdate.Services
                 }
             }
             return result;
+        }
+
+        public async Task<List<VoltageRule>> GetVoltageRulesAsync()
+        {
+            var authResponse = await _authService.GetAPIToken();
+
+            _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
+
+            var url = new Uri(_baseUri, "VoltageRule");
+
+            var response = await SendRequestAsync<List<VoltageRule>>(url, HttpMethod.Get, _headers);
+
+            return response;
         }
 
         public bool IsValidSerialNumber(string serialNumber, out SerialNumberFormatException ex)

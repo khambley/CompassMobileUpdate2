@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="CompassMobileUpdate.Pages.LoginPage">
+
+    <StackLayout x:Name="slContent"
+                            Padding="15,60,15,15"
+                            BackgroundColor="White">
+
+        <Label x:Name="lblTitle"
+                    Text="COMPASS"
+                    TextColor="#CC0033"
+                     FontSize="34"
+                     FontAttributes="Bold"
+                     HorizontalOptions="Center"
+                     VerticalOptions="StartAndExpand" />
+
+        <StackLayout Margin="0" VerticalOptions="Center">
+
+            <Entry x:Name="tbUserID"
+                   Placeholder="Exelon ID"
+                   PlaceholderColor="Gray"
+                   FontSize="Large" />
+
+            <Entry x:Name="tbPassword"
+                   Placeholder="Exelon Password"
+                   IsPassword="True"
+                   PlaceholderColor="Gray"
+                   FontSize="Large" />
+
+            <Button x:Name="btnLogin"
+                    Text="Login"
+                    FontSize="Large"
+                    TextColor="White"
+                    BackgroundColor="#CC0033"
+                    Opacity="1"
+                    Clicked="btnLogin_Clicked" />
+
+            <ActivityIndicator x:Name="aiIsAuthenticating" Margin="20" Scale="2" />
+
+        </StackLayout>
+
+        <StackLayout VerticalOptions="EndAndExpand">
+
+            <Label x:Name="lblVersion"
+                   Text="Version: 2.0"
+                   VerticalOptions="End"
+                   HorizontalOptions="Start" />
+
+        </StackLayout>
+    </StackLayout>
+</ContentPage>
+
