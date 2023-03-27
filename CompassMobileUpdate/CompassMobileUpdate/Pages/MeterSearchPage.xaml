@@ -3,11 +3,10 @@
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="CompassMobileUpdate.Pages.MeterSearchPage"
-    Title="Meter Search">
+    Title="Meter Search"
+    BackgroundColor="#ECECEC">
     <StackLayout x:Name="slContent" Orientation="Vertical" VerticalOptions="Start">
-
         <StackLayout x:Name="slTopBar" Orientation="Horizontal">
-
             <SearchBar x:Name="sBar"
                        Placeholder="Meter ID or Customer Name"
                        PlaceholderColor="Gray"
@@ -18,8 +17,7 @@
             <Button x:Name="scanButton"
                     ImageSource="ic_barcode.png"
                     HorizontalOptions="End"
-                    BackgroundColor="White" />
-       
+                    BackgroundColor="White" />      
         </StackLayout>
 
         <ActivityIndicator x:Name="aiCustomerSearch"
