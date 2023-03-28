@@ -7,6 +7,7 @@ using CompassMobileUpdate.Services;
 
 namespace CompassMobileUpdate
 {
+    using static CompassMobileUpdate.Models.Enums;
     using VoltageRule = LocalVoltageRule;
 
     public static class AppVariables
@@ -16,6 +17,8 @@ namespace CompassMobileUpdate
         //static LocalSql _localSql;
 
         public static App Application { get; set; }
+
+        public static AppEnvironment AppEnvironment { get; set; }
 
         public static MeterService MeterService { get; set; }
 

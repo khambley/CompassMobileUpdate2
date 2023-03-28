@@ -3,6 +3,12 @@ namespace CompassMobileUpdate.Models
 {
 	public class Enums
 	{
+        public enum AppEnvironment
+        {
+            Integration,
+            Stage,
+            Production
+        }
         public enum CustomerClassType
         {
             Unknown,
@@ -16,6 +22,7 @@ namespace CompassMobileUpdate.Models
             LandG,
             Unknown
         }
+
     }
 }
 

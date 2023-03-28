@@ -52,15 +52,15 @@ namespace CompassMobileUpdate.Models
             return true;
         }
 
-        public async Task<AppUser> GetAppUserAsync()
+        public AppUser GetAppUser()
         {
-            await CreateConnection();
+            CreateConnection();
 
-            var appUsers = await _database.Table<AppUser>().ToListAsync();
+            var appUsers = _database.Table<AppUser>().ToListAsync().Result;
 
             AppUser appUser = new AppUser();
 
-            if (await _database.Table<AppUser>().CountAsync() > 0)
+            if (appUsers.Count > 0)
             {
                 appUser = appUsers[0];
                 return appUser;

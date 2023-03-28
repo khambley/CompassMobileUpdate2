@@ -7,13 +7,35 @@
      BackgroundColor="White">
 
     <StackLayout Margin="20">
+        <StackLayout Orientation="Horizontal" Margin="0,0,0,15">
+            <Label x:Name="lblEnvironment"
+                     FontSize="Large"
+                     Text="Environment"
+                     VerticalTextAlignment="Center"
+                     FontAttributes="Bold"
+                     HorizontalOptions="Start"
+                     VerticalOptions="Center"
+                     HeightRequest="50"
+                      Padding="0,0,10,0" />
+
+        <Picker x:Name="pickerEnvironment"
+                      ItemsSource="{Binding Environments}"
+                      HorizontalOptions="FillAndExpand"
+                      VerticalOptions="FillAndExpand"
+                      HeightRequest="50"
+                      BackgroundColor="WhiteSmoke"
+                      IsEnabled="{Binding IsEnabledPickerEnvironment}"
+                      SelectedItem="{Binding SelectedEnvironment}" />
+
+        </StackLayout>
+        
 
         <Button x:Name="btnLogout"
-                       Text="Logout"
-                        HorizontalOptions="FillAndExpand"
-                        BackgroundColor="#CC0033"
-                        TextColor="White"
-                        Command="{Binding LogoutCommand}" />
+                      Text="Logout"
+                      HorizontalOptions="FillAndExpand"
+                      BackgroundColor="#CC0033"
+                      TextColor="White"
+                      Command="{Binding LogoutCommand}" />
 
     </StackLayout>
 

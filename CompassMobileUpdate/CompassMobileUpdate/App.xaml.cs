@@ -17,7 +17,10 @@ namespace CompassMobileUpdate
             {
                 AppVariables.StartTime = DateTimeOffset.Now;
                 AppVariables.Application = this;
-                
+
+                //Default to Integration (Test) environment for now...
+                //TODO: change to default Production environment once implemented
+                AppVariables.AppEnvironment = Enums.AppEnvironment.Integration;
 
                 var RootPage = new NavigationPage(Resolver.Resolve<MainPage>());
                 RootPage.BarBackgroundColor = Color.FromHex("#CC0033");
@@ -26,11 +29,11 @@ namespace CompassMobileUpdate
                 //var loginPage = Resolver.Resolve<LoginPage>();
                 //MainPage = loginPage;
                 var localSql = new LocalSql();
-                var appUser = Task.Run(async () => await localSql.GetAppUserAsync());
-                //var appUser = AppVariables.LocalAppSql.GetAppUser();
-                if (appUser.Result != null)
+                //var appUser = Task.Run(async () => await localSql.GetAppUserAsync());
+                var appUser = localSql.GetAppUser();
+                if (appUser != null)
                 {
-                    AppVariables.User = appUser.Result;
+                    AppVariables.User = appUser;
                 }
                 else
                 {
