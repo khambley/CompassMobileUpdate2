@@ -31,10 +31,25 @@ namespace CompassMobileUpdate
         public static string MeterNotFound = "Meter not found";
         public static string MeterCustomerNotFound = "Customer not found";
         public static string MeterAttributesNotFound = "Meter attributes not found";
+
+        public static String MilitaryFormatStringShort
+        {
+            get { return "MMM dd HH:mm"; }
+        }
+
+        public static String MilitaryFormatStringNoSeconds
+        {
+            get { return "MM/dd/yyyy HH:mm"; }
+        }
+
         public static DateTimeOffset StartTime { get; set; }
+
         public static string TimeZoneID { get; private set; }
+
         public static int TokenLifeInMinutes { get; private set; }
+
         public static int TokenMaxMinutesSinceCreation { get; private set; }
+
         public static int TokenRefreshThresholdInMinutes { get; private set; }
 
         public static AppUser User { get; set; }
@@ -833,7 +848,6 @@ namespace CompassMobileUpdate
 
         public async static Task ResetVoltageRules(bool forceResync)
         {
-
             DateTime lastSyncTime = await LocalAppSql.GetLastVoltageSyncTime();
             bool usedHardCodedValues = false;
             bool alreadyGotLocalValues = false;
@@ -910,10 +924,7 @@ namespace CompassMobileUpdate
             }
         }
 
-        public static String MilitaryFormatStringShort
-        {
-            get { return "MMM dd HH:mm"; }
-        }
+        
 
         #region AMISpecificVariables
 

@@ -7,6 +7,15 @@
      BackgroundColor="White">
 
     <StackLayout Margin="20">
+        <Label>
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="Default Env: " />
+                    <Span Text="{Binding DefaultEnvironment}" />
+                </FormattedString>
+            </Label.FormattedText>
+
+        </Label>
         <StackLayout Orientation="Horizontal" Margin="0,0,0,15">
             <Label x:Name="lblEnvironment"
                      FontSize="Large"
@@ -29,7 +38,6 @@
 
         </StackLayout>
         
-
         <Button x:Name="btnLogout"
                       Text="Logout"
                       HorizontalOptions="FillAndExpand"
@@ -37,6 +45,23 @@
                       TextColor="White"
                       Command="{Binding LogoutCommand}" />
 
+        <Label VerticalOptions="EndAndExpand">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="Session Expires: " />
+                    <Span Text="{Binding SessionExpirationTime}" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+
+        <Label VerticalOptions="End">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="App Version: " />
+                    <Span Text="2.0.0" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
     </StackLayout>
 
 </pages:BasePage>

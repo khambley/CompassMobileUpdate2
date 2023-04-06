@@ -13,6 +13,8 @@ namespace CompassMobileUpdate.ViewModels
 
 		public bool IsEnabledPickerEnvironment { get; set; }
 
+		public string DefaultEnvironment { get; set; }
+
 		public string SelectedEnvironment
 		{
 			get { return null; }
@@ -32,7 +34,8 @@ namespace CompassMobileUpdate.ViewModels
 				}
 			}
 		}
-        
+
+		public string SessionExpirationTime { get; set; }
 
         public ICommand LogoutCommand => new Command(async () =>
 		{
@@ -47,7 +50,16 @@ namespace CompassMobileUpdate.ViewModels
         public SettingsViewModel()
 		{
 			CheckEnabledUser();
+			SetSessionExpirationTime();
+			SelectedEnvironment = AppVariables.AppEnvironment.ToString();
+			DefaultEnvironment = AppVariables.AppEnvironment.ToString();
 		}
+
+        
+        protected void SetSessionExpirationTime()
+        {
+			SessionExpirationTime = AppVariables.User.JWTExpirationUTC.ToLocalTime().ToString(AppVariables.MilitaryFormatStringNoSeconds);
+        }
 
         private void CheckEnabledUser()
         {

@@ -26,11 +26,11 @@ namespace CompassMobileUpdate
                 RootPage.BarBackgroundColor = Color.FromHex("#CC0033");
                 RootPage.BarTextColor = Color.White;
 
-                //var loginPage = Resolver.Resolve<LoginPage>();
-                //MainPage = loginPage;
+               
                 var localSql = new LocalSql();
-                //var appUser = Task.Run(async () => await localSql.GetAppUserAsync());
+                
                 var appUser = localSql.GetAppUser();
+
                 if (appUser != null)
                 {
                     AppVariables.User = appUser;
@@ -39,8 +39,6 @@ namespace CompassMobileUpdate
                 {
                     AppVariables.User = null;
                 }
-                //TODO: take out in prod, for testing purposes only
-                //AppVariables.User = null;
 
                 CheckJWTExpiration();
 
@@ -73,6 +71,14 @@ namespace CompassMobileUpdate
                     if (AppVariables.User.JWTExpirationUTC < DateTime.UtcNow)
                     {
                         JWTIsExpired = true;
+                        var localSql = new LocalSql();
+                        localSql.DeleteUsers();
+
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            var loginPage = Resolver.Resolve<LoginPage>();
+                            App.Current.MainPage = loginPage;
+                        });
                     }
                 }
             }

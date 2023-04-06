@@ -41,11 +41,24 @@ namespace CompassMobileUpdate.Pages
             {
                 aiIsAuthenticating.IsRunning = true;
                 btnLogin.IsEnabled = false;
-                string userID = tbUserID.Text.Trim().ToLower();
+
+                string userID = "";
+                if (AppVariables.User != null)
+                {
+                    userID = AppVariables.User.UserID;
+                }
+                else {
+                    userID = tbUserID.Text.Trim().ToLower();
+                }
+
                 string password = tbPassword.Text;
+
                 AuthLoginResponse response = null;
+
                 bool cancelled = false;
+
                 CancellationTokenSource cts = new CancellationTokenSource();
+
                 cts.CancelAfter(60000); // MJ changing from 20000 to a minute (60000) after the Layer7 debacle of 2017
 
                 try
@@ -68,7 +81,7 @@ namespace CompassMobileUpdate.Pages
                         var currentTime = DateTime.Now;
                         user.UserID = userID;
                         user.JWT = response.Token;
-                        user.JWTExpirationUTC = currentTime.AddMinutes(30);
+                        user.JWTExpirationUTC = currentTime.AddHours(2);
                         
                         AppVariables.User = user;
                         var localSql = new LocalSql();
