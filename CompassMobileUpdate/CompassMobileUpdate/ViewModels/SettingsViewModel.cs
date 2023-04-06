@@ -32,6 +32,7 @@ namespace CompassMobileUpdate.ViewModels
 						App.Current.MainPage.DisplayAlert("Error", "Application Environment not found", "Close");
 					});
 				}
+				OnPropertyChanged(nameof(SelectedEnvironment));
 			}
 		}
 

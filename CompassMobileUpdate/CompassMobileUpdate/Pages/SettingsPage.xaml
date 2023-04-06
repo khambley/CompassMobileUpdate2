@@ -7,15 +7,7 @@
      BackgroundColor="White">
 
     <StackLayout Margin="20">
-        <Label>
-            <Label.FormattedText>
-                <FormattedString>
-                    <Span Text="Default Env: " />
-                    <Span Text="{Binding DefaultEnvironment}" />
-                </FormattedString>
-            </Label.FormattedText>
-
-        </Label>
+       
         <StackLayout Orientation="Horizontal" Margin="0,0,0,15">
             <Label x:Name="lblEnvironment"
                      FontSize="Large"
@@ -26,15 +18,21 @@
                      VerticalOptions="Center"
                      HeightRequest="50"
                       Padding="0,0,10,0" />
-
-        <Picker x:Name="pickerEnvironment"
-                      ItemsSource="{Binding Environments}"
-                      HorizontalOptions="FillAndExpand"
-                      VerticalOptions="FillAndExpand"
-                      HeightRequest="50"
-                      BackgroundColor="WhiteSmoke"
-                      IsEnabled="{Binding IsEnabledPickerEnvironment}"
-                      SelectedItem="{Binding SelectedEnvironment}" />
+  
+            <Picker x:Name="pickerEnvironment"
+                          HorizontalOptions="FillAndExpand"
+                          VerticalOptions="FillAndExpand"
+                          HeightRequest="50"
+                          BackgroundColor="WhiteSmoke"
+                          FontSize="Large">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>Integration</x:String>
+                        <x:String>Stage</x:String>
+                        <x:String>Production</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
 
         </StackLayout>
         
