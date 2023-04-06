@@ -23,9 +23,11 @@ namespace CompassMobileUpdate.Models
         {
             if (_database != null) { return; }
 
-            var documentPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            // we need to put in /Library/ on iOS5.1+ to meet Apple's iCloud terms
+            // (they don't want non-user-generated data in Documents)
+            var documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
 
-            var databasePath = Path.Combine(documentPath, "COMPASSMobile.db");
+            var databasePath = Path.Combine(documentsPath, "COMPASSMobile.db");
 
             _database = new SQLiteAsyncConnection(databasePath);
 

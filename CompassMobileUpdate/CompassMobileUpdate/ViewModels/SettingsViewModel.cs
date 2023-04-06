@@ -51,7 +51,6 @@ namespace CompassMobileUpdate.ViewModels
 		{
 			CheckEnabledUser();
 			SetSessionExpirationTime();
-			SelectedEnvironment = AppVariables.AppEnvironment.ToString();
 			DefaultEnvironment = AppVariables.AppEnvironment.ToString();
 		}
 
