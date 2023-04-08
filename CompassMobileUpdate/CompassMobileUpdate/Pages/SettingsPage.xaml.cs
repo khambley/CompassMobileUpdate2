@@ -34,6 +34,8 @@ namespace CompassMobileUpdate.Pages
             {
                 pickerEnvironment.IsEnabled = false;
             }
+
+            switchLogging.IsToggled = AppVariables.IsLogging;
         }
 
         private void pickerEnvironment_SelectedIndexChanged(object sender, EventArgs e)
@@ -49,6 +51,11 @@ namespace CompassMobileUpdate.Pages
             {
                 DisplayAlert("Error", "Application Environment not found", "Close");
             }
+        }
+
+        private void switchLogging_Toggled(System.Object sender, Xamarin.Forms.ToggledEventArgs e)
+        {
+            AppVariables.IsLogging = e.Value;
         }
     }
 }

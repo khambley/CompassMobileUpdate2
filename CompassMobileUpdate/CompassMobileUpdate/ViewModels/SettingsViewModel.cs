@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using CompassMobileUpdate.Pages;
 using Xamarin.Forms;
 using static CompassMobileUpdate.Models.Enums;
 
@@ -38,10 +39,33 @@ namespace CompassMobileUpdate.ViewModels
 
 		public string SessionExpirationTime { get; set; }
 
+		public ICommand ForceCustInfoUpdateCommand => new Command(() =>
+		{
+			ForceCustInfoUpdate();
+		});
+
+        private void ForceCustInfoUpdate()
+        {
+			Device.BeginInvokeOnMainThread(async () =>
+			{
+				await App.Current.MainPage.DisplayAlert("Success", "On the next Meter Check Status Customer Info will be pulled from the database", "Close");
+			});
+        }
+
         public ICommand LogoutCommand => new Command(async () =>
 		{
 			await Logout();
 		});
+
+		public ICommand ViewLogsCommand => new Command(async () =>
+		{
+			await ViewLogs();
+		});
+
+        private async Task ViewLogs()
+        {
+			await Navigation.PushAsync(Resolver.Resolve<LogPage>());
+        }
 
         private async Task Logout()
         {

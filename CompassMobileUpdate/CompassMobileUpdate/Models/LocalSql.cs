@@ -219,6 +219,23 @@ namespace CompassMobileUpdate.Models
             await _database.InsertAsync(lastUserId);
         }
 
+        public async Task<bool> UpdateAllMeterLastUpdatedTimeToMin()
+        {
+            await CreateConnection();
+            try
+            {
+                string sql = "update [LocalMeter] set LastUpdatedTime = ?";
+                await _database.ExecuteAsync(sql, DateTime.MinValue);
+                return true;
+            }
+            catch (Exception e)
+            {
+                //TODO: Add app logging
+                //AppVariables.AppService.LogApplicationError("LocalSql.cs", e);
+                return false;
+            }
+        }
+
         public async Task<bool> UpdateMeterIsFavorite(string deviceUtilityID, bool isFavorite)
         {
             await CreateConnection();

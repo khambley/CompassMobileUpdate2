@@ -13,13 +13,15 @@ namespace CompassMobileUpdate
     public static class AppVariables
 	{
 		static bool isInitialized = false;
+
         static int _defaultFadeMs;
-        //static LocalSql _localSql;
 
         public static App Application { get; set; }
 
         public static AppEnvironment AppEnvironment { get; set; }
 
+        public static bool IsLogging { get; set; }
+        
         public static MeterService MeterService { get; set; }
 
         public static string JWTSymmetricKey = "790A5F23BAF44D8851034DF88D1597FBDB6BB716BA029733077C55EB44C6EA58E399943BACEB0D3DA4EF2FCE1D7769B0DD2C5FF8AB4054567616DFBBB4DB792F229473F6FAD716C2296606FC93064D8F875BF08C2979052DF3B282A0EC34B731ECFB88F2290FD2F34702B919DFA241024C034166D33A31878AACD8A9D7604E69";
@@ -845,6 +847,8 @@ namespace CompassMobileUpdate
             return voltageRules;
         }
         #endregion
+
+        
 
         public async static Task ResetVoltageRules(bool forceResync)
         {
