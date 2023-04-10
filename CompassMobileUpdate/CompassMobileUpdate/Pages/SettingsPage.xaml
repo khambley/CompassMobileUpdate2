@@ -73,6 +73,16 @@
                       TextColor="White"
                       Command="{Binding ForceCustInfoUpdateCommand}" />
 
+         <Button x:Name="btnResyncVoltageRules"
+                      Text="Resync Voltage Rules"
+                      HorizontalOptions="FillAndExpand"
+                      BackgroundColor="#CC0033"
+                      TextColor="White"
+                       IsEnabled="{Binding IsEnabledResyncVoltageRulesButton}"
+                      Command="{Binding ResyncVoltageRulesCommand}" />
+
+        <ActivityIndicator IsRunning="{Binding IsRunningResyncVoltageRules}" />
+
         <Label VerticalOptions="EndAndExpand">
             <Label.FormattedText>
                 <FormattedString>

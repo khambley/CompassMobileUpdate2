@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using CompassMobileUpdate.Extensions;
+using CompassMobileUpdate.Helpers;
 using CompassMobileUpdate.Pages;
 using Xamarin.Forms;
 using static CompassMobileUpdate.Models.Enums;
@@ -14,7 +16,11 @@ namespace CompassMobileUpdate.ViewModels
 
 		public bool IsEnabledPickerEnvironment { get; set; }
 
-		public string DefaultEnvironment { get; set; }
+		public bool IsEnabledResyncVoltageRulesButton { get; set; }
+
+		public bool IsRunningResyncVoltageRules { get; set; }
+
+        public string DefaultEnvironment { get; set; }
 
 		public string SelectedEnvironment
 		{
@@ -72,6 +78,46 @@ namespace CompassMobileUpdate.ViewModels
 			await this.LoginRequired();
         }
 
+		public ICommand ResyncVoltageRulesCommand => new Command(async () =>
+		{
+			await ResyncVoltageRules();
+
+		});
+
+
+
+        private async Task ResyncVoltageRules()
+        {
+			bool success;
+			try
+			{
+				IsEnabledResyncVoltageRulesButton = false;
+				IsRunningResyncVoltageRules = true;
+				await AppVariables.ResetVoltageRules(true);
+				Device.BeginInvokeOnMainThread(async () =>
+				{
+					await App.Current.MainPage.DisplayAlert("Success", "On the next Meter Check Status Customer Info will be pulled from the database", "Close");
+				});
+			}
+			catch (Exception ex)
+			{
+				if (AppHelper.ContainsAuthenticationRequiredException(ex))
+				{
+                    await this.LoginRequired();
+                }
+                else
+                {
+                    success = false;
+                    //TODO: Add app logging
+                    //AppLogger.LogError(ex);
+                    Device.BeginInvokeOnMainThread(async () =>
+                    {
+                        await App.Current.MainPage.DisplayAlert("Error", "The Sync failed: " + ex.GetInnermostMessage(), "Close");
+                    });                   
+                }
+            }
+        }
+
         public SettingsViewModel()
 		{
 			CheckEnabledUser();
@@ -112,7 +158,6 @@ namespace CompassMobileUpdate.ViewModels
             Environments.Add("Stage");
             Environments.Add("Production");
         }
-
 	}
 }
 
