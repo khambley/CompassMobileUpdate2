@@ -12,16 +12,16 @@ namespace CompassMobileUpdate.Services
 {
 	public class AuthService : BaseHttpService, IAuthService
 	{
-        Uri _baseUrl = new Uri("https://api-integration.exeloncorp.com/edgemicro-auth/token?");
+        Uri _baseUrl = AppSettings._ApiGeeAPIAuthTokenUrl;
         Uri _baseAuthUrl = new Uri("https://exccommonap301.azure-api.net/api/");
         string _baseAuthRoute = "v2/auth?subscription-key=c5d7c537da7644dba62f38306a7d40b2";
 
         public async Task<AuthResponse> GetAPIToken()
         {
             var grantType = "grant_type=client_credentials";
-            var clientId = "client_id=hMYFMivXirIwAZ3Kw1RBxxqSW0MWOHrX";
+            var clientId = $"client_id={AppSettings._ApiGeeAPIClientCredentialsKey}";
             var separator = "&";
-            var clientSecret = "client_secret=kfpMonMoBMTogFKg";
+            var clientSecret = $"client_secret={AppSettings._ApiGeeAPIClientCredentialsSecret}";
             var myParameters = grantType + separator + clientId + separator + clientSecret;
 
             var webclient = new WebClient();

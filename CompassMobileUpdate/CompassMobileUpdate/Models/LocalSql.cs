@@ -23,9 +23,11 @@ namespace CompassMobileUpdate.Models
         {
             if (_database != null) { return; }
 
-            var documentPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            // we need to put in /Library/ on iOS5.1+ to meet Apple's iCloud terms
+            // (they don't want non-user-generated data in Documents)
+            var documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
 
-            var databasePath = Path.Combine(documentPath, "COMPASSMobile.db");
+            var databasePath = Path.Combine(documentsPath, "COMPASSMobile.db");
 
             _database = new SQLiteAsyncConnection(databasePath);
 
@@ -39,9 +41,7 @@ namespace CompassMobileUpdate.Models
         {
             await CreateConnection();
             await _database.DeleteAllAsync<AppUser>();
-            var tempUser = appUser;
-            await _database.InsertAsync(new AppUser(appUser.UserID));
-            //SetLastUserID(appUser.UserID);
+            await _database.InsertAsync(appUser);          
             return true;
         }
 
@@ -52,15 +52,15 @@ namespace CompassMobileUpdate.Models
             return true;
         }
 
-        public async Task<AppUser> GetAppUserAsync()
+        public AppUser GetAppUser()
         {
-            await CreateConnection();
+            CreateConnection();
 
-            var appUsers = await _database.Table<AppUser>().ToListAsync();
+            var appUsers = _database.Table<AppUser>().ToListAsync().Result;
 
             AppUser appUser = new AppUser();
 
-            if (await _database.Table<AppUser>().CountAsync() > 0)
+            if (appUsers.Count > 0)
             {
                 appUser = appUsers[0];
                 return appUser;
@@ -217,6 +217,23 @@ namespace CompassMobileUpdate.Models
             var lastUserId = new LastUserID();
             lastUserId.UserID = userID;
             await _database.InsertAsync(lastUserId);
+        }
+
+        public async Task<bool> UpdateAllMeterLastUpdatedTimeToMin()
+        {
+            await CreateConnection();
+            try
+            {
+                string sql = "update [LocalMeter] set LastUpdatedTime = ?";
+                await _database.ExecuteAsync(sql, DateTime.MinValue);
+                return true;
+            }
+            catch (Exception e)
+            {
+                //TODO: Add app logging
+                //AppVariables.AppService.LogApplicationError("LocalSql.cs", e);
+                return false;
+            }
         }
 
         public async Task<bool> UpdateMeterIsFavorite(string deviceUtilityID, bool isFavorite)

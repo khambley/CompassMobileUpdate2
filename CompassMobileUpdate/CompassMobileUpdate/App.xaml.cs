@@ -17,27 +17,28 @@ namespace CompassMobileUpdate
             {
                 AppVariables.StartTime = DateTimeOffset.Now;
                 AppVariables.Application = this;
-                
+
+                //Default to Integration (Test) environment for now...
+                //TODO: change to default Production environment once implemented
+                AppVariables.AppEnvironment = Enums.AppEnvironment.Integration;
 
                 var RootPage = new NavigationPage(Resolver.Resolve<MainPage>());
                 RootPage.BarBackgroundColor = Color.FromHex("#CC0033");
                 RootPage.BarTextColor = Color.White;
 
-                //var loginPage = Resolver.Resolve<LoginPage>();
-                //MainPage = loginPage;
+               
                 var localSql = new LocalSql();
-                var appUser = Task.Run(async () => await localSql.GetAppUserAsync());
-                //var appUser = AppVariables.LocalAppSql.GetAppUser();
-                if (appUser.Result != null)
+                
+                var appUser = localSql.GetAppUser();
+
+                if (appUser != null)
                 {
-                    AppVariables.User = appUser.Result;
+                    AppVariables.User = appUser;
                 }
                 else
                 {
                     AppVariables.User = null;
                 }
-                //TODO: take out in prod, for testing purposes only
-                //AppVariables.User = null;
 
                 CheckJWTExpiration();
 
@@ -70,6 +71,14 @@ namespace CompassMobileUpdate
                     if (AppVariables.User.JWTExpirationUTC < DateTime.UtcNow)
                     {
                         JWTIsExpired = true;
+                        var localSql = new LocalSql();
+                        localSql.DeleteUsers();
+
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            var loginPage = Resolver.Resolve<LoginPage>();
+                            App.Current.MainPage = loginPage;
+                        });
                     }
                 }
             }

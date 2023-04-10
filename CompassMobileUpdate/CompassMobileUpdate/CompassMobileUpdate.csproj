@@ -34,6 +34,7 @@
     <None Remove="sqlite-net-pcl" />
     <None Remove="Exceptions\" />
     <None Remove="Helpers\" />
+    <None Remove="Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Pages\" />
@@ -42,5 +43,6 @@
     <Folder Include="Services\" />
     <Folder Include="Exceptions\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
 </Project>

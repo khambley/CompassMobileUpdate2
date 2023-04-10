@@ -5,6 +5,24 @@ namespace CompassMobileUpdate.Helpers
 {
 	class AppHelper
 	{
+        public static bool ContainsAuthenticationRequiredException(Exception ex)
+        {
+            Exception e = ex;
+
+            while (e != null)
+            {
+                if (e.GetType() == typeof(AuthenticationRequiredException))
+                {
+                    return true;
+                }
+
+                e = e.InnerException;
+            }
+
+            return false;
+
+        }
+
         public static bool ContainsNullResponseException(Exception ex)
         {
             Exception e = ex;

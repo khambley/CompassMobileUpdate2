@@ -6,15 +6,100 @@
     Title="Settings"
      BackgroundColor="White">
 
-    <StackLayout Margin="20">
+    <StackLayout Margin="20">   
+        <Grid Margin="0,0,0,15" RowSpacing="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.5*" />
+                <ColumnDefinition Width="0.5*" />
+            </Grid.ColumnDefinitions>
+
+            <Label x:Name="lblEnvironment"
+                   Grid.Column="0"
+                   Grid.Row="0"
+                   FontSize="Large"
+                     Text="Environment"
+                     VerticalTextAlignment="Center"
+                     FontAttributes="Bold"
+                     HorizontalOptions="Start"
+                     VerticalOptions="Center"
+                     HeightRequest="50"
+                      Padding="0,0,10,0" />
+  
+            <Picker x:Name="pickerEnvironment"
+                          Grid.Column="1"
+                          Grid.Row="0"
+                          HorizontalOptions="FillAndExpand"
+                          VerticalOptions="FillAndExpand"
+                          HeightRequest="50"
+                          BackgroundColor="WhiteSmoke"
+                          FontSize="Large">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>Integration</x:String>
+                        <x:String>Stage</x:String>
+                        <x:String>Production</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
+
+            <Label x:Name="lblIsLogging"
+                         Grid.Column="0"
+                         Grid.Row="1"
+                         Text="Is Logging" />
+            <Switch x:Name="switchLogging"
+                           Grid.Column="1"
+                           Grid.Row="1"
+                           Toggled="switchLogging_Toggled" />
+        </Grid>
+        
+        <Button x:Name="btnLogs"
+                      Text="View Logs"
+                      HorizontalOptions="FillAndExpand"
+                      BackgroundColor="#CC0033"
+                      TextColor="White"
+                      Command="{Binding ViewLogsCommand}" />
 
         <Button x:Name="btnLogout"
-                       Text="Logout"
-                        HorizontalOptions="FillAndExpand"
-                        BackgroundColor="#CC0033"
-                        TextColor="White"
-                        Command="{Binding LogoutCommand}" />
+                      Text="Logout"
+                      HorizontalOptions="FillAndExpand"
+                      BackgroundColor="#CC0033"
+                      TextColor="White"
+                      Command="{Binding LogoutCommand}" />
 
+        <Button x:Name="btnForceCustomerInfoUpdate"
+                      Text="Force Customer Info Update"
+                      HorizontalOptions="FillAndExpand"
+                      BackgroundColor="#CC0033"
+                      TextColor="White"
+                      Command="{Binding ForceCustInfoUpdateCommand}" />
+
+         <Button x:Name="btnResyncVoltageRules"
+                      Text="Resync Voltage Rules"
+                      HorizontalOptions="FillAndExpand"
+                      BackgroundColor="#CC0033"
+                      TextColor="White"
+                       IsEnabled="{Binding IsEnabledResyncVoltageRulesButton}"
+                      Command="{Binding ResyncVoltageRulesCommand}" />
+
+        <ActivityIndicator IsRunning="{Binding IsRunningResyncVoltageRules}" />
+
+        <Label VerticalOptions="EndAndExpand">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="Session Expires: " />
+                    <Span Text="{Binding SessionExpirationTime}" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+
+        <Label VerticalOptions="End">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="App Version: " />
+                    <Span Text="2.0.0" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
     </StackLayout>
 
 </pages:BasePage>
