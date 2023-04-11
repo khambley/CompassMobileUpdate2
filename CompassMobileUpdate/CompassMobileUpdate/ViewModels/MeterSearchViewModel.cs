@@ -24,7 +24,9 @@ namespace CompassMobileUpdate.ViewModels
 
         public bool IsVisibleRecentMetersLabel { get; set; }
 
-        public List<LocalMeter> RecentMeters { get; set; }
+        public bool IsVisibleRecentMetersList { get; set; }
+
+        public ObservableCollection<LocalMeter> RecentMeters { get; set; }
 
         public List<Meter> Meters { get; set; }
         
@@ -34,15 +36,30 @@ namespace CompassMobileUpdate.ViewModels
 		{
             _meterService = meterService;
 
-            IsVisibleCustomerResults = true;
-            IsVisibleRecentMetersLabel = false;
+            //IsVisibleCustomerResults = true;
+            //IsVisibleRecentMetersLabel = false;
 
-            RecentMeters = new List<LocalMeter>();
+            RecentMeters = new ObservableCollection<LocalMeter>();
+
 			//Task.Run(async () => await LoadData());
 		}
 
+        public async Task BindRecentMetersAsync()
+        {
+            var localSql = new LocalSql();
+            RecentMeters = new ObservableCollection<LocalMeter>(await localSql.GetLocalMetersSorted());
+        }
+
         public ICommand PerformSearchCommand => new Command<string>(async (string searchText) =>
         {
+            // hide recent meters
+            IsVisibleRecentMetersLabel = false;
+            IsVisibleRecentMetersList = false;
+
+            // show search results
+            IsVisibleCustomerResults = true;
+            IsVisibleCustomerSearch = true;
+
             await PerformCustomerSearch(searchText);
         });
 
@@ -66,6 +83,16 @@ namespace CompassMobileUpdate.ViewModels
             }
         }
 
+        public Meter SelectedRecentMeterItem
+        {
+            get { return null; }
+            set
+            {
+                Device.BeginInvokeOnMainThread(async () => await NavigateToMeterDetail(value));
+                OnPropertyChanged(nameof(SelectedRecentMeterItem));
+            }
+        }
+
         private async Task NavigateToMeterDetail(Meter meter)
         {
             if (meter == null)
@@ -80,7 +107,10 @@ namespace CompassMobileUpdate.ViewModels
             vm.MeterItem = meter;
 
             await vm.GetAllMeterInfo();
-            
+
+            var localSql = new LocalSql();
+            await localSql.AddOrUpdateMeterLastAccessedTime(meter);
+
             await Navigation.PushAsync(meterDetailpage);        
         }
 

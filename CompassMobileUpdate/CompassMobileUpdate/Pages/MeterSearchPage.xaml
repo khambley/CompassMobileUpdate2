@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="CompassMobileUpdate.Pages.MeterSearchPage"
     Title="Meter Search"
-    BackgroundColor="#ECECEC">
+    BackgroundColor="White">
     <StackLayout x:Name="slContent" Orientation="Vertical" VerticalOptions="Start">
         <StackLayout x:Name="slTopBar" Orientation="Horizontal">
             <SearchBar x:Name="sBar"
@@ -27,11 +27,33 @@
         <Label Text="Recent Meters"
                      HorizontalTextAlignment="Center"
                      FontSize="Large"
-                     Margin="0,12,0,12"
+                     Margin="0,12,0,6"
                      IsVisible="{Binding IsVisibleRecentMetersLabel}" />
 
-        <StackLayout IsVisible="{Binding IsVisibleCustomerResults}">
-            
+        <StackLayout IsVisible="{Binding IsVisibleRecentMetersList}">          
+            <ListView x:Name="lvRecentMetersList"
+                             ItemsSource="{Binding RecentMeters}"
+                             RowHeight="60"
+                             SelectedItem="{Binding SelectedRecentMeterItem}"
+                             ItemSelected="lvRecentMetersList_ItemSelected">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Orientation="Vertical" Padding="10,5,0,10">
+                            <Label Text="{Binding CustomerNameAndDeviceUtilityId}"
+                                         FontSize="20"
+                                         FontAttributes="Bold" />
+                            <Label Text="{Binding CustomerAddress}"
+                                         TextColor="Gray"
+                                         FontSize="Small" />                          
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        </StackLayout>
+
+        <StackLayout IsVisible="{Binding IsVisibleCustomerResults}">          
             <ListView x:Name="lvCustomerResults"
                              ItemsSource="{Binding Meters}"
                              RowHeight="60"
@@ -51,7 +73,6 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-
         </StackLayout>
                    
     </StackLayout>    
