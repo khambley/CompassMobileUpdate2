@@ -31,7 +31,7 @@ namespace CompassMobileUpdate.Pages
         protected async override void OnAppearing()
         {
             var vm = this.BindingContext as MeterSearchViewModel;
-            await vm.BindRecentMetersAsync();
+            await vm.BindRecentMetersAsync(); 
 
             if (vm.RecentMeters.Count > 0)
             {
@@ -41,24 +41,18 @@ namespace CompassMobileUpdate.Pages
 
                 // hide search results
                 vm.IsVisibleCustomerResults = false;
-                vm.IsVisibleCustomerSearch = false;
-
-                //vm.SelectedRecentMeterItem = lvRecentMetersList.SelectedItem;
-                
+                vm.IsVisibleCustomerSearch = false;             
             }
-
             base.OnAppearing();
-        }
-
-        void lvRecentMetersList_ItemTapped(System.Object sender, Xamarin.Forms.ItemTappedEventArgs e)
-        {
-            var meter = (Meter)e.Item;
         }
 
         void lvRecentMetersList_ItemSelected(System.Object sender, Xamarin.Forms.SelectedItemChangedEventArgs e)
         {
             LocalMeter localMeter = e.SelectedItem as LocalMeter;
             var vm = this.BindingContext as MeterSearchViewModel;
+            
+            vm.IsFavorite = localMeter.IsFavorite;
+
             var meter = new Meter
             {
                DeviceUtilityID = localMeter.DeviceUtilityID,
@@ -67,6 +61,7 @@ namespace CompassMobileUpdate.Pages
                CustomerContactNumber = localMeter.CustomerContactNumber,
                Distance = localMeter.Distance              
             };
+
             vm.SelectedRecentMeterItem = meter;
         }
     }

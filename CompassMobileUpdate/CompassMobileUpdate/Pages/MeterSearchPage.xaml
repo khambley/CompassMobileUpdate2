@@ -39,14 +39,19 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
-                        <StackLayout Orientation="Vertical" Padding="10,5,0,10">
-                            <Label Text="{Binding CustomerNameAndDeviceUtilityId}"
-                                         FontSize="20"
-                                         FontAttributes="Bold" />
-                            <Label Text="{Binding CustomerAddress}"
-                                         TextColor="Gray"
-                                         FontSize="Small" />                          
-                        </StackLayout>
+                        <StackLayout Orientation="Horizontal">
+                            <StackLayout Orientation="Vertical" Padding="10,5,0,10">
+                                <Label x:Name="lblCustomerName"
+                                             Text="{Binding CustomerNameAndDeviceUtilityId}"
+                                             FontSize="20"
+                                             FontAttributes="Bold" />
+                                <Label Text="{Binding CustomerAddress}"
+                                             TextColor="Gray"
+                                             FontSize="Small" />                          
+                            </StackLayout>
+
+                            <ImageButton x:Name="btnFavorite" Padding="0,0,20,0" WidthRequest="50" HorizontalOptions="EndAndExpand" Source="{Binding IsFavoriteImage}" />
+                    </StackLayout>
                     </ViewCell>
                 </DataTemplate>
             </ListView.ItemTemplate>

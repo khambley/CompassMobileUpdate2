@@ -23,7 +23,8 @@
                              BackgroundColor="#ECECEC"
                              HorizontalOptions="End"
                              VerticalOptions="Start"
-                             Source="star_gray.png"
+                             Source="{Binding IsFavoriteImage}"
+                             Command="{Binding SetIsFavoriteCommand}"
                              WidthRequest="50"
                              AbsoluteLayout.LayoutFlags="PositionProportional" />
             </Grid>

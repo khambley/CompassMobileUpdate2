@@ -16,6 +16,10 @@ namespace CompassMobileUpdate.ViewModels
 	{
         private readonly MeterService _meterService;
 
+        public string IsFavoriteImage { get; set; }
+
+        public bool IsFavorite { get; set; }
+
         public bool IsVisibleCustomerResults  { get; set; }
 
         public bool IsVisibleCustomerSearch { get; set; }
@@ -31,6 +35,7 @@ namespace CompassMobileUpdate.ViewModels
         public List<Meter> Meters { get; set; }
         
         bool UseFirstAndLastName { get; set; }
+        
 
         public MeterSearchViewModel(MeterService meterService)
 		{

@@ -14,7 +14,21 @@ namespace CompassMobileUpdate.Models
         public double? Distance { get; set; }
         [Indexed]
         public bool IsFavorite { get; set; }
-
+        
+        public string IsFavoriteImage
+        {
+            get
+            {
+                if (IsFavorite)
+                {
+                    return "star_yellow.png";
+                }
+                else
+                {
+                    return "star_gray.png";
+                }
+            }
+        }
         public DateTime CreatedTime { get; set; }
         [Indexed]
         public DateTime LastAccessedTime { get; set; }
