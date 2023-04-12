@@ -168,6 +168,12 @@ namespace CompassMobileUpdate.Models
             return localMeter;
         }
 
+        public async Task<List<LocalMeter>> GetLocalMetersSorted()
+        {
+            await CreateConnection();
+            return await _database.Table<LocalMeter>().OrderByDescending(m => m.IsFavorite).OrderByDescending(m => m.LastAccessedTime).ToListAsync();
+        }
+
         public async Task<DateTime> GetMeterLastUpdatedTime(string deviceUtilityID)
         {
             await CreateConnection();

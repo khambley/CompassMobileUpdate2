@@ -38,6 +38,23 @@ namespace CompassMobileUpdate.ViewModels
 
         public bool IsPingable { get; set; }
 
+        public bool IsFavorite { get; set; }
+
+        public string IsFavoriteImage
+        {
+            get
+            {
+                if (IsFavorite)
+                {
+                    return "star_yellow.png";
+                }
+                else
+                {
+                    return "star_gray.png";
+                }               
+            }
+        }
+
         public bool AllowsPQRs { get; set; }
 
         public Manufacturer Manufacturer { get; set; }
@@ -64,6 +81,27 @@ namespace CompassMobileUpdate.ViewModels
         {
             await GetAllMeterInfo();
         });
+
+        public ICommand SetIsFavoriteCommand => new Command(async () =>
+        {
+            await SetIsFavoriteAsync();
+        });
+
+        private async Task SetIsFavoriteAsync()
+        {
+            IsFavorite = !IsFavorite;
+            var localSql = new LocalSql();
+            var localMeter = await localSql.GetLocalMeter(MeterItem.DeviceUtilityID);
+            if (localMeter != null)
+            {
+                localMeter.IsFavorite = IsFavorite;
+            }
+            else
+            {
+                await localSql.AddMeter(MeterItem);
+            }
+            await localSql.UpdateMeterIsFavorite(MeterItem.DeviceUtilityID, IsFavorite);
+        }
 
         public MeterDetailViewModel(MeterService meterService)
 		{
