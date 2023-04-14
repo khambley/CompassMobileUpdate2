@@ -57,23 +57,6 @@ namespace CompassMobileUpdate.Models
 
             return account;
         }
-
-        //public static AppUser GetUserFromAccount(Account account)
-        //{
-        //    AppUser user = new AppUser();
-        //    user.UserID = account.Username;
-        //    if (account.Properties.ContainsKey("FirstName"))
-        //    {
-        //        user.FirstName = account.Properties["FirstName"];
-        //    }
-        //    if (account.Properties.ContainsKey("LastName"))
-        //    {
-        //        user.LastName = account.Properties["LastName"];
-        //    }
-        //    user.JWT = account.Properties["JWT"];
-        //    user.JWTExpirationUTC = JWTHelper.GetExpirationTimeFromJWT(user.JWT);
-        //    return user;
-        //}
     }
 }
 

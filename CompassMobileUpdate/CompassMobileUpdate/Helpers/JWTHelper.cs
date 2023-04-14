@@ -31,15 +31,6 @@ namespace CompassMobileUpdate.Helpers
         {
             return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(secondsSince1970);
         }
-
-        //public static DateTime GetExpirationTimeFromJWT(string jwt)
-        //{
-        //    //Claims in JWT is the second set of encoded data. 0 is Header, 1 is Payload (claims), 3 is Signature
-        //    string decodedClaims = DecodedStringFromBase64URL(jwt.Split('.')[1]);
-        //    JsonValue values = JsonValue.Parse(decodedClaims);
-        //    long secondsSince1970 = (long)values["exp"];
-        //    return GetUTCTimeSince1970(secondsSince1970);
-        //}
     }
 }
 
