@@ -35,10 +35,10 @@ steps:
     keychain: 'temp'
 - task: XamariniOS@2
   inputs:
-    solutionFile: '**/*.sln'
+    solutionFile: 'CompassMobileUpdate.iOS/*.sln'
     configuration: 'Release'
-    buildForSimulator: true
-    packageApp: false
+    packageApp: true
+    runNugetRestore: false
 - task: CopyFiles@2
   inputs:
     SourceFolder: '$(system.defaultworkingdirectory)'
