@@ -35,6 +35,12 @@ steps:
     keychain: 'temp'
 - task: XamariniOS@2
   inputs:
+    solutionFile: '**/*.sln'
+    configuration: 'Release'
+    packageApp: true
+    runNugetRestore: false
+- task: XamariniOS@2
+  inputs:
     solutionFile: 'CompassMobileUpdate.iOS/*.sln'
     configuration: 'Release'
     packageApp: true
