@@ -39,12 +39,6 @@ steps:
     configuration: 'Release'
     packageApp: true
     runNugetRestore: false
-- task: XamariniOS@2
-  inputs:
-    solutionFile: 'CompassMobileUpdate.iOS/*.sln'
-    configuration: 'Release'
-    packageApp: true
-    runNugetRestore: false
 - task: CopyFiles@2
   inputs:
     SourceFolder: '$(system.defaultworkingdirectory)'
