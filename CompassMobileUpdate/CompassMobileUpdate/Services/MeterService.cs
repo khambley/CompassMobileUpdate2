@@ -121,6 +121,26 @@ namespace CompassMobileUpdate.Services
 
         }
 
+        /// <summary>
+        /// Gets a list of Meters within a specified radius (in miles)
+        /// </summary>
+        /// <param name="latitude"></param>
+        /// <param name="longitude"></param>
+        /// <param name="radiusInMiles"></param>
+        /// <returns>List of Meters</returns>
+        public async Task<List<Meter>> GetMetersWithinXRadiusAsync(double latitude, double longitude, double radiusInMiles)
+        {
+            var authResponse = await _authService.GetAPIToken();
+
+            var url = new Uri(_baseUri, $"meter?sourceLatitude={latitude}&sourceLongitude={longitude}&radiusInMiles={radiusInMiles}");
+
+            _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
+
+            var response = await SendRequestAsync<List<Meter>>(url, HttpMethod.Get, _headers);
+
+            return response;
+        }
+
         public async Task<Meter> GetMeterByDeviceUtilityIDAsync(string deviceUtilityID)
         {
             var apiAccessToken = _authService.GetAPIToken().Result.AccessToken;

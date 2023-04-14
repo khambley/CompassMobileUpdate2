@@ -12,7 +12,7 @@
                        PlaceholderColor="Gray"
                        HorizontalOptions="Start"
                        SearchCommand="{Binding PerformSearchCommand}"
-                       SearchCommandParameter="{Binding Text, Source={x:Reference sBar}}"/>
+                       SearchCommandParameter="{Binding Text, Source={x:Reference sBar}}" />
 
             <Button x:Name="scanButton"
                     ImageSource="ic_barcode.png"

@@ -20,6 +20,11 @@ namespace CompassMobileUpdate
 
         public static AppEnvironment AppEnvironment { get; set; }
 
+        public static double GetMetersWithinXRadiusMaxValue
+        {
+            get { return .13; }
+        }
+
         public static bool IsLogging { get; set; }
         
         public static MeterService MeterService { get; set; }
