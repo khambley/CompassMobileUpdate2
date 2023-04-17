@@ -33,6 +33,8 @@ namespace CompassMobileUpdate
 
         public static byte[] JWTSecretKey { get { return ASCIIEncoding.ASCII.GetBytes(JWTSymmetricKey); }}
 
+        public static Xamarin.Forms.Maps.MapSpan LastMapPosition { get; set; }
+
         public static LocalSql LocalAppSql { get; set; }
 
         public static string MeterNotFound = "Meter not found";

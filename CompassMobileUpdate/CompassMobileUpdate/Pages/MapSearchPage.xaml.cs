@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using CompassMobileUpdate.Exceptions;
 using CompassMobileUpdate.Helpers;
 using CompassMobileUpdate.ViewModels;
@@ -27,8 +28,63 @@ namespace CompassMobileUpdate.Pages
             // TODO: Add custom background effect for searchbar on ios.
             // https://stackoverflow.com/questions/67581008/how-to-change-the-color-of-searchbar-search-icon-and-cancel-button-color-in-xama
 
-            meterMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(41.8500, -87.6500), Distance.FromMiles(5)));
+            SetMapToDefaultPositionAsync();
 
+            //meterMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(41.8500, -87.6500), Distance.FromMiles(5)));
+
+        }
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+        }
+        public async Task SetMapToDefaultPositionAsync()
+        {
+            try
+            {
+                //If we haven't cached our last location, go ahead and set it to the user's current position
+                if (AppVariables.LastMapPosition == null)
+                {
+                    var position = await Xamarin.Essentials.Geolocation.GetLocationAsync();
+                    if (position != null)
+                    {
+                        Console.WriteLine("Position: " + position.ToString());
+                        meterMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(position.Latitude, position.Longitude), Distance.FromMiles(.05)));
+                    }
+                    else
+                    {
+                        Console.WriteLine("Position is null");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("AppVariables.LastMapPosition: " + AppVariables.LastMapPosition.ToString());
+                }
+            }
+            catch (Exception e)
+            {
+                if (e.GetType() == typeof(System.Threading.Tasks.TaskCanceledException) || (e.InnerException != null && e.InnerException.GetType() == typeof(System.Threading.Tasks.TaskCanceledException)))
+                {
+                    //TODO: Add app logging
+                    //AppLogger.Debug("Locator.GetPositionAsync(10000) timed out");
+
+                    Console.WriteLine("GetLocation errored out");
+
+                    // Set default position to Chicago
+                    meterMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(41.881832, -87.623177), Distance.FromMiles(5)));
+                }
+                //TODO: Log app errors
+                //this.LogApplicationError("SearchPage.SetMapToDefaultPosition", e);
+            }
+
+            try
+            {
+                meterMap.IsShowingUser = true;
+            }
+            catch (Exception)
+            {
+                meterMap.IsShowingUser = false;
+            }
         }
 
         protected async void sBar_SearchButtonPressed(System.Object sender, System.EventArgs e)
@@ -42,7 +98,7 @@ namespace CompassMobileUpdate.Pages
                     double radius = .05; //small for exact location or meter
                     int temp;
 
-                    //If we're prety sure it's a zipcode
+                    //If we're pretty sure it's a zipcode
                     if (searchText.Length == 5 && Int32.TryParse(searchText, out temp))
                     {
                         radius = 3;

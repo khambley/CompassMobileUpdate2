@@ -6,6 +6,7 @@ using CompassMobileUpdate.Exceptions;
 using CompassMobileUpdate.Helpers;
 using CompassMobileUpdate.Models;
 using CompassMobileUpdate.Services;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 
@@ -21,6 +22,8 @@ namespace CompassMobileUpdate.ViewModels
 
         public bool IsVisibleListViewMeters { get; set; }
 
+        public bool IsVisibleMap { get; set; }
+
         public string MessageLabel { get; set; }
 
         public MapSearchViewModel(MeterService meterService)
@@ -29,8 +32,9 @@ namespace CompassMobileUpdate.ViewModels
             IsVisibleMessage = false;
             IsVisibleSearchResults = false;
             IsVisibleListViewMeters = false;
+            IsVisibleMap = true;
+            
         }
-
 
         public async Task<List<Meter>> GetMetersWithinXRadiusAsync(double latitude, double longitude, double radiusInMiles)
         {
