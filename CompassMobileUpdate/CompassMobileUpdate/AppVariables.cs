@@ -11,10 +11,18 @@ namespace CompassMobileUpdate
     using VoltageRule = LocalVoltageRule;
 
     public static class AppVariables
-	{
+    {
+        static AppVariables()
+        {
+            _defaultFadeMs = 3000;
+        }
 		static bool isInitialized = false;
 
         static int _defaultFadeMs;
+        public static int DefaultFadeMs
+        {
+            get { return _defaultFadeMs; }
+        }
 
         public static App Application { get; set; }
 

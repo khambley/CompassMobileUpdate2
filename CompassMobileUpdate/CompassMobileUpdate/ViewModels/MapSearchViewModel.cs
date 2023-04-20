@@ -45,6 +45,17 @@ namespace CompassMobileUpdate.ViewModels
         {
             return _meterService.IsValidSerialNumber(serialNumber, out ex);
         }
+
+        public async Task<List<Meter>> GetMetersWithinBoxBoundsAsync(BoundingCoords bc)
+        {
+            return await _meterService.GetMetersWithinBoxBoundsAsync(bc);
+        }
+
+        public string GetCustomerNameAndDeviceUtilityID(Meter meter)
+        {
+            return _meterService.GetCustomerNameAndDeviceUtilityID(meter);
+        }
+
         public ICommand PerformSearch => new Command<string>(async (string searchText) =>
 		{
             IsBusy = true;

@@ -62,7 +62,9 @@
                           IsVisible="{Binding IsVisibleSearchResults}">
         </ListView>
 
-        <maps:Map x:Name="meterMap" IsVisible="{Binding IsVisibleMap}" />
+        <maps:Map x:Name="meterMap"
+                  IsVisible="{Binding IsVisibleMap}"
+                  PropertyChanged="meterMap_PropertyChanged"/>
 
         <ActivityIndicator x:Name="aiMeterListLoading" />
 
