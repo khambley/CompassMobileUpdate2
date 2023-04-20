@@ -121,6 +121,49 @@ namespace CompassMobileUpdate.Services
 
         }
 
+        public async Task<List<Meter>> GetMetersWithinBoxBoundsAsync(BoundingCoords bc)
+        {
+            var authResponse = await _authService.GetAPIToken();
+
+            var url = new Uri(_baseUri, $"meter?left={bc.Left}&top={bc.Top}&right={bc.Right}&bottom={bc.Bottom}");
+
+            _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
+
+            var response = await SendRequestAsync<List<Meter>>(url, HttpMethod.Get, _headers);
+
+            return response;
+        }
+
+        /// <summary>
+        /// Gets a list of Meters within a specified radius (in miles)
+        /// </summary>
+        /// <param name="latitude"></param>
+        /// <param name="longitude"></param>
+        /// <param name="radiusInMiles"></param>
+        /// <returns>List of Meters</returns>
+        public async Task<List<Meter>> GetMetersWithinXRadiusAsync(double latitude, double longitude, double radiusInMiles)
+        {
+            var authResponse = await _authService.GetAPIToken();
+
+            var url = new Uri(_baseUri, $"meter?sourceLatitude={latitude}&sourceLongitude={longitude}&radiusInMiles={radiusInMiles}");
+
+            _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
+
+            var response = await SendRequestAsync<List<Meter>>(url, HttpMethod.Get, _headers);
+
+            return response;
+        }
+        public string GetCustomerNameAndDeviceUtilityID(Meter meter)
+        {
+            var returnString = meter.DeviceUtilityID;
+
+            if (!string.IsNullOrWhiteSpace(meter.CustomerName))
+            {
+                returnString = meter.CustomerName + " - " + meter.DeviceUtilityID;
+            }
+
+            return returnString;
+        }
         public async Task<Meter> GetMeterByDeviceUtilityIDAsync(string deviceUtilityID)
         {
             var apiAccessToken = _authService.GetAPIToken().Result.AccessToken;

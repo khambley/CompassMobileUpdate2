@@ -12,10 +12,9 @@
         <SearchBar x:Name="sBar"
                    Placeholder="Search"
                    HorizontalTextAlignment="Center"
-                   SearchCommand="{Binding PerformSearch}"
+                   SearchButtonPressed="sBar_SearchButtonPressed"
                    PlaceholderColor="Gray"
-                   FontSize="Large"
-                   />
+                   FontSize="Large" />
 
         <StackLayout x:Name="stackUnderSearch"
                      VerticalOptions="Center"
@@ -28,14 +27,12 @@
                          Orientation="Horizontal">
 
                 <Label x:Name="lblMessage"
-                       Text="160 Meters Found"
                        HorizontalOptions="Center"
                        VerticalOptions="Center"
                        FontSize="Small"
                        IsVisible="{Binding IsVisibleMessage}" />
 
                 <ActivityIndicator x:Name="aiSearchingForMeters"
-                                               IsRunning="{Binding IsBusy}"
                                                VerticalOptions="Center"
                                                HorizontalOptions="Center" />
 
@@ -65,10 +62,11 @@
                           IsVisible="{Binding IsVisibleSearchResults}">
         </ListView>
 
-        <maps:Map x:Name="meterMap" />
+        <maps:Map x:Name="meterMap"
+                  IsVisible="{Binding IsVisibleMap}"
+                  PropertyChanged="meterMap_PropertyChanged"/>
 
-        <ActivityIndicator x:Name="aiMeterListLoading"
-                                       IsRunning="{Binding IsBusy}" />
+        <ActivityIndicator x:Name="aiMeterListLoading" />
 
         <ListView x:Name="lvMeters"
                           IsVisible="{Binding IsVisibleListViewMeters}">

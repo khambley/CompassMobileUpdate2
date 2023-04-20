@@ -26,7 +26,7 @@ namespace CompassMobileUpdate.ViewModels
 
         public bool IsBusy { get; set; }
 
-        protected async Task LoginRequired()
+        public async Task LoginRequired()
         {
             _isLoginPageBeingPushed = true;
             var localSql = new LocalSql();
