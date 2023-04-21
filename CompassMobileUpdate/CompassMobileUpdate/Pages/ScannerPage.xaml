@@ -8,7 +8,14 @@
 
     <Grid VerticalOptions="FillAndExpand"
                HorizontalOptions="FillAndExpand">
-
+        <ActivityIndicator x:Name="aiScannerPage"
+                           Color="White"
+                           HeightRequest="100"
+                           WidthRequest="100"
+                           IsRunning="True"
+                           VerticalOptions="CenterAndExpand"
+                           HorizontalOptions="CenterAndExpand"
+                           />
         <zxing:ZXingScannerView
                     x:Name="zxingScanner"
                     IsScanning="True"
