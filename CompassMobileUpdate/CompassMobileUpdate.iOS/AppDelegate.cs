@@ -24,6 +24,7 @@ namespace CompassMobileUpdate.iOS
         {
             global::Xamarin.Forms.Forms.Init();
             Xamarin.FormsMaps.Init();
+            ZXing.Net.Mobile.Forms.iOS.Platform.Init();
             Bootstrapper.Init();
             LoadApplication(new App());
 

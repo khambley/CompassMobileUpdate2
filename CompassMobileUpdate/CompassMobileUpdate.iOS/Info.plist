@@ -42,5 +42,7 @@
 	<string>Can we use your location at all times?</string>
 	<key>NSLocationUsageDescription</key>
 	<string>Can we use your device&apos;s location?</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Compass Mobile would like access to your camera to scan barcodes.</string>
 </dict>
 </plist>

@@ -41,11 +41,13 @@ namespace CompassMobileUpdate.Droid
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             Xamarin.FormsMaps.Init(this, savedInstanceState);
+            ZXing.Net.Mobile.Forms.Android.Platform.Init();
             Bootstrapper.Init();
             LoadApplication(new App());
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
         {
+            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
             if (requestCode == RequestLocationId)
             {
                 if ((grantResults.Length == 1) && (grantResults[0] == (int)Permission.Granted))
@@ -59,6 +61,7 @@ namespace CompassMobileUpdate.Droid
             }
             else
             {
+                Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
                 base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
             }
         }
