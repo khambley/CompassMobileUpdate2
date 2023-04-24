@@ -30,16 +30,16 @@ namespace CompassMobileUpdate.Pages
         }
 
         // Scanning happens on a background thread, so if you want to post something back with these results
-        // you have to make sure you're on the main thread
+        // you have to make sure you're on the main thread KLH
         void ZXingScannerView_OnScanResult(ZXing.Result result)
         {
             Device.BeginInvokeOnMainThread(async () =>
             {
-                // Stop analysis until we navigate away so we don't keep reading barcodes
+                // Stop analysis until we navigate away so we don't keep reading barcodes KLH
                 zxingScanner.IsAnalyzing = false;
 
-                // Show an alert
-                await DisplayAlert("Scanned Barcode", result.Text, "OK");
+                // Show an alert - for testing
+                // await DisplayAlert("Scanned Barcode", result.Text, "OK");
 
                 var meterId = await GetMeterIDFromScanAsync(result.Text);
 
