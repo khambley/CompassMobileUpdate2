@@ -55,7 +55,7 @@ namespace CompassMobileUpdate.Pages
         private async Task SetMeterByDeviceUtilityIDAsync(string meterId)
         {
             var meter = new Meter();
-            meterId = "G270146674"; // Integration testing purposes
+            //meterId = "G270146674"; // a meter id that works in the non-prod (Integration) env. 4/21/23 KLH
             this.Meter = await vm.GetMeterByDeviceUtilityIDAsync(meterId);          
         }
 
