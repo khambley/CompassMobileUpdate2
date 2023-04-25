@@ -39,10 +39,11 @@
             </StackLayout> <!--end messageAndIndicator-->
 
             <StackLayout x:Name="stackToggle"
+                            Padding="0,0,10,0"
                              VerticalOptions="Center"
                              HorizontalOptions="EndAndExpand"
                              Orientation="Horizontal"
-                             IsVisible="False">
+                             IsVisible="True">
 
                     <Label x:Name="lblFollowMovementLabel"
                            Text="Auto-Follow"
@@ -121,6 +122,6 @@
                               TextColor="White"
                               BackgroundColor="#CC0033" />
         </Grid>
-    </StackLayout> <!--end end slContent-->
+    </StackLayout> <!--end slContent-->
 </ContentPage>
 

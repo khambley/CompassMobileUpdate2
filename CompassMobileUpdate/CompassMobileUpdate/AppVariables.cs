@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CompassMobileUpdate.Models;
 using CompassMobileUpdate.Services;
+using Xamarin.Forms.Maps;
 
 namespace CompassMobileUpdate
 {
@@ -28,10 +29,16 @@ namespace CompassMobileUpdate
 
         public static AppEnvironment AppEnvironment { get; set; }
 
+        public static List<BoundingCoords> CachedMapBoundingCoords { get; set; }
+
+        public static List<Pin> CachedMapPins { get; set; }
+
         public static double GetMetersWithinXRadiusMaxValue
         {
             get { return .13; }
         }
+
+        public static bool IsCachingMapPins { get; set; }
 
         public static bool IsLogging { get; set; }
         
