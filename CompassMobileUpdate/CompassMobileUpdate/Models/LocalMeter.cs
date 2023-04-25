@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using SQLite;
 namespace CompassMobileUpdate.Models
 {
@@ -59,6 +60,16 @@ namespace CompassMobileUpdate.Models
             local.ConvertCompassMeterToLocalMeter(meter);
 
             return local;
+        }
+        public static List<LocalMeter> GetListOfLocalMetersFromMeters(List<Meter> meters)
+        {
+            List<LocalMeter> localMeters = new List<LocalMeter>();
+            for (int i = 0; i < meters.Count; i++)
+            {
+                localMeters.Add(LocalMeter.GetLocalMeterFromMeter(meters[i]));
+            }
+
+            return localMeters;
         }
     }
 }

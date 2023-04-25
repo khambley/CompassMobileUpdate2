@@ -65,7 +65,8 @@
 
         <maps:Map x:Name="meterMap"
                   IsVisible="{Binding IsVisibleMap}"
-                  PropertyChanged="meterMap_PropertyChanged"/>
+                  PropertyChanged="meterMap_PropertyChanged"
+                  MapType="Hybrid" />
 
         <ActivityIndicator x:Name="aiMeterListLoading" />
 

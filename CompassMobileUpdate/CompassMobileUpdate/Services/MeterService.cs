@@ -8,6 +8,7 @@ using CompassMobileUpdate.Exceptions;
 using CompassMobileUpdate.Helpers;
 using CompassMobileUpdate.Models;
 using Newtonsoft.Json;
+using Xamarin.Forms;
 
 namespace CompassMobileUpdate.Services
 {
@@ -15,8 +16,9 @@ namespace CompassMobileUpdate.Services
 
     public class MeterService : BaseHttpService, IMeterService
     {
-        // Apigee 
-        readonly Uri _baseUri = new Uri("https://apir-integration.exeloncorp.com/comed/compassmobile/");
+        public string ServiceEnvironment => "Internal";
+
+        readonly Uri _baseUri;
 
         readonly IDictionary<string, string> _headers;
 
@@ -28,6 +30,16 @@ namespace CompassMobileUpdate.Services
             _headers = new Dictionary<string, string>();
 
             // TODO: Add header with auth-based token
+
+            if(ServiceEnvironment == "Apigee")
+            {
+                _baseUri = new Uri("https://apir-integration.exeloncorp.com/comed/compassmobile/");
+            }
+            else
+            {
+                // have to be connected to the VPN in order for this to make successful calls - for testing only KLH
+                _baseUri = new Uri("https://compassmobiletest.exeloncorp.com/api/");
+            }
         }
         public delegate void GetMeterAttributesCompletedHandler(MeterAttributesResponse meter, Exception ex);
 
@@ -40,13 +52,10 @@ namespace CompassMobileUpdate.Services
             Exception e = null;
 
             try
-            {
-                var authResponse = await _authService.GetAPIToken();
+            {              
+                await AddHeadersAsync();
 
                 var url = new Uri(_baseUri, $"MeterAttributes/{meter.DeviceSSNID}");
-
-                _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
-
                 response = await SendRequestAsync<MeterAttributesResponse>(url, HttpMethod.Get, _headers);
             }
             catch (Exception ex)
@@ -66,6 +75,20 @@ namespace CompassMobileUpdate.Services
             }
         }
 
+        private async Task AddHeadersAsync()
+        {
+            if (ServiceEnvironment == "Apigee")
+            {
+                var authResponse = await _authService.GetAPIToken();
+                _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
+            }
+            else
+            {
+                _headers["X-API-Key"] = "A221F9A024E112AA5FC9A20F071E42A";
+                _headers["Accept"] = "application/json, text/json, text/x-json, text/javascript, application/xml, text/xml";
+            }
+        }
+
         public delegate void GetMeterStatusCompletedHandler(MeterStatusResponse response, Exception ex);
 
         public async void GetMeterStatusAsync(Meter meter, int? activityID, GetMeterStatusCompletedHandler handler, CancellationToken token)
@@ -80,11 +103,10 @@ namespace CompassMobileUpdate.Services
 
             MeterStatusResponse response = null;
             Exception e = null;
-            var authResponse = await _authService.GetAPIToken();
+
+            await AddHeadersAsync();
 
             var url = new Uri(_baseUri, $"MeterStatus?meterMACID={meter.MacID}&deviceSSNID={meter.DeviceSSNID}&correlationID={correlationID}&source={AppVariables.SourceForAMICalls}");
-
-            _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
 
             response = await SendRequestAsync<MeterStatusResponse>(url, HttpMethod.Get, _headers);
 
@@ -93,11 +115,9 @@ namespace CompassMobileUpdate.Services
 
         public async Task<ActivityMessage.ActivityResponse> PerformActivityRequest(ActivityMessage.ActivityRequest requestBody)
         {
-            var authResponse = await _authService.GetAPIToken();
+            await AddHeadersAsync();
 
             var url = new Uri(_baseUri, $"Activity/{requestBody.ActionName}");
-
-            _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
 
             var response = await SendRequestAsync<ActivityMessage.ActivityResponse>(url, HttpMethod.Post, _headers);
 
@@ -109,13 +129,29 @@ namespace CompassMobileUpdate.Services
         {
             //TODO: Add error handling, invalid or null auth token here.
 
-            var authResponse = await _authService.GetAPIToken();
+            //await AddHeadersAsync();
+            if (ServiceEnvironment == "Apigee")
+            {
+                var authResponse = await _authService.GetAPIToken();
+                _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
+            }
+            else
+            {
+                _headers["X-API-Key"] = "A221F9A024E112AA5FC9A20F071E42A";
+                _headers["Accept"] = "application/json, text/json, text/x-json, text/javascript, application/xml, text/xml";
+            }
 
             var url = new Uri(_baseUri, $"meter?name={name}&firstName={firstName}&lastName={lastName}");
 
-            _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
-
             var response = await SendRequestAsync<List<Meter>>(url, HttpMethod.Get, _headers);
+            
+            if(response == null)
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    App.Current.MainPage.DisplayAlert("Service Error", "Service is not available, please try again later", "OK");
+                });
+            }
 
             return response;
 
@@ -123,11 +159,9 @@ namespace CompassMobileUpdate.Services
 
         public async Task<List<Meter>> GetMetersWithinBoxBoundsAsync(BoundingCoords bc)
         {
-            var authResponse = await _authService.GetAPIToken();
+            await AddHeadersAsync();
 
             var url = new Uri(_baseUri, $"meter?left={bc.Left}&top={bc.Top}&right={bc.Right}&bottom={bc.Bottom}");
-
-            _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
 
             var response = await SendRequestAsync<List<Meter>>(url, HttpMethod.Get, _headers);
 
@@ -143,16 +177,15 @@ namespace CompassMobileUpdate.Services
         /// <returns>List of Meters</returns>
         public async Task<List<Meter>> GetMetersWithinXRadiusAsync(double latitude, double longitude, double radiusInMiles)
         {
-            var authResponse = await _authService.GetAPIToken();
+            await AddHeadersAsync();
 
             var url = new Uri(_baseUri, $"meter?sourceLatitude={latitude}&sourceLongitude={longitude}&radiusInMiles={radiusInMiles}");
-
-            _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
 
             var response = await SendRequestAsync<List<Meter>>(url, HttpMethod.Get, _headers);
 
             return response;
         }
+
         public string GetCustomerNameAndDeviceUtilityID(Meter meter)
         {
             var returnString = meter.DeviceUtilityID;
@@ -164,18 +197,26 @@ namespace CompassMobileUpdate.Services
 
             return returnString;
         }
+
         public async Task<Meter> GetMeterByDeviceUtilityIDAsync(string deviceUtilityID)
         {
             var apiAccessToken = _authService.GetAPIToken().Result.AccessToken;
+
             var result = new Meter();
+
             if (apiAccessToken != null)
             {
 
                 var url = new Uri(_baseUri, $"Meter/{deviceUtilityID}");
 
-                var request = new HttpRequestMessage(HttpMethod.Get, url);
+                var request = new HttpRequestMessage(HttpMethod.Get, $"https://compassmobiletest.exeloncorp.com/api/Meter/{deviceUtilityID}");
 
-                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiAccessToken);
+                //_headers["X-API-Key"] = "A221F9A024E112AA5FC9A20F071E42A";
+                //_headers["Accept"] = "application/json, text/json, text/x-json, text/javascript, application/xml, text/xml";
+                //request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiAccessToken);
+
+                request.Headers.Add("X-API-Key", "A221F9A024E112AA5FC9A20F071E42A");
+                request.Headers.Add("Accept", "application/json, text/json, text/x-json, text/javascript, application/xml, text/xml");
 
                 using (var client = new HttpClient())
                 using (var response = await client.SendAsync(request, HttpCompletionOption.ResponseContentRead))
@@ -193,9 +234,7 @@ namespace CompassMobileUpdate.Services
 
         public async Task<List<VoltageRule>> GetVoltageRulesAsync()
         {
-            var authResponse = await _authService.GetAPIToken();
-
-            _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
+            await AddHeadersAsync();
 
             var url = new Uri(_baseUri, "VoltageRule");
 
