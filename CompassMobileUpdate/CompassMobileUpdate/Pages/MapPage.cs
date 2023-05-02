@@ -6,13 +6,10 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using System.Threading;
 using Xamarin.Forms.Maps;
-//using Xamarin.Geolocation;
 using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
 using Xamarin.Essentials;
 using CompassMobile.Models;
-//using CompassMobile.DataAccess;
-//using COMPASSMobileModels;
 using CompassMobileUpdate;
 using CompassMobileUpdate.Helpers;
 using CompassMobileUpdate.Models;
@@ -23,8 +20,8 @@ using CompassMobileUpdate.Services;
 
 namespace CompassMobileUpdate.Pages
 {
-    //Used to disambiguate between Xamarin.Forms.Maps.Position and Xamarin.Geolocation.Position
     using MapPosition = Xamarin.Forms.Maps.Position;
+
     public class MapPage : ContentPage
     {
         //Controls
@@ -35,7 +32,6 @@ namespace CompassMobileUpdate.Pages
         ListView _lvSearchResults;
         ListView _lvMeters;
         Xamarin.Forms.Maps.Map _map;
-        //Geolocator _locator;
         Geocoder _geoCoder;
         Button _btnToggleView;
         Button _btnHybrid;
@@ -68,25 +64,20 @@ namespace CompassMobileUpdate.Pages
         public MapPage()
         {
             this.Title = "Search by Location";
-            //if (Device.RuntimePlatform == Device.Android)
-            //{
-            //    App.HideNavTitleIcon(this);
-            //}
+
             _authService = new AuthService();
             _meterService = new MeterService(_authService);
+
             try
             {
                 initControls();
                 loadControls();
-
-
                 SetMapToDefaultPosition();
             }
             catch (Exception e)
             {
                 string message = e.Message;
             }
-
         }
 
         protected override void OnSizeAllocated(double width, double height)
@@ -165,7 +156,6 @@ namespace CompassMobileUpdate.Pages
                 AppVariables.CachedMapPins = _map.Pins.ToList();
                 AppVariables.CachedMapBoundingCoords = _submittedBounds.ToList();
             }
-
         }
 
         protected override void OnAppearing()
@@ -179,8 +169,7 @@ namespace CompassMobileUpdate.Pages
                 GetPinsForMap();
             }
             
-            base.OnAppearing();
-            
+            base.OnAppearing();          
         }
 
         public void initControls()
@@ -198,11 +187,8 @@ namespace CompassMobileUpdate.Pages
             //Search Bar
             _sBar = new SearchBar
             {
-                // MJ https://forums.xamarin.com/discussion/103579/search-bar-crash-on-new-version-of-xamarin-with-latest-xcode
-                // MJ need to provide a default so we can get past a bug
                 WidthRequest = 50,
-                HeightRequest = 50, // this line eliminates the issue on Android devices where the search box is only visible when the phone is turned sideways
-                                    //
+                HeightRequest = 50,
                 Placeholder = "search"
             };
             _sBar.SearchButtonPressed += _sBar_SearchButtonPressed;
@@ -220,7 +206,7 @@ namespace CompassMobileUpdate.Pages
 
             _switchFollowMovement = new Switch
             {
-                IsToggled = true // by default
+                IsToggled = true
             };
             _switchFollowMovement.Toggled += _switchFollowMovement_Toggled;
 
@@ -233,20 +219,11 @@ namespace CompassMobileUpdate.Pages
             #region Location Objects
 
             //Locator
-            //#if __ANDROID__
-            ////            _locator = new Geolocator(Android.App.Application.Context) { DesiredAccuracy = 50 };
-            //            _locator = new Geolocator(Plugin.CurrentActivity.CrossCurrentActivity.Current.AppContext) { DesiredAccuracy = 50 };
-            //#else
-            //            _locator = new Geolocator { DesiredAccuracy = 50 };
-            //#endif
-
-            //            _locator.PositionChanged += _locator_position_changed;
             var _locator = CrossGeolocator.Current;
             _locator.DesiredAccuracy = 50;
             _locator.PositionChanged += _locator_position_changed;
             _geoCoder = new Geocoder();
 
-            //
             //Map
             _map = new Xamarin.Forms.Maps.Map(MapSpan.FromCenterAndRadius(new MapPosition(41.8500300, -87.6500500), Distance.FromMiles(5)));
             _map.PropertyChanged += _map_PropertyChanged;
@@ -289,19 +266,11 @@ namespace CompassMobileUpdate.Pages
             {
                 BackgroundColor = _backGroundColor,
 
-                //ItemTemplate = new DataTemplate(typeof(TextCell))
-                //{
-                //    Bindings =  {
-                //                { TextCell.TextProperty, new Binding ("CustomerNameAndDeviceUtilityId") },
-                //                { TextCell.DetailProperty, new Binding ("DistanceAndCustomerAddress") },
-                //                { TextCell.CommandProperty, new Binding("DeviceUtilityID") },
-                //                { TextCell.TextColorProperty, new Binding(_textColorString) },
-                //            }
-                //},
                 ItemTemplate = new DataTemplate (typeof(CustomCell)),
                 IsVisible = false,
                 RowHeight = 60
             };
+
             _lvMeters.ItemTapped += _lvMeters_ItemTapped;
 
             _slToggleView = new StackLayout
@@ -330,21 +299,12 @@ namespace CompassMobileUpdate.Pages
                 BackgroundColor = _backGroundColor
             };
 
-
             _btnToggleView = GetMapButton("List");
             _btnToggleView.Clicked += _btnToggleView_Clicked;
 
             _btnHybrid = GetMapTypeButton("Hybrid", MapType.Hybrid);
             _btnSatellite = GetMapTypeButton("Satellite", MapType.Satellite);
             _btnStreet = GetMapTypeButton("Street", MapType.Street);
-
-            /*
-            if (_locator.IsGeolocationAvailable)
-                _lblMessage.Text = "Location is Available";
-            else
-                _lblMessage.Text = "Location is NOT Available";
-            AppHelper.ClearLabel(_lblMessage, 2000);
-             * */
 
             if (!_locator.IsListening)
             {
