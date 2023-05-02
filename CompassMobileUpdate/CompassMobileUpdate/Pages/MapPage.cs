@@ -19,6 +19,7 @@ using CompassMobileUpdate.Models;
 using CompassMobileUpdate.Pages;
 using CompassMobileUpdate.ViewModels;
 using CompassMobileUpdate.Exceptions;
+using CompassMobileUpdate.Services;
 
 namespace CompassMobileUpdate.Pages
 {
@@ -58,7 +59,9 @@ namespace CompassMobileUpdate.Pages
         bool _cacheMapPins = false;
         HashSet<string> _existingMapPinHash = new HashSet<string>();
 
-        MapSearchViewModel vm => BindingContext as MapSearchViewModel;
+        AuthService _authService;
+        MeterService _meterService;
+        MapSearchViewModel vm => this.BindingContext as MapSearchViewModel;
 
         //Bindables
         static BindableProperty _bpDeviceUtilityID = BindableProperty.Create("DeviceUtilityID", typeof(string), typeof(string), string.Empty, BindingMode.Default, null, null, null, null, null);
@@ -69,7 +72,8 @@ namespace CompassMobileUpdate.Pages
             //{
             //    App.HideNavTitleIcon(this);
             //}
-
+            _authService = new AuthService();
+            _meterService = new MeterService(_authService);
             try
             {
                 initControls();
@@ -285,16 +289,18 @@ namespace CompassMobileUpdate.Pages
             {
                 BackgroundColor = _backGroundColor,
 
-                ItemTemplate = new DataTemplate(typeof(TextCell))
-                {
-                    Bindings =  {
-                                { TextCell.TextProperty, new Binding ("CustomerNameAndDeviceUtilityID") },
-                                { TextCell.DetailProperty, new Binding ("DistanceAndCustomerAddress") },
-                                { TextCell.CommandProperty, new Binding("DeviceUtilityID") },
-                                { TextCell.TextColorProperty, new Binding(_textColorString) }
-                            }
-                },
-                IsVisible = false
+                //ItemTemplate = new DataTemplate(typeof(TextCell))
+                //{
+                //    Bindings =  {
+                //                { TextCell.TextProperty, new Binding ("CustomerNameAndDeviceUtilityId") },
+                //                { TextCell.DetailProperty, new Binding ("DistanceAndCustomerAddress") },
+                //                { TextCell.CommandProperty, new Binding("DeviceUtilityID") },
+                //                { TextCell.TextColorProperty, new Binding(_textColorString) },
+                //            }
+                //},
+                ItemTemplate = new DataTemplate (typeof(CustomCell)),
+                IsVisible = false,
+                RowHeight = 60
             };
             _lvMeters.ItemTapped += _lvMeters_ItemTapped;
 
@@ -598,13 +604,13 @@ namespace CompassMobileUpdate.Pages
                     _btnToggleView.IsEnabled = false;
                     //We're using LocalMeters because we need access to "Calculated" properties. for the ListView Bindings DeviceUtilityIDAndCustomerName and DistanceAndCustomerAddress
                     //If xamarin ever allows for Complex Property bindings we can use the normal Meter class.
-                    List<LocalMeter> meters = LocalMeter.GetListOfLocalMetersFromMeters(await vm.GetMetersWithinXRadiusAsync(position.Latitude, position.Longitude, radius));
+                    List<LocalMeter> meters = LocalMeter.GetListOfLocalMetersFromMeters(await _meterService.GetMetersWithinXRadiusAsync(position.Latitude, position.Longitude, radius));
 
                     //Remove any meters from the list that don't have the proper Meter Format (bad data or old meters recieved from UIQ)
                     SerialNumberFormatException fe;
                     for (int i = 0; i < meters.Count; i++)
                     {
-                        if (!vm.IsValidSerialNumber(meters[i].DeviceUtilityID, out fe))
+                        if (!_meterService.IsValidSerialNumber(meters[i].DeviceUtilityID, out fe))
                         {
                             meters.RemoveAt(i);
                             i--;
@@ -699,10 +705,8 @@ namespace CompassMobileUpdate.Pages
                                 //Want to see if this ever happens.
                                 if ((time = stopWatch.ElapsedMilliseconds) > 500)
                                 {
-
                                     string message = "Bound Search took " + Math.Round(time) + " milliseconds for " + _submittedBounds.Count.ToString() + " BoundingCoords";
                                     //AppVariables.AppService.LogApplicationError("SearchPage.mapPropertyChanged", new Exception(message));
-
                                 }
 
                                 if (alreadySearched)
@@ -761,7 +765,10 @@ namespace CompassMobileUpdate.Pages
                     _btnToggleView.IsEnabled = false;
                     ToggleMeterLoadingActivityIndicator(true);
                     _mapIsBusy = true;
-                    List<Meter> meters = await vm.GetMetersWithinBoxBoundsAsync(_latestBoundingCoords);// await Task.Run(() => AppVariables.AppService.GetMetersWithinBoxBounds(_latestBoundingCoords));
+
+                    //List<Meter> meters = await vm.GetMetersWithinBoxBoundsAsync(_latestBoundingCoords);
+                    List<Meter> meters = await _meterService.GetMetersWithinBoxBoundsAsync(_latestBoundingCoords);
+                    
                     _submittedBounds.Add(_latestBoundingCoords);
                     await AddMetersToMap(meters);
                     meterFoundCount = meters.Count;
@@ -805,7 +812,6 @@ namespace CompassMobileUpdate.Pages
                     await AppHelper.FadeOutLabelByEmptyString(_lblMessage);
                 }
 
-
             }
         }
 
@@ -838,7 +844,7 @@ namespace CompassMobileUpdate.Pages
                     {
                         meter = meters[i];
                         SerialNumberFormatException fe;
-                        if (vm.IsValidSerialNumber(meter.DeviceUtilityID, out fe))
+                        if (_meterService.IsValidSerialNumber(meter.DeviceUtilityID, out fe))
                         {
                             //Add it only if we haven't already added it.
                             if (!_existingMapPinHash.Contains(meter.DeviceUtilityID)) // _map.Pins.FirstOrDefault(x => x.Label.StartsWith(meter.DeviceUtilityID)) == null)
@@ -850,7 +856,7 @@ namespace CompassMobileUpdate.Pages
                                 {
                                     Type = PinType.Place,
                                     Position = new MapPosition(Convert.ToDouble(meter.Latitude), Convert.ToDouble(meter.Longitude)),
-                                    Label = vm.GetCustomerNameAndDeviceUtilityID(meter),
+                                    Label = _meterService.GetCustomerNameAndDeviceUtilityID(meter),
                                     Address = meter.CustomerAddress
                                 };
                                 pin.SetValue(_bpDeviceUtilityID, meter.DeviceUtilityID);
@@ -890,7 +896,7 @@ namespace CompassMobileUpdate.Pages
 
             var detailViewModel = meterDetailpage.BindingContext as MeterDetailViewModel;
 
-            var meter = await vm.GetMeterByDeviceUtilityIDAsync(deviceUtilityID);
+            var meter = await _meterService.GetMeterByDeviceUtilityIDAsync(deviceUtilityID);
 
             detailViewModel.MeterItem = meter;
 

@@ -44,6 +44,26 @@ namespace CompassMobileUpdate.Models
             }
         }
 
+        public string DistanceAndCustomerAddress
+        {
+            get
+            {
+                if (Distance.HasValue)
+                {
+                    return GetDistanceInFeet(Distance) + " ft - " + CustomerAddress;
+                }
+                else
+                {
+                    return CustomerAddress;
+                }
+            }
+        }
+
+        private string GetDistanceInFeet(double? distance)
+        {
+            return Convert.ToDouble(Math.Round(Convert.ToDecimal(5280 * distance))).ToString();
+        }
+
         public void ConvertCompassMeterToLocalMeter(Meter meter)
         {
             this.DeviceUtilityID = meter.DeviceUtilityID;

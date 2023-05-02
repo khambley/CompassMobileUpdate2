@@ -16,9 +16,9 @@ namespace CompassMobileUpdate.Services
 
     public class MeterService : BaseHttpService, IMeterService
     {
-        public string ServiceEnvironment => "Internal";
+        public string ServiceEnvironment => "Apigee";
 
-        readonly Uri _baseUri;
+        Uri _baseUri => AppSettings._ApiGeeBaseUrl;
 
         readonly IDictionary<string, string> _headers;
 
@@ -28,19 +28,8 @@ namespace CompassMobileUpdate.Services
         {
             _authService = authService;
             _headers = new Dictionary<string, string>();
-
-            // TODO: Add header with auth-based token
-
-            if(ServiceEnvironment == "Apigee")
-            {
-                _baseUri = new Uri("https://apir-integration.exeloncorp.com/comed/compassmobile/");
-            }
-            else
-            {
-                // have to be connected to the VPN in order for this to make successful calls - for testing only KLH
-                _baseUri = new Uri("https://compassmobiletest.exeloncorp.com/api/");
-            }
         }
+
         public delegate void GetMeterAttributesCompletedHandler(MeterAttributesResponse meter, Exception ex);
 
         public async Task GetMeterAttributesAsync(Meter meter, GetMeterAttributesCompletedHandler handler, CancellationToken token)
@@ -77,16 +66,8 @@ namespace CompassMobileUpdate.Services
 
         private async Task AddHeadersAsync()
         {
-            if (ServiceEnvironment == "Apigee")
-            {
-                var authResponse = await _authService.GetAPIToken();
-                _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
-            }
-            else
-            {
-                _headers["X-API-Key"] = "A221F9A024E112AA5FC9A20F071E42A";
-                _headers["Accept"] = "application/json, text/json, text/x-json, text/javascript, application/xml, text/xml";
-            }
+            var authResponse = await _authService.GetAPIToken();
+            _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
         }
 
         public delegate void GetMeterStatusCompletedHandler(MeterStatusResponse response, Exception ex);
@@ -200,36 +181,13 @@ namespace CompassMobileUpdate.Services
 
         public async Task<Meter> GetMeterByDeviceUtilityIDAsync(string deviceUtilityID)
         {
-            var apiAccessToken = _authService.GetAPIToken().Result.AccessToken;
+            await AddHeadersAsync();
 
-            var result = new Meter();
+            var url = new Uri(_baseUri, $"Meter/{deviceUtilityID}");
 
-            if (apiAccessToken != null)
-            {
+            var response = await SendRequestAsync<Meter>(url, HttpMethod.Get, _headers);
 
-                var url = new Uri(_baseUri, $"Meter/{deviceUtilityID}");
-
-                var request = new HttpRequestMessage(HttpMethod.Get, $"https://compassmobiletest.exeloncorp.com/api/Meter/{deviceUtilityID}");
-
-                //_headers["X-API-Key"] = "A221F9A024E112AA5FC9A20F071E42A";
-                //_headers["Accept"] = "application/json, text/json, text/x-json, text/javascript, application/xml, text/xml";
-                //request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiAccessToken);
-
-                request.Headers.Add("X-API-Key", "A221F9A024E112AA5FC9A20F071E42A");
-                request.Headers.Add("Accept", "application/json, text/json, text/x-json, text/javascript, application/xml, text/xml");
-
-                using (var client = new HttpClient())
-                using (var response = await client.SendAsync(request, HttpCompletionOption.ResponseContentRead))
-                {
-                    var content = response.Content == null ? null : await response.Content.ReadAsStringAsync();
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        result = JsonConvert.DeserializeObject<Meter>(content);
-                    }
-                }
-            }
-            return result;
+            return response;
         }
 
         public async Task<List<VoltageRule>> GetVoltageRulesAsync()
