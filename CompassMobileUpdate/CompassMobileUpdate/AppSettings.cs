@@ -28,7 +28,29 @@ namespace CompassMobileUpdate
                 }
 			}
 		}
-
+		public static Uri _ApiGeeBaseUrl
+		{
+            get
+            {
+                if (AppVariables.AppEnvironment == AppEnvironment.Integration)
+                {
+                    return new Uri("https://apir-integration.exeloncorp.com/comed/compassmobile/");
+                }
+                else if (AppVariables.AppEnvironment == AppEnvironment.Stage)
+                {
+                    return new Uri("https://apir-stage.exeloncorp.com/comed/compassmobile/");
+                }
+                else if (AppVariables.AppEnvironment == AppEnvironment.Production)
+                {
+                    //TODO: Implement change request to deploy Apigee Prod environment
+                    throw new NotImplementedException("Production Not Implemented Yet");
+                }
+                else
+                {
+                    throw new NotImplementedException("URI Not Found");
+                }
+            }
+        }
 		public static string _ApiGeeAPIClientCredentialsKey
 		{
 			get

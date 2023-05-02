@@ -36,6 +36,11 @@ namespace CompassMobileUpdate.ViewModels
             
         }
 
+        public async Task<Meter> GetMeterByDeviceUtilityIDAsync(string deviceUtilityID)
+        {
+            return await _meterService.GetMeterByDeviceUtilityIDAsync(deviceUtilityID);
+        }
+
         public async Task<List<Meter>> GetMetersWithinXRadiusAsync(double latitude, double longitude, double radiusInMiles)
         {
             return await _meterService.GetMetersWithinXRadiusAsync(latitude, longitude, radiusInMiles);

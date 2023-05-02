@@ -12,6 +12,8 @@ using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms.PlatformConfiguration.GTKSpecific;
+using Plugin.Geolocator;
+using Plugin.Geolocator.Abstractions;
 
 namespace CompassMobileUpdate.Pages
 {	
@@ -26,7 +28,11 @@ namespace CompassMobileUpdate.Pages
         private List<BoundingCoords> _submittedBounds = new List<BoundingCoords>();
         HashSet<string> _existingMapPinHash = new HashSet<string>();
         private static BindableProperty _bpDeviceUtilityID = BindableProperty.Create("DeviceUtilityID", typeof(string), typeof(string), string.Empty, BindingMode.Default, null, null, null, null, null);
-        private Position _positionNotedWhileZooming;
+        private Plugin.Geolocator.Abstractions.Position _positionNotedWhileZooming;
+        bool _getPinsForMapIsRunning = false;
+        private List<KeyValuePair<Point, double>> _submittedCoords = new List<KeyValuePair<Point, double>>();
+        private bool _useLastPositionOnMapLoad;
+        string _lastSearchText;
 
         MapSearchViewModel vm => BindingContext as MapSearchViewModel;
 
@@ -43,6 +49,81 @@ namespace CompassMobileUpdate.Pages
 
             //meterMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(41.8500, -87.6500), Distance.FromMiles(5)));
 
+            var locator = CrossGeolocator.Current;
+            locator.DesiredAccuracy = 50;
+            locator.PositionChanged += Locator_PositionChanged;
+
+            btnToggleView.Clicked += BtnToggleView_Clicked;
+        }
+
+        private void BtnToggleView_Clicked(object sender, EventArgs e)
+        {
+            if (lvMeters.IsVisible)
+            {
+                lvMeters.IsVisible = false;
+
+                btnToggleView.Text = "List";
+
+                btnStreet.IsVisible = btnSatellite.IsVisible = btnHybrid.IsVisible = true;
+
+                if (_useLastPositionOnMapLoad)
+                {
+                    //_map.MoveToRegion(MapSpan.FromCenterAndRadius(_lastPosition, Distance.FromMiles(_lastRadius)));
+                    //For whatever reason, moving the map to the region at this point doesn't work. Instead, get the same results
+                    //by mimicking a search button pressed using the latest search text
+                    sBar.Text = _lastSearchText; //Set the current text to the last searched text in case they modified the text but didn't submit the search
+                    sBar_SearchButtonPressed(sBar, null);
+                }
+                meterMap.IsVisible = true;
+            }
+            else
+            {
+                meterMap.IsVisible = false;
+
+
+                //Since we are moving from map to listview reset to false; It will be set to true if a search is performed while the listView is visible.
+                //That way when the map is reloaded we can move to the same location as was entered in the list view;
+                _useLastPositionOnMapLoad = false;
+
+                UpdateMeterListView();
+
+                btnToggleView.Text = "Map";
+
+                btnStreet.IsVisible = btnSatellite.IsVisible = btnHybrid.IsVisible = false;
+
+                lvMeters.IsVisible = true;
+            }
+        }
+
+        private void Locator_PositionChanged(object sender, PositionEventArgs positionEvent)
+        {
+            if (switchFollowMovement.IsToggled)
+            {
+                if(AppVariables.LastMapPosition != null)
+                {
+                    if(positionEvent.Position != null)
+                    {
+                        if(meterMap.VisibleRegion != null)
+                        {
+                            MapSpan mapSpanNewCenter = MapSpan.FromCenterAndRadius(new Xamarin.Forms.Maps.Position(positionEvent.Position.Latitude, positionEvent.Position.Longitude), meterMap.VisibleRegion.Radius);
+
+                            meterMap.MoveToRegion(mapSpanNewCenter);
+                        }
+                        else
+                        {
+                            Console.WriteLine("VisibleRegion was null");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Position was null");
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("switchFollowMovement was false");
+            }
         }
 
         protected override void OnAppearing()
@@ -50,7 +131,7 @@ namespace CompassMobileUpdate.Pages
 
             if (lvMeters.IsVisible)
             {
-                UpdateMeterListView(meterMap.VisibleRegion.Center, meterMap.VisibleRegion.Radius.Miles);
+                UpdateMeterListView();
             }
             else if (meterMap.IsVisible)
             {
@@ -60,8 +141,28 @@ namespace CompassMobileUpdate.Pages
 
         }
 
-        bool _getPinsForMapIsRunning = false;
+        private void UpdateMeterListView()
+        {
+            UpdateMeterListView(meterMap.VisibleRegion.Center, meterMap.VisibleRegion.Radius.Miles);
+        }
 
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+
+            var locator = CrossGeolocator.Current;
+
+            if (locator.IsListening)
+            {
+                locator.StopListeningAsync();
+            }
+
+            if (AppVariables.IsCachingMapPins)
+            {
+                AppVariables.CachedMapPins = meterMap.Pins.ToList();
+                AppVariables.CachedMapBoundingCoords = _submittedBounds.ToList();
+            }
+        }
         private async Task GetPinsForMapAsync()
         {
             Exception ex = null;
@@ -156,7 +257,7 @@ namespace CompassMobileUpdate.Pages
                                 Pin pin = new Pin
                                 {
                                     Type = PinType.Place,
-                                    Position = new Position(Convert.ToDouble(meter.Latitude), Convert.ToDouble(meter.Longitude)),
+                                    Position = new Xamarin.Forms.Maps.Position(Convert.ToDouble(meter.Latitude), Convert.ToDouble(meter.Longitude)),
                                     Label = vm.GetCustomerNameAndDeviceUtilityID(meter),
                                     Address = meter.CustomerAddress
                                 };
@@ -184,7 +285,6 @@ namespace CompassMobileUpdate.Pages
         {
             string deviceUtilityID = ((Pin)sender).GetValue(_bpDeviceUtilityID).ToString();
             Navigation.PushAsync(Resolver.Resolve<MeterDetailPage>());
-
         }
 
         protected void ToggleMeterLoadingActivityIndicator(bool on)
@@ -215,7 +315,7 @@ namespace CompassMobileUpdate.Pages
                     if (position != null)
                     {
                         Console.WriteLine("Position: " + position.ToString());
-                        meterMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(position.Latitude, position.Longitude), Distance.FromMiles(.05)));
+                        meterMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Xamarin.Forms.Maps.Position(position.Latitude, position.Longitude), Distance.FromMiles(.05)));
                     }
                     else
                     {
@@ -237,7 +337,7 @@ namespace CompassMobileUpdate.Pages
                     Console.WriteLine("GetLocation errored out");
 
                     // Set default position to Chicago
-                    meterMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(41.881832, -87.623177), Distance.FromMiles(5)));
+                    meterMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Xamarin.Forms.Maps.Position(41.881832, -87.623177), Distance.FromMiles(5)));
                 }
                 //TODO: Log app errors
                 //this.LogApplicationError("SearchPage.SetMapToDefaultPosition", e);
@@ -276,7 +376,7 @@ namespace CompassMobileUpdate.Pages
                     }
                     await AppHelper.FadeOutLabelByEmptyString(lblMessage, 3000);
 
-                    Position position = new Position();
+                    Xamarin.Forms.Maps.Position position = new Xamarin.Forms.Maps.Position();
 
                     var approximateLocation = (await geoCoder.GetPositionsForAddressAsync(searchText)).ToList();
 
@@ -289,17 +389,36 @@ namespace CompassMobileUpdate.Pages
                         if (lvMeters.IsVisible)
                         {
                             UpdateMeterListView(position, radius);
+
+                            _useLastPositionOnMapLoad = true;
+                            _lastSearchText = sBar.Text;
                         }
+                        else if (meterMap.IsVisible)
+                        {
+                            meterMap.MoveToRegion(MapSpan.FromCenterAndRadius(position, Distance.FromMiles(radius)));
+                        }
+                    }
+                    else
+                    {
+                        lblMessage.Text = "Address not found, please try again";
+                        await AppHelper.FadeOutLabelByEmptyString(lblMessage, 10000);
+                        HideSearchResults();
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
-
+                lblMessage.Text = ex.Message;
+                await AppHelper.FadeOutLabelByEmptyString(lblMessage, 10000);
             }
         }
 
-        private async void UpdateMeterListView(Position position, double radius)
+        protected void HideSearchResults()
+        {
+            lvSearchResults.IsVisible = false;
+        }
+
+        private async void UpdateMeterListView(Xamarin.Forms.Maps.Position position, double radius)
         {
             lvMeters.ItemsSource = null;
 
@@ -349,7 +468,7 @@ namespace CompassMobileUpdate.Pages
             }
         }
 
-        void meterMap_PropertyChanged(System.Object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        void meterMap_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             string zoomInMoreMessage = "Zoom in to see meters";
 
@@ -359,9 +478,11 @@ namespace CompassMobileUpdate.Pages
                 {
                     if (_positionNotedWhileZooming != null)
                     {
-                        MapSpan mapSpanNewCenter = MapSpan.FromCenterAndRadius(new Position(_positionNotedWhileZooming.Latitude, _positionNotedWhileZooming.Longitude), meterMap.VisibleRegion.Radius);
-
+                        MapSpan mapSpanNewCenter = MapSpan.FromCenterAndRadius(new Xamarin.Forms.Maps.Position(_positionNotedWhileZooming.Latitude, _positionNotedWhileZooming.Longitude), meterMap.VisibleRegion.Radius);
+                        Console.WriteLine("MJ - E");
                         meterMap.MoveToRegion(mapSpanNewCenter);
+
+                        _positionNotedWhileZooming = null;
                     }
                     if (meterMap.VisibleRegion != null && _mapIsBusy == false)
                     {
@@ -371,63 +492,68 @@ namespace CompassMobileUpdate.Pages
                         if (meterMap.VisibleRegion.Radius.Miles <= AppVariables.GetMetersWithinXRadiusMaxValue)
                         {
                             if (lblMessage.Text == zoomInMoreMessage)
-                            {
                                 lblMessage.Text = string.Empty;
-                            }
-                        }
 
-                        try
-                        {
-                            BoundingCoords bounds = AppHelper.GetBoundingCoords(meterMap.VisibleRegion);
-                            bool alreadySearched = false;
-
-                            Stopwatch stopWatch = new Stopwatch();
-                            stopWatch.Start();
-
-                            for (int i = 0; i < _submittedBounds.Count; i++)
+                            try
                             {
-                                if (bounds.Within(_submittedBounds[i], 6))
+                                BoundingCoords bounds = AppHelper.GetBoundingCoords(meterMap.VisibleRegion);
+                                bool alreadySearched = false;
+
+                                System.Diagnostics.Stopwatch stopWatch = new System.Diagnostics.Stopwatch();
+                                stopWatch.Start();
+
+                                for (int i = 0; i < _submittedBounds.Count; i++)
                                 {
-                                    alreadySearched = true;
-                                    break;
+                                    if (bounds.Within(_submittedBounds[i], 6))
+                                    {
+                                        alreadySearched = true;
+                                        break;
+                                    }
                                 }
-                            }
-                            stopWatch.Stop();
+                                stopWatch.Stop();
 
-                            double time;
+                                double time;
 
-                            if ((time = stopWatch.ElapsedMilliseconds) > 500)
+                                //Want to see if this ever happens.
+                                if ((time = stopWatch.ElapsedMilliseconds) > 500)
+                                {
+
+                                    string message = "Bound Search took " + Math.Round(time) + " milliseconds for " + _submittedBounds.Count.ToString() + " BoundingCoords";
+                                    //AppVariables.AppService.LogApplicationError("SearchPage.mapPropertyChanged", new Exception(message));
+
+                                }
+
+                                if (alreadySearched)
+                                {
+                                    return;
+                                }
+                                else
+                                {
+                                    _lastMapMove = DateTime.Now;
+                                    _latestBoundingCoords = bounds;
+                                    GetPinsForMapAsync();
+                                }
+
+                            } //End try
+                            catch (Exception ex)
                             {
-                                string message = "Bound Search took " + Math.Round(time) + " milliseconds for " + _submittedBounds.Count.ToString() + " BoundingCoords";
-                                //TODO:  AppVariables.AppService.LogApplicationError("SearchPage.mapPropertyChanged", new Exception(message));
+                                //AppLogger.LogError(ex);
                             }
-                            if (alreadySearched)
+                            finally
                             {
-                                return;
+                                _mapIsBusy = false;
                             }
-                            else
-                            {
-                                _lastMapMove = DateTime.Now;
-                                _latestBoundingCoords = bounds;
-                                Task.Run(async () => await GetPinsForMapAsync());
-                            }
-                        }
-                        catch (Exception ex)
+
+                        }//end we are within the acceptable radius
+                        else
                         {
-                            //TODO: AppLogger.LogError(ex);
+                            lblMessage.Text = zoomInMoreMessage;
                         }
-                        finally
-                        {
-                            _mapIsBusy = false;
-                        }
-                    }
-                    else
-                    {
-                        lblMessage.Text = zoomInMoreMessage;
-                    }
-                } //End Visible Region is good
+                    } //End VisibleRegion is good
+                } //End it's the Property we care about
             } //End Map Is visible
-        } //End meterMap_PropertyChanged
+
+        } //end meterMap_Property_Changed
     }
 }
 
