@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CompassMobileUpdate.Exceptions;
+using CompassMobileUpdate.Helpers;
 using CompassMobileUpdate.Models;
 using CompassMobileUpdate.Pages;
 using CompassMobileUpdate.Services;
@@ -28,6 +29,9 @@ namespace CompassMobileUpdate.ViewModels
         private CancellationTokenSource _ctsMeterAttributes, _ctsMeterStatus, _ctsMeterReads, _ctsMeterOutages, _ctsMeterRestores, _ctsGetMeterForDevice;
 
         private bool _isPingActivityRequestCompleted = false;
+        private bool _isPageBeingPushed = false;
+        private bool _isTimeOutCountDownRunning = false;
+        private bool _isFirstPageLoad = true;
 
         private object _lockMeter = new Object();
 
@@ -36,6 +40,14 @@ namespace CompassMobileUpdate.ViewModels
         public int? ActivityID { get; set; }
 
         public string ErrorMessageText { get; set; }
+
+        public bool? HasOverlappingVoltage
+        {
+            get
+            {
+                return AppHelper.HasOverlappingVoltage(MeterItem);
+            }
+        }
 
         public bool IsEnabledCheckStatusButton { get; set; }
 
@@ -60,6 +72,59 @@ namespace CompassMobileUpdate.ViewModels
 
         public bool IsVisibleErrorMessage { get; set; }
 
+        public bool IsVisiblePingStatusValueImg { get; set; }
+
+        public bool IsVisibleVoltageStatusValueImg { get; set; }
+
+        public bool? IsVoltagePhaseAInRange
+        {
+            get
+            {
+                if (!MeterReads.AreAllVoltagesValid)
+                {
+                    var isInRange = AppHelper.IsVoltageInRangeAsync(MeterItem, MeterReads.VoltagePhaseA).Result;
+                    return isInRange;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+
+        }
+
+        public bool? IsVoltagePhaseBInRange
+        {
+            get
+            {
+                if (!MeterReads.AreAllVoltagesValid)
+                {
+                    var isInRange = AppHelper.IsVoltageInRangeAsync(MeterItem, MeterReads.VoltagePhaseB).Result;
+                    return isInRange;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
+
+        public bool? IsVoltagePhaseCInRange
+        {
+            get
+            {
+                if (!MeterReads.AreAllVoltagesValid)
+                {
+                    var isInRange = AppHelper.IsVoltageInRangeAsync(MeterItem, MeterReads.VoltagePhaseC).Result;
+                    return isInRange;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
+
         public bool AllowsPQRs { get; set; }
 
         public Manufacturer Manufacturer { get; set; }
@@ -69,6 +134,10 @@ namespace CompassMobileUpdate.ViewModels
         public string MeterTypeNumber { get; set; }
 
         public MeterAttributesResponse MeterAttributes { get; set; }
+
+        public MeterReadsResponse MeterReads { get; set; }
+
+        public MeterStatusResponse MeterStatus { get; set; }
 
         public MeterAvailabilityEventsResponse Outages { get; set; }
 
@@ -82,11 +151,85 @@ namespace CompassMobileUpdate.ViewModels
 
         public Color OutagesValueTextColor { get; set; }
 
+        public string PingStatusImage { get; set; }
+
         public string RestoresValueText { get; set; }
 
         public Color RestoresValueTextColor { get; set; }
 
         public string StatusDate { get; set; }
+
+        public string VoltageAValueText { get; set; }
+
+        public Color VoltageAValueTextColor { get; set; }
+
+        public bool? VoltageStatus
+        {
+            get
+            {
+                bool nullA, nullB, nullC, noValueA, noValueB, noValueC;
+                nullA = nullB = nullC = noValueA = noValueB = noValueC = false;
+
+                if(MeterReads != null)
+                {
+                    if (MeterReads.VoltagePhaseA.HasValue)
+                    {
+                        if(IsVoltagePhaseAInRange.HasValue && !IsVoltagePhaseAInRange.Value)
+                        {
+                            return false;
+                        }
+                        else if (IsVoltagePhaseAInRange == null)
+                        {
+                            nullA = true;
+                        }
+                    }
+                    else
+                    {
+                        noValueA = true;
+                    }
+
+                    if (MeterReads.VoltagePhaseB.HasValue)
+                    {
+                        if (IsVoltagePhaseBInRange.HasValue && !IsVoltagePhaseBInRange.Value)
+                            return false;
+                        else if (IsVoltagePhaseBInRange == null)
+                        {
+                            nullB = true;
+                        }
+                    }
+                    else
+                    {
+                        noValueB = true;
+                    }
+
+                    if (MeterReads.VoltagePhaseC.HasValue)
+                    {
+                        if (IsVoltagePhaseCInRange.HasValue && !IsVoltagePhaseCInRange.Value)
+                            return false;
+                        else if (IsVoltagePhaseCInRange == null)
+                        {
+                            nullC = true;
+                        }
+                    }
+                    else
+                    {
+                        noValueC = true;
+                    }
+                }
+
+                if (nullA || nullB || nullC)
+                {
+                    return null;
+                }
+                else if (noValueA && noValueB && noValueC)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        public string VoltageStatusImage { get; set; }
 
         public string CustomerContactNumber { get; set; }
 
@@ -177,16 +320,233 @@ namespace CompassMobileUpdate.ViewModels
                         _isWebServiceRunningDictionary[_getMeterAvailabilityEventOutage] = true;
                         await _meterService.GetMeterAvailabilityEventsAsync(MeterItem, Enums.MeterAvailabilityEventsEventType.Outages, HandleGetMeterAvailabilityEventsCompleted, _ctsMeterOutages.Token);
 
-                        // call GetMeterAvailabilityEventsAsync - Restorations L1555
+                        _isWebServiceRunningDictionary[_getMeterAvailabilityEventRestoration] = true;
+                        await _meterService.GetMeterAvailabilityEventsAsync(MeterItem, Enums.MeterAvailabilityEventsEventType.Restorations, HandleGetMeterAvailabilityEventsCompleted, _ctsMeterRestores.Token);
 
-                        IsEnabledCheckStatusButton = true;
+                        //startGetInfoCounter(); //for fade out animation on label
+                        StartTimeOutCountDown();
+
                     }
                 }
-                catch
+                catch (AuthenticationRequiredException)
                 {
+                    HandleAuthorizationRequired();
+                }
+                catch (Exception e)
+                {
+                    await CancelAllServiceCallsAsync(true);
+                    //stopAllAnimations();
 
+                    //TODO: Add app logging
+                    //this.LogApplicationError("MeterDetailPage.getAllMeterInfo", e);
+
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        App.Current.MainPage.DisplayAlert("Error", e.Message, "Close");
+                    });
                 }
             }
+            if (AppVariables.IsLogging)
+            {
+                //TODO: Add app logging
+                //AppLogger.Debug("GET ALL GetAllMeterInfo End");
+            }
+        }
+
+        protected async void StartTimeOutCountDown()
+        {
+            if (_isTimeOutCountDownRunning == false)
+            {
+                _isTimeOutCountDownRunning = true;
+                DateTime startTime = DateTime.Now;
+
+                while (_isTimeOutCountDownRunning)
+                {
+                    await Task.Delay(500);
+
+                    //If the webservices have stopped runnning prior to the timeout
+                    if (!_isWebServiceRunningDictionary.ContainsValue(true))
+                    {
+                        _isTimeOutCountDownRunning = false;
+                        ErrorMessageText = "All Service Calls Completed";
+                        IsVisibleErrorMessage = true;
+                        break;
+                    }
+
+                    if (DateTime.Now.AddSeconds(0 - AppVariables.MeterDetailTimeOutInSeconds) > startTime)
+                    {
+
+                        //Cancel any calls that are still running
+                        if (_isWebServiceRunningDictionary.ContainsValue(true))
+                        {
+                            await CancelAllServiceCallsAsync(true);
+
+                            Device.BeginInvokeOnMainThread(() =>
+                            {
+                                App.Current.MainPage.DisplayAlert("Service Timeout", "Timeout Exceeded: remaining calls have been cancelled", "Close");
+                            });
+                            
+                            //AppLogger.Debug("Timeout Exceeded: remaining calls have been cancelled");
+                        }
+                        _isTimeOutCountDownRunning = false;
+                    }
+                }
+            }
+        }
+
+        protected async Task CancelAllServiceCallsAsync(bool isCancelledBecauseOfError)
+        {
+            if (_isWebServiceRunningDictionary[_getMeterForDevice])
+            {
+                _ctsGetMeterForDevice.Cancel(false);
+                _isWebServiceRunningDictionary[_getMeterForDevice] = false;
+
+                //stopMeterForDeviceAnimations();
+
+                //AppLogger.Debug("Stopping: GetMeterForDevice");
+            }
+
+            if (_isWebServiceRunningDictionary[_getMeterAvailabilityEventRestoration])
+            {
+                _ctsMeterRestores.Cancel(false);
+                _isWebServiceRunningDictionary[_getMeterAvailabilityEventRestoration] = false;
+
+                //stopRestorationAnimation();
+
+                //AppLogger.Debug("Stopping: Get Restores");
+            }
+
+            if (_isWebServiceRunningDictionary[_getMeterAvailabilityEventOutage])
+            {
+                _ctsMeterOutages.Cancel(false);
+                _isWebServiceRunningDictionary[_getMeterAvailabilityEventOutage] = false;
+
+                //stopOutageAnimation();
+
+                //AppLogger.Debug("Stopping: Get Outages");
+            }
+
+            if (_isWebServiceRunningDictionary[_getMeterAttributes])
+            {
+                _ctsMeterAttributes.Cancel(false);
+                _isWebServiceRunningDictionary[_getMeterAttributes] = false;
+
+                //stopMeterAttributesAnimations(true);
+
+                //AppLogger.Debug("Stopping: GetMeterAttributes");
+
+            }
+            else
+            {
+                if (_isWebServiceRunningDictionary[_getMeterStatus])
+                {
+                    _ctsMeterStatus.Cancel(false);
+                    _isWebServiceRunningDictionary[_getMeterStatus] = false;
+
+                    if (ActivityID.HasValue)
+                    {
+                        var pingRequest = GetPostMeterPingActivityCompleteRequest();
+                        pingRequest.Result = ResultEnum.NULL;
+                        if (isCancelledBecauseOfError)
+                        {
+                            pingRequest.Status = StatusEnum.E;
+                        }
+                        else
+                        {
+                            pingRequest.Status = StatusEnum.I;
+                            pingRequest.Result = ResultEnum.CANCELLED;
+                        }
+                        try
+                        {
+                            await _meterService.PerformActivityRequest(pingRequest);
+
+                            await _meterService.PerformActivityRequest(GetPostActivityCompleteRequest());
+                        }
+                        catch (AuthenticationRequiredException)
+                        {
+                            HandleAuthorizationRequired();
+                            return;
+                        }
+                    }
+
+                    //stopMeterStatusAnimations(true);
+
+                    //AppLogger.Debug("Stopping: GetMeterStatus");
+                }
+
+                if (_isWebServiceRunningDictionary[_getMeterReads])
+                {
+                    _ctsMeterReads.Cancel(false);
+                    //AppVariables.AppService.CancelGetMeterReads(_userState);
+                    _isWebServiceRunningDictionary[_getMeterReads] = false;
+
+                    //stopMeterReadsAnimations();
+
+                    if (ActivityID.HasValue)
+                    {
+                        var pqrRequest = GetPostMeterPQRActivityCompleteRequest();
+                        if (isCancelledBecauseOfError)
+                        {
+                            pqrRequest.Status = StatusEnum.E;
+                        }
+                        else
+                        {
+                            pqrRequest.Status = StatusEnum.I;
+                            pqrRequest.Result = ResultEnum.CANCELLED;
+                        }
+                        try
+                        {
+                            await _meterService.PerformActivityRequest(pqrRequest);
+
+                            await _meterService.PerformActivityRequest(GetPostActivityCompleteRequest());
+                        }
+                        catch (AuthenticationRequiredException)
+                        {
+                            HandleAuthorizationRequired();
+                            return;
+                        }
+                    }
+
+                    //AppLogger.Debug("Stopping: GetMeterReads");
+                }
+            }
+            //stopAllAnimations();
+            TryEnableCheckStatusButton();
+        }
+
+        public ActivityMessage.PostPQRActivityCompleteRequest GetPostMeterPQRActivityCompleteRequest()
+        {
+            ActivityMessage.PostPQRActivityCompleteRequest request = new ActivityMessage.PostPQRActivityCompleteRequest();
+            if (this.ActivityID.HasValue)
+            {
+                request.ActivityID = this.ActivityID.Value;
+            }
+
+            request.MeterDeviceUtilityID = MeterItem.DeviceUtilityID;
+            if (this.MeterReads != null)
+            {
+                request.VoltagePhaseA = this.MeterReads.VoltagePhaseA;
+                request.VoltagePhaseB = this.MeterReads.VoltagePhaseB;
+                request.VoltagePhaseC = this.MeterReads.VoltagePhaseC;
+
+                request.IsVoltagePhaseAInRange = this.IsVoltagePhaseAInRange;
+                request.IsVoltagePhaseBInRange = this.IsVoltagePhaseBInRange;
+                request.IsVoltagePhaseCInRange = this.IsVoltagePhaseCInRange;
+            }
+
+            return request;
+        }
+
+        public ActivityMessage.PostActivityComplete GetPostActivityCompleteRequest()
+        {
+            ActivityMessage.PostActivityComplete request = new ActivityMessage.PostActivityComplete();
+
+            if (this.ActivityID.HasValue)
+            {
+                request.ActivityID = this.ActivityID.Value;
+            }
+
+            return request;
         }
 
         private async void HandleGetMeterAvailabilityEventsCompleted(MeterAvailabilityEventsResponse response, Enums.MeterAvailabilityEventsEventType eventType, Exception ex)
@@ -479,7 +839,183 @@ namespace CompassMobileUpdate.ViewModels
 
         protected async void HandleGetMeterStatusCompleted(MeterStatusResponse response, Exception ex)
         {
-            var pingActionRequest = GetPostMeterPingActivityCompleteRequest();
+            
+            try
+            {
+                //TODO: Add app logging
+                //AppLogger.Debug("    GetMeterStatusCompleted: Method Begin");
+                if (ex != null)
+                {
+                    if (ex.GetType() == typeof(AuthenticationRequiredException))
+                    {
+                        HandleAuthorizationRequired();
+                        return;
+                    }
+                    else if (ex is ApplicationMaintenanceException)
+                    {
+                        HandleApplicationMaintenance();
+                        return;
+                    }
+                }
+                _isWebServiceRunningDictionary[_getMeterStatus] = false;
+
+                var pingActionRequest = GetPostMeterPingActivityCompleteRequest();
+
+                IsVisiblePingStatusValueImg = true;
+
+                if(ex == null)
+                {
+                    pingActionRequest.Status = StatusEnum.C;
+                    MeterStatus = response;
+
+                    //stopMeterStatusAnimations(false);
+
+                    if (MeterStatus.Ping)
+                    {
+                        pingActionRequest.Result = ResultEnum.OK;
+
+                        if(_userState != null)
+                        {
+                            PingStatusImage = "status_good.png";
+
+                            if (AllowsPQRs)
+                            {
+                                try
+                                {
+                                    _meterService.GetMeterReadsAsync(MeterItem, ActivityID, HandleGetMeterReadsCompleted, _ctsMeterReads.Token);
+                                }
+                                catch
+                                {
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        public async void HandleGetMeterReadsCompleted(MeterReadsResponse response, Exception ex)
+        {
+            //TODO: Add app logging
+            //AppLogger.Debug("      GetMeterReadsCompleted: Method Begin");
+
+            if (ex != null)
+            {
+                if (ex.GetType() == typeof(AuthenticationRequiredException))
+                {
+                    HandleAuthorizationRequired();
+                    return;
+                }
+                else if (ex is ApplicationMaintenanceException)
+                {
+                    HandleApplicationMaintenance();
+                    return;
+                }
+            }
+
+            //stopMeterReadsAnimations();
+            _isWebServiceRunningDictionary[_getMeterReads] = false;
+
+            MeterReads = response;
+            IsVisibleVoltageStatusValueImg = true;
+
+            var meterPQRCompleteRequest = GetPostMeterPQRActivityCompleteRequest();
+
+            if (_ctsMeterReads.IsCancellationRequested)
+            {
+                meterPQRCompleteRequest.Result = ResultEnum.CANCELLED;
+            }
+            else
+            {
+                meterPQRCompleteRequest.Result = meterPQRCompleteRequest.GetActivityPQRResult();
+            }
+
+            if(ex == null)
+            {
+                if (_ctsMeterReads.IsCancellationRequested)
+                {
+                    meterPQRCompleteRequest.Status = StatusEnum.I;
+                }
+                else
+                {
+                    meterPQRCompleteRequest.Status = StatusEnum.C;
+                }
+
+                //PhaseA
+                if (MeterReads.VoltagePhaseA.HasValue)
+                {
+                    VoltageAValueText = MeterReads.VoltagePhaseA.Value.ToString();
+
+                    if (IsVoltagePhaseAInRange.HasValue)
+                    {
+                        if (HasOverlappingVoltage.Value)
+                        {
+                            VoltageAValueTextColor = Color.Orange;
+                        }
+                        else
+                        {
+                            VoltageAValueTextColor = Color.Green;
+                        }
+                    }
+                    else
+                    {
+                        VoltageAValueTextColor = Color.Red;
+                    }
+                }
+                else
+                {
+                    VoltageAValueTextColor = Color.Black;
+                }
+
+                if (VoltageStatus.HasValue)
+                {
+                    if (VoltageStatus.Value)
+                    {
+                        if (HasOverlappingVoltage.Value)
+                        {
+                            //StatusUncertainImage
+                            VoltageStatusImage = "question.png";
+                        }
+                        else
+                        {
+                            VoltageStatusImage = "status_good.png";
+                        }
+                    }
+                    else
+                    {
+                        VoltageStatusImage = "status_error.png";
+                    }
+                }               
+            }
+            else
+            {
+                meterPQRCompleteRequest.Status = StatusEnum.E;
+                VoltageStatusImage = "status_error.png";
+
+                string logMessage = (ex.Message + ": " + ex.StackTrace);
+                string errorMessage = ex.Message;
+
+                if (ex.InnerException != null)
+                {
+                    errorMessage += Environment.NewLine + ex.InnerException.Message;
+                    logMessage += ". " + ex.InnerException.Message + ": " + ex.InnerException.StackTrace;
+                }
+                //TODO: Add app logging
+                //AppLogger.Debug(logMessage);
+                //LogApplicationError("MeterDetailPage.handleGetMeterReadsCompleted", ex);
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    App.Current.MainPage.DisplayAlert("Service Error", "Get Meter Reads service call failed", "close");
+                });
+                ErrorMessageText = ex.Message;
+                IsVisibleErrorMessage = true;
+            }
+            
         }
     }
 }

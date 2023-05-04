@@ -103,6 +103,42 @@ namespace CompassMobileUpdate.Services
             _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
         }
 
+        public delegate void GetMeterReadsCompletedHandler(MeterReadsResponse response, Exception ex);
+
+        public async void GetMeterReadsAsync(Meter meter, int? activityID, GetMeterReadsCompletedHandler handler, CancellationToken token)
+        {
+            //TODO: Add app logging
+            //AppLogger.Debug("  AppService.GetMeterReads: MethodStart");
+
+            string correlationID = "unknown";
+            if (activityID.HasValue)
+            {
+                correlationID = activityID.Value.ToString();
+            }
+
+            MeterReadsResponse response = null;
+            Exception e = null;
+
+            try
+            {
+                await AddHeadersAsync();
+
+                var url = new Uri(_baseUri, $"MeterReads?meterMACID={meter.MacID}&correlationID={correlationID}&source={AppVariables.SourceForAMICalls}&formNumber={meter.Form}&subTypeName={meter.TypeName}&deviceSSNID={meter.DeviceSSNID}");
+
+                response = await SendRequestAsync<MeterReadsResponse>(url, HttpMethod.Get, _headers);
+            }
+            catch (Exception ex)
+            {
+                if (!AppHelper.ContainsNullResponseException(ex))
+                {
+                    e = ex;
+                }
+            }
+
+            if (!token.IsCancellationRequested)
+                handler(response, e);
+        }
+
         public delegate void GetMeterStatusCompletedHandler(MeterStatusResponse response, Exception ex);
 
         public async void GetMeterStatusAsync(Meter meter, int? activityID, GetMeterStatusCompletedHandler handler, CancellationToken token)

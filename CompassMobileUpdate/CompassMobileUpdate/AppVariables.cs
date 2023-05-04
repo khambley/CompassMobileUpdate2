@@ -52,8 +52,15 @@ namespace CompassMobileUpdate
 
         public static LocalSql LocalAppSql { get; set; }
 
+        public static int MeterDetailTimeOutInSeconds
+        {
+            get { return 90; }
+        }
+
         public static string MeterNotFound = "Meter not found";
+
         public static string MeterCustomerNotFound = "Customer not found";
+
         public static string MeterAttributesNotFound = "Meter attributes not found";
 
         public static String MilitaryFormatStringShort

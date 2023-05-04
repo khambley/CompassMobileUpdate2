@@ -189,7 +189,8 @@
                 <Image x:Name="imgPingStatusValue"
                        Grid.Column="1"
                        Grid.Row="4"
-                       Source="status_good.png"
+                       Source="{Binding PingStatusImage}"
+                       IsVisible="{Binding IsVisiblePingStatusValueImg}"
                        WidthRequest="25"
                        HorizontalOptions="Start"/>
 
@@ -204,7 +205,8 @@
                 <Image x:Name="imgVoltageStatusValue"
                        Grid.Column="1"
                        Grid.Row="5"
-                       Source="status_good.png"
+                       Source="{Binding VoltageStatusImage}"
+                       IsVisible="{Binding IsVisibleVoltageStatusValueImg}"
                        WidthRequest="25"
                        HorizontalOptions="Start"/>
 
@@ -214,10 +216,11 @@
                        Grid.Column="0"
                        Grid.Row="6"
                        Grid.ColumnSpan="2">
+
                     <Label x:Name="lblVoltageAValue"
                            HorizontalOptions="End"
-                           Text="284 283"
-                           TextColor="Green" />
+                           Text="{Binding VoltageAValueText}"
+                           TextColor="{Binding VoltageAValueTextColor}" />
                 </Grid>
             </Grid>
             <Button x:Name="btnCheckStatus"
