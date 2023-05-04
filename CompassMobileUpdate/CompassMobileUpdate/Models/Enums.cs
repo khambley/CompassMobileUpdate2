@@ -22,6 +22,11 @@ namespace CompassMobileUpdate.Models
             LandG,
             Unknown
         }
+        public enum MeterAvailabilityEventsEventType
+        {
+            Restorations = 100007,
+            Outages = 12007
+        }
 
     }
 }

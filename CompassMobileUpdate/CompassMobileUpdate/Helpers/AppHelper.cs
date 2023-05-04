@@ -134,6 +134,48 @@ namespace CompassMobileUpdate.Helpers
 
             return new BoundingCoords(left, top, right, bottom);
         }
+
+        /// <summary>
+        /// Expects a list of digits only.
+        /// It will then Format the number like xxx-xxxx or x-xxx-xxxx
+        /// where the delimeter is by default a hyphen ("-") or you can pass your own
+        /// </summary>
+        /// <param name="phoneNumber"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public static bool TryFormatPhoneNumberFromDigits(string phoneNumber, out string result, char delimiter = '-')
+        {
+            long number;
+
+            //if the phone number is all numbers
+            if (long.TryParse(phoneNumber, out number))
+            {
+                if (phoneNumber.Length == 10 || phoneNumber.Length == 11)
+                {
+                    //lets add some "-" for readability
+                    if (phoneNumber.Length == 10)
+                    {
+                        result = phoneNumber.Insert(3, delimiter.ToString());
+                        result = result.Insert(7, delimiter.ToString());
+                    }
+                    else if (phoneNumber.Length == 11)
+                    {
+                        result = phoneNumber.Insert(1, delimiter.ToString());
+                        result = result.Insert(5, delimiter.ToString());
+                        result = result.Insert(9, delimiter.ToString());
+                    }
+                    else
+                        result = null;
+                }
+                else
+                    result = null;
+
+                return true;
+            }
+
+            result = null;
+            return false;
+        }
     }
 }
 

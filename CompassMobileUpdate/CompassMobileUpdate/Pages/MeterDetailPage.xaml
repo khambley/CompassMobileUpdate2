@@ -27,6 +27,8 @@
                              Command="{Binding SetIsFavoriteCommand}"
                              WidthRequest="50"
                              AbsoluteLayout.LayoutFlags="PositionProportional" />
+
+                <Label x:Name="lblErrorMessage" Text="{Binding ErrorMessageText}" IsVisible="{Binding IsVisibleErrorMessage}" />
             </Grid>
 
             <Label x:Name="lblMeterTypeNumber"
@@ -119,8 +121,9 @@
                     <Label x:Name="lblOutagesValue"
                            Grid.Column="1"
                            Grid.Row="0"
-                           Text="0"
-                           HorizontalTextAlignment="End">
+                           Text="{Binding OutagesValueText}"
+                           HorizontalTextAlignment="End"
+                           TextColor="{Binding OutagesValueTextColor}">
                         <Label.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding TapOutageRestoreCommand}" />
                         </Label.GestureRecognizers>
@@ -151,8 +154,9 @@
                     <Label x:Name="lblRestoresValue"
                            Grid.Column="1"
                            Grid.Row="0"
-                           Text="0"
-                           HorizontalTextAlignment="Start">
+                           Text="{Binding RestoresValueText}"
+                           HorizontalTextAlignment="Start"
+                           TextColor="{Binding RestoresValueTextColor}">
                         <Label.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding TapOutageRestoreCommand}" />
                         </Label.GestureRecognizers>

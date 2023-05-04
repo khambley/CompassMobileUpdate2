@@ -12,6 +12,7 @@ using Xamarin.Forms;
 
 namespace CompassMobileUpdate.Services
 {
+    using static CompassMobileUpdate.Models.Enums;
     using VoltageRule = LocalVoltageRule;
 
     public class MeterService : BaseHttpService, IMeterService
@@ -61,6 +62,38 @@ namespace CompassMobileUpdate.Services
             if (!token.IsCancellationRequested)
             {
                 handler(response, e);
+            }
+        }
+
+        public delegate void GetMeterAvailabilityEventsCompletedHandler(MeterAvailabilityEventsResponse response, MeterAvailabilityEventsEventType eventType, Exception ex);
+
+        public async Task GetMeterAvailabilityEventsAsync(Meter meter, MeterAvailabilityEventsEventType eventType, GetMeterAvailabilityEventsCompletedHandler handler, CancellationToken token)
+        {
+            //TODO: Add app logging
+            //AppLogger.Debug("  AppService.GetMeterAvailabilityEvents: MethodStart");
+
+            MeterAvailabilityEventsResponse response = null;
+            Exception e = null;
+
+            try
+            {
+                await AddHeadersAsync();
+
+                var startTime = DateTimeOffset.Now.AddMinutes(0 - AppVariables.COMPASS_AMI_GetMeterAvailabilityEvents_OutageAndRestoreLookBackInMinutes);
+                var endTime = DateTimeOffset.Now.AddHours(1);
+                int eventTypeCode = eventType.GetHashCode();
+
+                var url = new Uri(_baseUri, $"MeterAvailabilityEvents?deviceSSNID={meter.DeviceSSNID}&startTime={startTime}&endTime={endTime}&eventType={eventTypeCode}");
+
+                response = await SendRequestAsync<MeterAvailabilityEventsResponse>(url, HttpMethod.Get, _headers);
+            }
+            catch (Exception ex)
+            {
+                e = ex;
+            }
+            if (!token.IsCancellationRequested)
+            {
+                handler(response, eventType, e);
             }
         }
 
