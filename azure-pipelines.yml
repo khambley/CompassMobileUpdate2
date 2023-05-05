@@ -57,4 +57,4 @@ steps:
     releaseNotesOption: 'input'
     releaseNotesInput: 'New Build'
     destinationType: 'groups'
-    distributionGroupId: d99a69fc-816c-43a3-80b8-173d42596029
+    distributionGroupId: d8a09133-4455-4708-965a-b1e53075bf5c
