@@ -141,7 +141,7 @@ namespace CompassMobileUpdate.Services
 
         public delegate void GetMeterStatusCompletedHandler(MeterStatusResponse response, Exception ex);
 
-        public async void GetMeterStatusAsync(Meter meter, int? activityID, GetMeterStatusCompletedHandler handler, CancellationToken token)
+        public async Task GetMeterStatusAsync(Meter meter, int? activityID, GetMeterStatusCompletedHandler handler, CancellationToken token)
         {
             //AppLogger.Debug("  AppService.GetMeterStatus: MethodStart");
 

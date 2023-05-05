@@ -174,7 +174,8 @@
                 <Image x:Name="imgMeterStatusValue"
                        Grid.Column="1"
                        Grid.Row="3"
-                       Source="status_good.png"
+                       Source="{Binding MeterStatusImage}"
+                       IsVisible="{Binding IsVisibleMeterStatusImage}"
                        WidthRequest="25"
                        HorizontalOptions="Start" />
 
@@ -210,6 +211,12 @@
                        WidthRequest="25"
                        HorizontalOptions="Start"/>
 
+                <Label x:Name="lblVoltageStatusMessage"
+                             Grid.Column="1"
+                             Grid.Row="5"
+                             Text="{Binding VoltageStatusMessage}"
+                             IsVisible="{Binding IsVisibleVoltageStatusMsg}" />
+
                  <Grid x:Name="gridVoltages"
                        HorizontalOptions="End"
                        Padding="0,0,7,0"
@@ -218,9 +225,25 @@
                        Grid.ColumnSpan="2">
 
                     <Label x:Name="lblVoltageAValue"
+                           Grid.Column="0"
                            HorizontalOptions="End"
                            Text="{Binding VoltageAValueText}"
-                           TextColor="{Binding VoltageAValueTextColor}" />
+                           TextColor="{Binding VoltageAValueTextColor}"
+                           IsVisible="{Binding IsVisibileVoltageAValueLabel}" />
+
+                    <Label x:Name="lblVoltageBValue"
+                           Grid.Column="1"
+                           HorizontalOptions="End"
+                           Text="{Binding VoltageAValueText}"
+                           TextColor="{Binding VoltageAValueTextColor}"
+                           IsVisible="{Binding IsVisibileVoltageBValueLabel}" />
+
+                    <Label x:Name="lblVoltageCValue"
+                           Grid.Column="2"
+                           HorizontalOptions="End"
+                           Text="{Binding VoltageAValueText}"
+                           TextColor="{Binding VoltageAValueTextColor}"
+                           IsVisible="{Binding IsVisibileVoltageCValueLabel}" />
                 </Grid>
             </Grid>
             <Button x:Name="btnCheckStatus"
