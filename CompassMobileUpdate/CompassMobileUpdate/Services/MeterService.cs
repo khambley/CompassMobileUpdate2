@@ -12,6 +12,7 @@ using Xamarin.Forms;
 
 namespace CompassMobileUpdate.Services
 {
+    using static CompassMobileUpdate.Models.ActivityMessage;
     using static CompassMobileUpdate.Models.Enums;
     using VoltageRule = LocalVoltageRule;
 
@@ -105,7 +106,7 @@ namespace CompassMobileUpdate.Services
 
         public delegate void GetMeterReadsCompletedHandler(MeterReadsResponse response, Exception ex);
 
-        public async void GetMeterReadsAsync(Meter meter, int? activityID, GetMeterReadsCompletedHandler handler, CancellationToken token)
+        public async Task GetMeterReadsAsync(Meter meter, int? activityID, GetMeterReadsCompletedHandler handler, CancellationToken token)
         {
             //TODO: Add app logging
             //AppLogger.Debug("  AppService.GetMeterReads: MethodStart");
@@ -165,13 +166,37 @@ namespace CompassMobileUpdate.Services
 
         public async Task<ActivityMessage.ActivityResponse> PerformActivityRequest(ActivityMessage.ActivityRequest requestBody)
         {
-            await AddHeadersAsync();
+            //await AddHeadersAsync();
 
             var url = new Uri(_baseUri, $"Activity/{requestBody.ActionName}");
 
-            var response = await SendRequestAsync<ActivityMessage.ActivityResponse>(url, HttpMethod.Post, _headers);
+            var body = requestBody.GetBody();
+            
+            var json = JsonConvert.SerializeObject(body);
 
-            return response;
+            var contentKey = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+           
+            var client = new HttpClient();
+
+            var request = new HttpRequestMessage(HttpMethod.Post, url) { Content = new FormUrlEncodedContent(contentKey) };
+
+            var authResponse = await _authService.GetAPIToken();
+
+            request.Headers.Add("Authorization", "Bearer " + authResponse.AccessToken);
+
+            var response = await client.SendAsync(request);
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            var activityResponse = new ActivityMessage.ActivityResponse();
+
+            if (response.IsSuccessStatusCode)
+            {
+                activityResponse = JsonConvert.DeserializeObject<ActivityMessage.ActivityResponse>(content);
+            }
+            //var response = await SendRequestAsync<ActivityMessage.ActivityResponse>(url, HttpMethod.Post, _headers);
+
+            return activityResponse;
 
         }
 
@@ -249,6 +274,17 @@ namespace CompassMobileUpdate.Services
         }
 
         public async Task<Meter> GetMeterByDeviceUtilityIDAsync(string deviceUtilityID)
+        {
+            await AddHeadersAsync();
+
+            var url = new Uri(_baseUri, $"Meter/{deviceUtilityID}");
+
+            var response = await SendRequestAsync<Meter>(url, HttpMethod.Get, _headers);
+
+            return response;
+        }
+
+        public async Task<Meter> GetMeterByDeviceUtilityIDAsync(string deviceUtilityID, CancellationToken token)
         {
             await AddHeadersAsync();
 

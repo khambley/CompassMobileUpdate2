@@ -40,6 +40,8 @@ namespace CompassMobileUpdate.ViewModels
 
         public int? ActivityID { get; set; }
 
+        public Color CustomerNameTextColor { get; set; }
+
         public string ErrorMessageText { get; set; }
 
         public bool? HasOverlappingVoltage
@@ -71,17 +73,7 @@ namespace CompassMobileUpdate.ViewModels
             }
         }
 
-        public bool IsFinalMeterStatusGood
-        {
-            get
-            {
-                bool goodPing = MeterStatus != null && MeterStatus.Ping;
-                bool goodPQR = !AllowsPQRs || (AllowsPQRs && VoltageStatus.HasValue && VoltageStatus.Value);
-                bool goodPQRViaService = MeterReads != null && MeterReads.AreAllVoltagesValid;
-
-                return goodPing && (goodPQR || goodPQRViaService);
-            }
-        }
+        public bool IsFinalMeterStatusGood { get; set; }     
 
         public bool IsVisibleErrorMessage { get; set; }
 
@@ -97,30 +89,15 @@ namespace CompassMobileUpdate.ViewModels
 
         public bool IsVisibileVoltageCValueLabel { get; set; }
 
-        public bool? IsVoltagePhaseAInRange
-        {
-            get
-            {
-                if (!MeterReads.AreAllVoltagesValid)
-                {
-                    var isInRange = AppHelper.IsVoltageInRangeAsync(MeterItem, MeterReads.VoltagePhaseA).Result;
-                    return isInRange;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-
-        }
-
+        public bool? IsVoltagePhaseAInRange { get; set; }
+             
         public bool? IsVoltagePhaseBInRange
         {
             get
             {
                 if (!MeterReads.AreAllVoltagesValid)
                 {
-                    var isInRange = AppHelper.IsVoltageInRangeAsync(MeterItem, MeterReads.VoltagePhaseB).Result;
+                    var isInRange = AppHelper.IsVoltageInRangeAsync(MeterItem, MeterReads.VoltagePhaseB);
                     return isInRange;
                 }
                 else
@@ -136,7 +113,7 @@ namespace CompassMobileUpdate.ViewModels
             {
                 if (!MeterReads.AreAllVoltagesValid)
                 {
-                    var isInRange = AppHelper.IsVoltageInRangeAsync(MeterItem, MeterReads.VoltagePhaseC).Result;
+                    var isInRange = AppHelper.IsVoltageInRangeAsync(MeterItem, MeterReads.VoltagePhaseC);
                     return isInRange;
                 }
                 else
@@ -196,72 +173,8 @@ namespace CompassMobileUpdate.ViewModels
 
         public Color VoltageCValueTextColor { get; set; }
 
-        public bool? VoltageStatus
-        {
-            get
-            {
-                bool nullA, nullB, nullC, noValueA, noValueB, noValueC;
-                nullA = nullB = nullC = noValueA = noValueB = noValueC = false;
-
-                if(MeterReads != null)
-                {
-                    if (MeterReads.VoltagePhaseA.HasValue)
-                    {
-                        if(IsVoltagePhaseAInRange.HasValue && !IsVoltagePhaseAInRange.Value)
-                        {
-                            return false;
-                        }
-                        else if (IsVoltagePhaseAInRange == null)
-                        {
-                            nullA = true;
-                        }
-                    }
-                    else
-                    {
-                        noValueA = true;
-                    }
-
-                    if (MeterReads.VoltagePhaseB.HasValue)
-                    {
-                        if (IsVoltagePhaseBInRange.HasValue && !IsVoltagePhaseBInRange.Value)
-                            return false;
-                        else if (IsVoltagePhaseBInRange == null)
-                        {
-                            nullB = true;
-                        }
-                    }
-                    else
-                    {
-                        noValueB = true;
-                    }
-
-                    if (MeterReads.VoltagePhaseC.HasValue)
-                    {
-                        if (IsVoltagePhaseCInRange.HasValue && !IsVoltagePhaseCInRange.Value)
-                            return false;
-                        else if (IsVoltagePhaseCInRange == null)
-                        {
-                            nullC = true;
-                        }
-                    }
-                    else
-                    {
-                        noValueC = true;
-                    }
-                }
-
-                if (nullA || nullB || nullC)
-                {
-                    return null;
-                }
-                else if (noValueA && noValueB && noValueC)
-                {
-                    return false;
-                }
-                return true;
-            }
-        }
-
+        public bool? VoltageStatus { get; set; }
+        
         public string VoltageStatusImage { get; set; }
 
         public string VoltageStatusMessage { get; set; }
@@ -366,25 +279,19 @@ namespace CompassMobileUpdate.ViewModels
                 try
                 {
                     // get meter customer info - Name, Address, and PhoneNumber
+
+
+
+                    //var meter = await _meterService.GetMeterByDeviceUtilityIDAsync(MeterItem.DeviceUtilityID);
+
+                    //if (meter != null)
+                    //{
+                    //MeterItem = meter;
                     _isWebServiceRunningDictionary[_getMeterForDevice] = true;
-                    var meter = await _meterService.GetMeterByDeviceUtilityIDAsync(MeterItem.DeviceUtilityID);
+                    await GetMeterInfoAndCustomerInfo();
 
-                    if (meter != null)
-                    {
-                        MeterItem = meter;
-
-                        // set MeterTypeNumber on MeterDetail
-                        if (string.IsNullOrWhiteSpace(meter.DeviceUtilityIDWithLocation))
-                        {
-                            MeterTypeNumber = meter.ManufacturerName + " Meter #" + meter.DeviceUtilityID;
-                        }
-                        else
-                        {
-                            MeterTypeNumber = meter.ManufacturerName + " Meter #" + meter.DeviceUtilityIDWithLocation;
-                        }
-
-                        // set MeterAttributes.Status and StatusDate on MeterDetail in handler
-                        _isWebServiceRunningDictionary[_getMeterAttributes] = true;
+                    // set MeterAttributes.Status and StatusDate on MeterDetail in handler
+                    _isWebServiceRunningDictionary[_getMeterAttributes] = true;
                         await _meterService.GetMeterAttributesAsync(MeterItem, HandleGetMeterAttributesCompleted, _ctsMeterAttributes.Token);
 
                         _isWebServiceRunningDictionary[_getMeterAvailabilityEventOutage] = true;
@@ -395,7 +302,7 @@ namespace CompassMobileUpdate.ViewModels
 
                         //startGetInfoCounter(); //for fade out animation on label
                         StartTimeOutCountDown();
-                    }
+                    //}
                 }
                 catch (AuthenticationRequiredException)
                 {
@@ -419,6 +326,182 @@ namespace CompassMobileUpdate.ViewModels
             {
                 //TODO: Add app logging
                 //AppLogger.Debug("GET ALL GetAllMeterInfo End");
+            }
+        }
+
+        private async Task GetMeterInfoAndCustomerInfo()
+        {
+            Exception ex = null;
+            Meter meter = null;
+
+            _ctsGetMeterForDevice = new CancellationTokenSource();
+
+            var localSql = new LocalSql();
+            var lastUpdatedTime = await localSql.GetMeterLastUpdatedTime(MeterItem.DeviceUtilityID);
+            if (MeterContainsAllCustomerInfo() &&  lastUpdatedTime > DateTime.Now.AddDays(-7))
+            {
+                meter = await _meterService.GetMeterByDeviceUtilityIDAsync(MeterItem.DeviceUtilityID, _ctsGetMeterForDevice.Token); //MeterItem;
+
+                MeterItem = meter;
+            }
+            else
+            {
+                try
+                {
+                    meter = await _meterService.GetMeterByDeviceUtilityIDAsync(MeterItem.DeviceUtilityID, _ctsGetMeterForDevice.Token);
+
+                    MeterItem = meter;
+
+                    if (meter != null && !string.IsNullOrWhiteSpace(meter.DeviceUtilityID))
+                        await localSql.UpdateMeterLastUpdatedTimeAsync(meter.DeviceUtilityID);
+                }
+                catch (OperationCanceledException)
+                {
+                    return;
+                }
+                catch (ApplicationMaintenanceException)
+                {
+                    HandleApplicationMaintenance();
+                    return;
+                }
+                catch (Exception e)
+                {
+                    if (AppHelper.ContainsAuthenticationRequiredException(e))
+                    {
+                        HandleAuthorizationRequired();
+                        return;
+                    }
+                    else
+                    {
+                        if (!AppHelper.ContainsNullResponseException(e))
+                        {
+                            //TODO: Add app logging
+                            //AppLogger.LogError(e);
+                        }
+
+                        ex = e;
+                    }
+                }
+            }
+            HandleGetMeterForDeviceCompleted(meter, ex);
+        }
+
+        private async void HandleGetMeterForDeviceCompleted(Meter meter, Exception ex)
+        {
+            if (ex != null)
+            {
+                if (ex.GetType() == typeof(AuthenticationRequiredException))
+                {
+                    HandleAuthorizationRequired();
+                    return;
+                }
+                else if (ex is ApplicationMaintenanceException)
+                {
+                    HandleApplicationMaintenance();
+                    return;
+                }
+            }
+
+            //stopMeterForDeviceAnimations();
+
+            _isWebServiceRunningDictionary[_getMeterForDevice] = false;
+
+            //TODO: Add app logging
+            //AppLogger.Debug("  GetMeterForDeviceCompleted: Method Start");
+
+            if (ex == null)
+            {
+                if(meter != null)
+                {
+                    // check that meter info matches
+                    MeterItem.CustomerName = meter.CustomerName;
+                    MeterItem.DeviceUtilityIDWithLocation = meter.DeviceUtilityIDWithLocation;
+                    MeterItem.CustomerAddress = meter.CustomerAddress;
+                    MeterItem.CustomerClass = meter.CustomerClass;
+                    MeterItem.CustomerContactNumber = meter.CustomerContactNumber;
+
+                    var localSql = new LocalSql();
+                    await localSql.UpdateLocalMeterCustomerInformation(meter);
+
+                    // set MeterTypeNumber on MeterDetail
+                    if (string.IsNullOrWhiteSpace(MeterItem.DeviceUtilityIDWithLocation))
+                    {
+                        MeterTypeNumber = meter.ManufacturerName + " Meter #" + meter.DeviceUtilityID;
+                    }
+                    else
+                    {
+                        MeterTypeNumber = meter.ManufacturerName + " Meter #" + meter.DeviceUtilityIDWithLocation;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(MeterItem.CustomerName) && string.IsNullOrWhiteSpace(MeterItem.CustomerAddress))
+                    {
+                       MeterItem.CustomerName = "Customer Not Found";
+                    }
+                    else
+                    {
+                        MeterItem.CustomerName = meter.CustomerName;
+                        MeterItem.CustomerAddress = meter.CustomerAddress;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(MeterItem.CustomerContactNumber))
+                    {
+                        MeterItem.CustomerContactNumber = GetCustomerContactNumberFormatted();
+                    }
+                }
+                else
+                {
+                    if (!_ctsGetMeterForDevice.IsCancellationRequested)
+                       MeterItem.CustomerName = "Customer Not Found";
+                }
+            }
+            else
+            {
+                if (ex is MeterNotFoundException || AppHelper.ContainsNullResponseException(ex))
+                {
+                    MeterItem.CustomerName = "Customer Not Found";
+                }
+                else
+                {
+                    MeterItem.CustomerName = "Customer Service Error";
+                    CustomerNameTextColor = Color.Red;
+
+                    //TODO: Add app logging
+                    //AppLogger.LogError(ex);
+
+                }
+            }
+            TryEnableCheckStatusButton();
+        }
+
+        private bool MeterContainsAllCustomerInfo()
+        {
+            string customerAddress = MeterItem.CustomerAddress;
+            string contactNumber = GetCustomerContactNumberFormatted();
+            string customerName = MeterItem.CustomerName;
+
+            if (string.IsNullOrWhiteSpace(MeterItem.CustomerAddress)
+                || string.IsNullOrWhiteSpace(GetCustomerContactNumberFormatted())
+                || string.IsNullOrWhiteSpace(MeterItem.CustomerName)
+            )
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public string GetCustomerContactNumberFormatted()
+        {
+            string temp;
+            if (AppHelper.TryFormatPhoneNumberFromDigits(MeterItem.CustomerContactNumber, out temp))
+            {
+                return temp;
+            }
+            else
+            {
+                return MeterItem.CustomerContactNumber;
             }
         }
 
@@ -463,7 +546,7 @@ namespace CompassMobileUpdate.ViewModels
             }
         }
 
-        protected async Task CancelAllServiceCallsAsync(bool isCancelledBecauseOfError)
+        public async Task CancelAllServiceCallsAsync(bool isCancelledBecauseOfError)
         {
             if (_isWebServiceRunningDictionary[_getMeterForDevice])
             {
@@ -582,8 +665,17 @@ namespace CompassMobileUpdate.ViewModels
             //stopAllAnimations();
             TryEnableCheckStatusButton();
         }
-
-        public ActivityMessage.PostPQRActivityCompleteRequest GetPostMeterPQRActivityCompleteRequest()
+//        if (!MeterReads.AreAllVoltagesValid)
+//                {
+//                    //var isInRange = 
+//                    return AppHelper.IsVoltageInRangeAsync(MeterItem, MeterReads.VoltagePhaseA);
+//                }
+//                else
+//                {
+//                    return true;
+//                }
+//}
+public ActivityMessage.PostPQRActivityCompleteRequest GetPostMeterPQRActivityCompleteRequest()
         {
             ActivityMessage.PostPQRActivityCompleteRequest request = new ActivityMessage.PostPQRActivityCompleteRequest();
             if (this.ActivityID.HasValue)
@@ -592,6 +684,12 @@ namespace CompassMobileUpdate.ViewModels
             }
 
             request.MeterDeviceUtilityID = MeterItem.DeviceUtilityID;
+
+            if (!MeterReads.AreAllVoltagesValid)
+            {
+                IsVoltagePhaseAInRange = AppHelper.IsVoltageInRangeAsync(MeterItem, MeterReads.VoltagePhaseA);
+            }
+
             if (this.MeterReads != null)
             {
                 request.VoltagePhaseA = this.MeterReads.VoltagePhaseA;
@@ -808,6 +906,18 @@ namespace CompassMobileUpdate.ViewModels
                 {
                     // set MeterAttributes from response
                     MeterAttributes = meterAttributesResponse;
+                    MeterItem.MacID = MeterAttributes.MacID;
+                    MeterItem.Status = MeterAttributes.Status;
+                    MeterItem.StatusDate = AppHelper.GetConfiguredTimeZone(MeterAttributes.StatusDate);
+                    MeterItem.Form = MeterAttributes.Form;
+                    MeterItem.Version = MeterAttributes.Version;
+                    MeterItem.Model = MeterAttributes.Model;
+                    MeterItem.ManufacturerName = MeterAttributes.ManufacturerName;
+                    MeterItem.Latitude = MeterAttributes.Latitude;
+                    MeterItem.Longitude = MeterAttributes.Longitude;
+                    MeterItem.Type = MeterAttributes.Type;
+                    MeterItem.TypeName = MeterAttributes.TypeName;
+                    AllowsPQRs = MeterAttributes.IsPQRCapable;
 
                     if (MeterAttributes.StatusDate != DateTimeOffset.MinValue)
                     {
@@ -827,9 +937,7 @@ namespace CompassMobileUpdate.ViewModels
 
                                 var response = await _meterService.PerformActivityRequest(logActivityAndMeterPingActivityRequest);
 
-                                //ActivityID = response.Value;
-
-                                ActivityID = 90551;
+                                ActivityID = response.Value;
 
                                 _ctsMeterStatus = new CancellationTokenSource();
 
@@ -961,7 +1069,7 @@ namespace CompassMobileUpdate.ViewModels
                             {
                                 try
                                 {
-                                    _meterService.GetMeterReadsAsync(MeterItem, ActivityID, HandleGetMeterReadsCompleted, _ctsMeterReads.Token);
+                                    await _meterService.GetMeterReadsAsync(MeterItem, ActivityID, HandleGetMeterReadsCompleted, _ctsMeterReads.Token);
 
                                     _isWebServiceRunningDictionary[_getMeterReads] = true;
 
@@ -981,7 +1089,7 @@ namespace CompassMobileUpdate.ViewModels
                                     //AppLogger.LogError(ex1);
                                 }
                             }
-                            else
+                            else //(!AllowPQRs)
                             {
                                 try
                                 {
@@ -1000,6 +1108,7 @@ namespace CompassMobileUpdate.ViewModels
                                     //TODO: Add app logging
                                     //AppLogger.LogError(ex1);
                                 }
+
                                 //stopMeterReadsAnimations();
                                 VoltageStatusMessage= "N/A";
                                 IsVisibleVoltageStatusMsg = true;
@@ -1105,6 +1214,7 @@ namespace CompassMobileUpdate.ViewModels
             _isWebServiceRunningDictionary[_getMeterReads] = false;
 
             MeterReads = response;
+
             IsVisibleVoltageStatusValueImg = true;
 
             var meterPQRCompleteRequest = GetPostMeterPQRActivityCompleteRequest();
@@ -1216,6 +1326,8 @@ namespace CompassMobileUpdate.ViewModels
                     }
                 }
 
+                SetVoltageStatus();
+
                 if (VoltageStatus.HasValue)
                 {
                     if (VoltageStatus.Value)
@@ -1286,9 +1398,76 @@ namespace CompassMobileUpdate.ViewModels
             TryEnableCheckStatusButton();
         }
 
+        private void SetVoltageStatus()
+        {
+            bool nullA, nullB, nullC, noValueA, noValueB, noValueC;
+            nullA = nullB = nullC = noValueA = noValueB = noValueC = false;
+
+            if (MeterReads != null)
+            {
+                if (MeterReads.VoltagePhaseA.HasValue)
+                {
+                    if (IsVoltagePhaseAInRange.HasValue && !IsVoltagePhaseAInRange.Value)
+                    {
+                        VoltageStatus = false;
+                    }
+                    else if (IsVoltagePhaseAInRange == null)
+                    {
+                        nullA = true;
+                    }
+                }
+                else
+                {
+                    noValueA = true;
+                }
+
+                if (MeterReads.VoltagePhaseB.HasValue)
+                {
+                    if (IsVoltagePhaseBInRange.HasValue && !IsVoltagePhaseBInRange.Value)
+                        VoltageStatus =  false;
+
+                    else if (IsVoltagePhaseBInRange == null)
+                    {
+                        nullB = true;
+                    }
+                }
+                else
+                {
+                    noValueB = true;
+                }
+
+                if (MeterReads.VoltagePhaseC.HasValue)
+                {
+                    if (IsVoltagePhaseCInRange.HasValue && !IsVoltagePhaseCInRange.Value)
+                        VoltageStatus =  false;
+                    else if (IsVoltagePhaseCInRange == null)
+                    {
+                        nullC = true;
+                    }
+                }
+                else
+                {
+                    noValueC = true;
+                }
+            }
+
+            if (nullA || nullB || nullC)
+            {
+                VoltageStatus =  null;
+            }
+            else if (noValueA && noValueB && noValueC)
+            {
+                VoltageStatus =  false;
+            }
+            VoltageStatus =  true;
+        }
+
         private void SetFinalMeterStatusImage()
         {
             IsVisibleMeterStatusImage = true;
+
+            SetIsFinalMeterStatusGood();
+
             if (IsFinalMeterStatusGood)
             {
                 MeterStatusImage = "status_good.png";
@@ -1304,6 +1483,15 @@ namespace CompassMobileUpdate.ViewModels
                 }
                 MeterStatusImage = "status_error.png";
             }
+        }
+
+        private void SetIsFinalMeterStatusGood()
+        {
+            bool goodPing = MeterStatus != null && MeterStatus.Ping;
+            bool goodPQR = !AllowsPQRs || (AllowsPQRs && VoltageStatus.HasValue && VoltageStatus.Value);
+            bool goodPQRViaService = MeterReads != null && MeterReads.AreAllVoltagesValid;
+
+            IsFinalMeterStatusGood =  goodPing && (goodPQR || goodPQRViaService);
         }
 
         protected void ShowVoltageReads()

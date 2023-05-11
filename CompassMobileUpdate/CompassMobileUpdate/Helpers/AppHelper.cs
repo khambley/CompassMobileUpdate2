@@ -99,6 +99,11 @@ namespace CompassMobileUpdate.Helpers
             }
         }
 
+        public static DateTimeOffset GetConfiguredTimeZone(DateTimeOffset dto)
+        {
+            return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(dto, AppVariables.TimeZoneID);
+        }
+
         public static bool? HasOverlappingVoltage(Meter meter)
         {
             List<LocalVoltageRule> possibleRanges = (from voltageRule
@@ -120,7 +125,7 @@ namespace CompassMobileUpdate.Helpers
             }
         }
 
-        public static async Task<bool?> IsVoltageInRangeAsync(Meter meter, decimal? voltage)
+        public static bool? IsVoltageInRangeAsync(Meter meter, decimal? voltage)
         {
             if (!voltage.HasValue)
                 return null;
@@ -166,7 +171,7 @@ namespace CompassMobileUpdate.Helpers
                     }
                     else if (meter.CustomerClassType == CustomerClassType.Commercial)
                     {
-                        // uh....you guessed it, check check commercial only
+                        // uh....you guessed it, check commercial only
                         if ((commercialLowRange < voltage) && (voltage < commercialHighRange))
                         {
                             result = true;
@@ -183,7 +188,7 @@ namespace CompassMobileUpdate.Helpers
             else
             {
                 var localSql = new LocalSql();
-                var list = await localSql.GetVoltageRules();
+                var list = localSql.GetVoltageRules().Result;
                 int count = list.Count;
                 string message = string.Format("No Voltage Rules found for Meter_Type = {0} And Meter_Form = {1}. There are currently {2} rows of Voltage Rules in this mobile device's memory", meter.Type, meter.Form, count);
                 //TODO: Add app logging

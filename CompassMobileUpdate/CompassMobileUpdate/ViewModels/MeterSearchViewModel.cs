@@ -68,16 +68,6 @@ namespace CompassMobileUpdate.ViewModels
             await PerformCustomerSearch(searchText);
         });
 
-        public ICommand GetAPITokenCommand => new Command(async () =>
-        {
-            //await GetAPIToken();
-        });
-
-        public ICommand GetMeterByDeviceUtilityIDCommand => new Command(async () =>
-        {
-            await _meterService.GetMeterByDeviceUtilityIDAsync("G270280650");
-        });
-
         public Meter SelectedMeterItem
         {
             get { return null; }
@@ -223,8 +213,6 @@ namespace CompassMobileUpdate.ViewModels
                 CustomerAddress = "5931 S MOODY AVE CHICAGO IL 60638"
             });
         }
-
-
 	}
 }
 

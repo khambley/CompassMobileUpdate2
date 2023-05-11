@@ -11,7 +11,8 @@
                      Padding="0,10,10,0"
                      HorizontalOptions="Center">
 
-            <Grid x:Name="imgLayout">     
+            <Grid x:Name="imgLayout">
+                
                 <Image x:Name="imgMeter"
                        Aspect="AspectFit"
                        HorizontalOptions="Center"
@@ -37,7 +38,8 @@
 
             <Label x:Name="lblCustomerName"
                    HorizontalOptions="Center"
-                   Text="{Binding MeterItem.CustomerName}" />
+                   Text="{Binding MeterItem.CustomerName}"
+                   TextColor="{Binding CustomerNameTextColor}" />
 
             <Label x:Name="lblCustomerStreet"
                    HorizontalOptions="Center"
