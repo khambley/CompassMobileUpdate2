@@ -16,6 +16,8 @@ namespace CompassMobileUpdate
         static AppVariables()
         {
             _defaultFadeMs = 3000;
+            Company = Company.ComEd;
+            ResetCompanyVariables(Company);
         }
 		static bool isInitialized = false;
 
@@ -32,6 +34,8 @@ namespace CompassMobileUpdate
         public static List<BoundingCoords> CachedMapBoundingCoords { get; set; }
 
         public static List<Pin> CachedMapPins { get; set; }
+
+        public static Company Company { get; private set; }
 
         public static double GetMetersWithinXRadiusMaxValue
         {
@@ -52,8 +56,15 @@ namespace CompassMobileUpdate
 
         public static LocalSql LocalAppSql { get; set; }
 
+        public static int MeterDetailTimeOutInSeconds
+        {
+            get { return 90; }
+        }
+
         public static string MeterNotFound = "Meter not found";
+
         public static string MeterCustomerNotFound = "Customer not found";
+
         public static string MeterAttributesNotFound = "Meter attributes not found";
 
         public static String MilitaryFormatStringShort
@@ -870,10 +881,23 @@ namespace CompassMobileUpdate
         }
         #endregion
 
-        
+        public static void ResetCompanyVariables(Company company)
+        {
+            //these Time zones are "Olson Time Zones" and not .NET TimzeZones which is why they aren't
+            //"Central Standard Time" and "Eastern Standard Time"
+            if (company == Company.ComEd)
+            {
+                TimeZoneID = "America/Chicago";
+            }
+            else
+            {
+                TimeZoneID = "America/New_York";
+            }
+        }
 
         public async static Task ResetVoltageRules(bool forceResync)
         {
+            LocalAppSql = new LocalSql();
             DateTime lastSyncTime = await LocalAppSql.GetLastVoltageSyncTime();
             bool usedHardCodedValues = false;
             bool alreadyGotLocalValues = false;

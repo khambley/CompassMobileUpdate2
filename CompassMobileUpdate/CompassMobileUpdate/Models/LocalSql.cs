@@ -190,6 +190,52 @@ namespace CompassMobileUpdate.Models
             return result;
         }
 
+        public async Task<bool> UpdateMeterLastUpdatedTimeAsync(string deviceUtilityID)
+        {
+            await CreateConnection();
+            try
+            {
+                var localMeter = await _database.Table<LocalMeter>().Where(meter => meter.DeviceUtilityID == deviceUtilityID).FirstOrDefaultAsync();
+                localMeter.LastUpdatedTime= DateTime.Now;
+                await _database.UpdateAsync(localMeter);
+                return true;
+            }
+            catch (Exception e)
+            {
+                //TODO: Add application error logging
+                //AppVariables.AppService.LogApplicationError("LocalSql.cs", e);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateLocalMeterCustomerInformation(Meter meter)
+        {
+            await CreateConnection();
+            try
+            {
+                LocalMeter existingMeter = await _database.GetAsync<LocalMeter>(meter.DeviceUtilityID);
+                LocalMeter localMeter = LocalMeter.GetLocalMeterFromMeter(meter);
+
+                if (existingMeter != null)
+                {
+                    localMeter.IsFavorite = existingMeter.IsFavorite;
+                    localMeter.CreatedTime = existingMeter.CreatedTime;
+                    localMeter.LastAccessedTime = existingMeter.LastAccessedTime;
+                    localMeter.LastUpdatedTime = DateTime.Now;
+
+                    await _database.UpdateAsync(localMeter);
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception e)
+            {
+                //TODO: Add app logging
+                //AppVariables.AppService.LogApplicationError("LocalSql.cs", e);
+                return false;
+            }
+        }
+
         public async Task<bool> ResetVoltageRules(List<LocalVoltageRule> voltageRules, bool usedHardCodedValues)
         {
             await CreateConnection();

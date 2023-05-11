@@ -8,11 +8,27 @@ namespace CompassMobileUpdate.Pages
 {
     public partial class MeterDetailPage : BasePage
     {
+        MeterDetailViewModel vm => BindingContext as MeterDetailViewModel;
+
         public MeterDetailPage(MeterDetailViewModel viewModel)
         {
             InitializeComponent();
             viewModel.Navigation = Navigation;
             BindingContext = viewModel;
+        }
+
+        protected override void OnAppearing()
+        {
+            vm.GetAllMeterInfo();
+
+            base.OnAppearing();
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            vm._userState = null;
+            vm.CancelAllServiceCallsAsync(false);
         }
 
         void tapPhone_Tapped(System.Object sender, System.EventArgs e)
@@ -27,6 +43,8 @@ namespace CompassMobileUpdate.Pages
                 }
             }
         }
+
+        
 
         
     }

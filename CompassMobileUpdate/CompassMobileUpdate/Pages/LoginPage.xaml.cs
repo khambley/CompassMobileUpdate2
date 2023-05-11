@@ -86,7 +86,7 @@ namespace CompassMobileUpdate.Pages
                         AppVariables.User = user;
                         var localSql = new LocalSql();
                         await localSql.AddUser(AppVariables.User);
-                        //await AppVariables.ResetVoltageRules(false);
+                        await AppVariables.ResetVoltageRules(false);
 
                         if (App.Current.MainPage is LoginPage)
                         {

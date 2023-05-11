@@ -12,6 +12,8 @@ using Xamarin.Forms;
 
 namespace CompassMobileUpdate.Services
 {
+    using static CompassMobileUpdate.Models.ActivityMessage;
+    using static CompassMobileUpdate.Models.Enums;
     using VoltageRule = LocalVoltageRule;
 
     public class MeterService : BaseHttpService, IMeterService
@@ -64,15 +66,83 @@ namespace CompassMobileUpdate.Services
             }
         }
 
+        public delegate void GetMeterAvailabilityEventsCompletedHandler(MeterAvailabilityEventsResponse response, MeterAvailabilityEventsEventType eventType, Exception ex);
+
+        public async Task GetMeterAvailabilityEventsAsync(Meter meter, MeterAvailabilityEventsEventType eventType, GetMeterAvailabilityEventsCompletedHandler handler, CancellationToken token)
+        {
+            //TODO: Add app logging
+            //AppLogger.Debug("  AppService.GetMeterAvailabilityEvents: MethodStart");
+
+            MeterAvailabilityEventsResponse response = null;
+            Exception e = null;
+
+            try
+            {
+                await AddHeadersAsync();
+
+                var startTime = DateTimeOffset.Now.AddMinutes(0 - AppVariables.COMPASS_AMI_GetMeterAvailabilityEvents_OutageAndRestoreLookBackInMinutes);
+                var endTime = DateTimeOffset.Now.AddHours(1);
+                int eventTypeCode = eventType.GetHashCode();
+
+                var url = new Uri(_baseUri, $"MeterAvailabilityEvents?deviceSSNID={meter.DeviceSSNID}&startTime={startTime}&endTime={endTime}&eventType={eventTypeCode}");
+
+                response = await SendRequestAsync<MeterAvailabilityEventsResponse>(url, HttpMethod.Get, _headers);
+            }
+            catch (Exception ex)
+            {
+                e = ex;
+            }
+            if (!token.IsCancellationRequested)
+            {
+                handler(response, eventType, e);
+            }
+        }
+
         private async Task AddHeadersAsync()
         {
             var authResponse = await _authService.GetAPIToken();
             _headers["Authorization"] = "Bearer " + authResponse.AccessToken;
         }
 
+        public delegate void GetMeterReadsCompletedHandler(MeterReadsResponse response, Exception ex);
+
+        public async Task GetMeterReadsAsync(Meter meter, int? activityID, GetMeterReadsCompletedHandler handler, CancellationToken token)
+        {
+            //TODO: Add app logging
+            //AppLogger.Debug("  AppService.GetMeterReads: MethodStart");
+
+            string correlationID = "unknown";
+            if (activityID.HasValue)
+            {
+                correlationID = activityID.Value.ToString();
+            }
+
+            MeterReadsResponse response = null;
+            Exception e = null;
+
+            try
+            {
+                await AddHeadersAsync();
+
+                var url = new Uri(_baseUri, $"MeterReads?meterMACID={meter.MacID}&correlationID={correlationID}&source={AppVariables.SourceForAMICalls}&formNumber={meter.Form}&subTypeName={meter.TypeName}&deviceSSNID={meter.DeviceSSNID}");
+
+                response = await SendRequestAsync<MeterReadsResponse>(url, HttpMethod.Get, _headers);
+            }
+            catch (Exception ex)
+            {
+                if (!AppHelper.ContainsNullResponseException(ex))
+                {
+                    e = ex;
+                }
+            }
+
+            if (!token.IsCancellationRequested)
+                handler(response, e);
+        }
+
         public delegate void GetMeterStatusCompletedHandler(MeterStatusResponse response, Exception ex);
 
-        public async void GetMeterStatusAsync(Meter meter, int? activityID, GetMeterStatusCompletedHandler handler, CancellationToken token)
+        public async Task GetMeterStatusAsync(Meter meter, int? activityID, GetMeterStatusCompletedHandler handler, CancellationToken token)
         {
             //AppLogger.Debug("  AppService.GetMeterStatus: MethodStart");
 
@@ -96,13 +166,37 @@ namespace CompassMobileUpdate.Services
 
         public async Task<ActivityMessage.ActivityResponse> PerformActivityRequest(ActivityMessage.ActivityRequest requestBody)
         {
-            await AddHeadersAsync();
+            //await AddHeadersAsync();
 
             var url = new Uri(_baseUri, $"Activity/{requestBody.ActionName}");
 
-            var response = await SendRequestAsync<ActivityMessage.ActivityResponse>(url, HttpMethod.Post, _headers);
+            var body = requestBody.GetBody();
+            
+            var json = JsonConvert.SerializeObject(body);
 
-            return response;
+            var contentKey = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+           
+            var client = new HttpClient();
+
+            var request = new HttpRequestMessage(HttpMethod.Post, url) { Content = new FormUrlEncodedContent(contentKey) };
+
+            var authResponse = await _authService.GetAPIToken();
+
+            request.Headers.Add("Authorization", "Bearer " + authResponse.AccessToken);
+
+            var response = await client.SendAsync(request);
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            var activityResponse = new ActivityMessage.ActivityResponse();
+
+            if (response.IsSuccessStatusCode)
+            {
+                activityResponse = JsonConvert.DeserializeObject<ActivityMessage.ActivityResponse>(content);
+            }
+            //var response = await SendRequestAsync<ActivityMessage.ActivityResponse>(url, HttpMethod.Post, _headers);
+
+            return activityResponse;
 
         }
 
@@ -180,6 +274,17 @@ namespace CompassMobileUpdate.Services
         }
 
         public async Task<Meter> GetMeterByDeviceUtilityIDAsync(string deviceUtilityID)
+        {
+            await AddHeadersAsync();
+
+            var url = new Uri(_baseUri, $"Meter/{deviceUtilityID}");
+
+            var response = await SendRequestAsync<Meter>(url, HttpMethod.Get, _headers);
+
+            return response;
+        }
+
+        public async Task<Meter> GetMeterByDeviceUtilityIDAsync(string deviceUtilityID, CancellationToken token)
         {
             await AddHeadersAsync();
 

@@ -9,6 +9,15 @@ namespace CompassMobileUpdate.Models
             Stage,
             Production
         }
+
+        public enum Company
+        {
+            ComEd = 1,
+            PECO = 2,
+            BGE = 3,
+            PHI = 4
+        }
+
         public enum CustomerClassType
         {
             Unknown,
@@ -21,6 +30,11 @@ namespace CompassMobileUpdate.Models
             GE,
             LandG,
             Unknown
+        }
+        public enum MeterAvailabilityEventsEventType
+        {
+            Restorations = 100007,
+            Outages = 12007
         }
 
     }

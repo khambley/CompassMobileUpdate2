@@ -11,7 +11,8 @@
                      Padding="0,10,10,0"
                      HorizontalOptions="Center">
 
-            <Grid x:Name="imgLayout">     
+            <Grid x:Name="imgLayout">
+                
                 <Image x:Name="imgMeter"
                        Aspect="AspectFit"
                        HorizontalOptions="Center"
@@ -27,6 +28,8 @@
                              Command="{Binding SetIsFavoriteCommand}"
                              WidthRequest="50"
                              AbsoluteLayout.LayoutFlags="PositionProportional" />
+
+                <Label x:Name="lblErrorMessage" Text="{Binding ErrorMessageText}" IsVisible="{Binding IsVisibleErrorMessage}" />
             </Grid>
 
             <Label x:Name="lblMeterTypeNumber"
@@ -35,7 +38,8 @@
 
             <Label x:Name="lblCustomerName"
                    HorizontalOptions="Center"
-                   Text="{Binding MeterItem.CustomerName}" />
+                   Text="{Binding MeterItem.CustomerName}"
+                   TextColor="{Binding CustomerNameTextColor}" />
 
             <Label x:Name="lblCustomerStreet"
                    HorizontalOptions="Center"
@@ -119,8 +123,9 @@
                     <Label x:Name="lblOutagesValue"
                            Grid.Column="1"
                            Grid.Row="0"
-                           Text="0"
-                           HorizontalTextAlignment="End">
+                           Text="{Binding OutagesValueText}"
+                           HorizontalTextAlignment="End"
+                           TextColor="{Binding OutagesValueTextColor}">
                         <Label.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding TapOutageRestoreCommand}" />
                         </Label.GestureRecognizers>
@@ -151,8 +156,9 @@
                     <Label x:Name="lblRestoresValue"
                            Grid.Column="1"
                            Grid.Row="0"
-                           Text="0"
-                           HorizontalTextAlignment="Start">
+                           Text="{Binding RestoresValueText}"
+                           HorizontalTextAlignment="Start"
+                           TextColor="{Binding RestoresValueTextColor}">
                         <Label.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding TapOutageRestoreCommand}" />
                         </Label.GestureRecognizers>
@@ -170,7 +176,8 @@
                 <Image x:Name="imgMeterStatusValue"
                        Grid.Column="1"
                        Grid.Row="3"
-                       Source="status_good.png"
+                       Source="{Binding MeterStatusImage}"
+                       IsVisible="{Binding IsVisibleMeterStatusImage}"
                        WidthRequest="25"
                        HorizontalOptions="Start" />
 
@@ -185,7 +192,8 @@
                 <Image x:Name="imgPingStatusValue"
                        Grid.Column="1"
                        Grid.Row="4"
-                       Source="status_good.png"
+                       Source="{Binding PingStatusImage}"
+                       IsVisible="{Binding IsVisiblePingStatusValueImg}"
                        WidthRequest="25"
                        HorizontalOptions="Start"/>
 
@@ -200,9 +208,16 @@
                 <Image x:Name="imgVoltageStatusValue"
                        Grid.Column="1"
                        Grid.Row="5"
-                       Source="status_good.png"
+                       Source="{Binding VoltageStatusImage}"
+                       IsVisible="{Binding IsVisibleVoltageStatusValueImg}"
                        WidthRequest="25"
                        HorizontalOptions="Start"/>
+
+                <Label x:Name="lblVoltageStatusMessage"
+                             Grid.Column="1"
+                             Grid.Row="5"
+                             Text="{Binding VoltageStatusMessage}"
+                             IsVisible="{Binding IsVisibleVoltageStatusMsg}" />
 
                  <Grid x:Name="gridVoltages"
                        HorizontalOptions="End"
@@ -210,10 +225,27 @@
                        Grid.Column="0"
                        Grid.Row="6"
                        Grid.ColumnSpan="2">
+
                     <Label x:Name="lblVoltageAValue"
+                           Grid.Column="0"
                            HorizontalOptions="End"
-                           Text="284 283"
-                           TextColor="Green" />
+                           Text="{Binding VoltageAValueText}"
+                           TextColor="{Binding VoltageAValueTextColor}"
+                           IsVisible="{Binding IsVisibileVoltageAValueLabel}" />
+
+                    <Label x:Name="lblVoltageBValue"
+                           Grid.Column="1"
+                           HorizontalOptions="End"
+                           Text="{Binding VoltageAValueText}"
+                           TextColor="{Binding VoltageAValueTextColor}"
+                           IsVisible="{Binding IsVisibileVoltageBValueLabel}" />
+
+                    <Label x:Name="lblVoltageCValue"
+                           Grid.Column="2"
+                           HorizontalOptions="End"
+                           Text="{Binding VoltageAValueText}"
+                           TextColor="{Binding VoltageAValueTextColor}"
+                           IsVisible="{Binding IsVisibileVoltageCValueLabel}" />
                 </Grid>
             </Grid>
             <Button x:Name="btnCheckStatus"
