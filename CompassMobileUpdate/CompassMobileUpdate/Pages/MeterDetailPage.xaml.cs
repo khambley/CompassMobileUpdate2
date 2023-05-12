@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CompassMobileUpdate.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Essentials;
+using System.Linq;
 
 namespace CompassMobileUpdate.Pages
 {
@@ -19,7 +20,16 @@ namespace CompassMobileUpdate.Pages
 
         protected override void OnAppearing()
         {
-            vm.GetAllMeterInfo();
+            vm._isPageBeingPushed = false;
+
+            if(vm._isFirstPageLoad || vm._isLoginPageBeingPushed || vm._isAppMaintenanceBeingPushed)
+            {
+                vm.GetAllMeterInfo();
+            }
+
+            vm._isFirstPageLoad = false;
+            vm._isAppMaintenanceBeingPushed = false;
+            vm._AppMaintenanceInitiated = false;
 
             base.OnAppearing();
         }
@@ -27,8 +37,40 @@ namespace CompassMobileUpdate.Pages
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            vm._userState = null;
-            //vm.CancelAllServiceCallsAsync(false);
+
+            if (!vm._isPageBeingPushed)
+            {
+                //TODO: Add app logging
+                //AppLogger.LogNewLine();
+
+                vm._isTimeOutCountDownRunning = false;
+                vm.CancelAllServiceCallsAsync(false);
+
+                vm._userState = null;
+
+                //TODO: Add app logging
+                //AppLogger.Debug("Meter Detail Page: Closing");
+
+                if (vm._isWebServiceRunningDictionary.ContainsValue(true))
+                {
+                    List<string> servicesRunning = (from service in vm._isWebServiceRunningDictionary
+                                                    where service.Value == true
+                                                    select service.Key.ToString()).ToList();
+
+                    string servicesRunningText = string.Empty;
+
+                    for (int i = 0; i < servicesRunning.Count; i++)
+                    {
+                        if (i == 0)
+                            servicesRunningText += servicesRunning[i];
+                        else
+                            servicesRunningText += ", " + servicesRunning[i];
+                    }
+
+                    //TODO: Add app logging
+                    //AppLogger.Debug("These services are still running: " + servicesRunningText);
+                }
+            }
         }
 
         void tapPhone_Tapped(System.Object sender, System.EventArgs e)

@@ -20,7 +20,8 @@ namespace CompassMobileUpdate.ViewModels
         }
         public bool popUpSessionTimeOut { get; set; }
 
-        protected bool _isLoginPageBeingPushed { get; set; }
+        public bool _isAppMaintenanceBeingPushed { get; set; }
+        public bool _isLoginPageBeingPushed { get; set; }
 
         public INavigation Navigation { get; set; }
 

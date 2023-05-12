@@ -38,6 +38,7 @@
     <None Remove="Exceptions\" />
     <None Remove="Helpers\" />
     <None Remove="Extensions\" />
+    <None Remove="Pages\Views\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Pages\" />
@@ -47,5 +48,6 @@
     <Folder Include="Exceptions\" />
     <Folder Include="Helpers\" />
     <Folder Include="Extensions\" />
+    <Folder Include="Pages\Views\" />
   </ItemGroup>
 </Project>

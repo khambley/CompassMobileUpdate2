@@ -236,14 +236,14 @@
                     <Label x:Name="lblVoltageBValue"
                            Grid.Column="1"
                            HorizontalOptions="End"
-                           Text="{Binding VoltageAValueText}"
+                           Text="{Binding VoltageBValueText}"
                            TextColor="{Binding VoltageAValueTextColor}"
                            IsVisible="{Binding IsVisibileVoltageBValueLabel}" />
 
                     <Label x:Name="lblVoltageCValue"
                            Grid.Column="2"
                            HorizontalOptions="End"
-                           Text="{Binding VoltageAValueText}"
+                           Text="{Binding VoltageCValueText}"
                            TextColor="{Binding VoltageAValueTextColor}"
                            IsVisible="{Binding IsVisibileVoltageCValueLabel}" />
                 </Grid>
