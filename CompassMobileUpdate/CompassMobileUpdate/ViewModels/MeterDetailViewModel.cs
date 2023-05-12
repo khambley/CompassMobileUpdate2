@@ -505,8 +505,7 @@ namespace CompassMobileUpdate.ViewModels
             }
         }
 
-        protected async void StartTimeOutCountDown()
-        {
+        protected async void StartTimeOutCountDown()        {
             if (_isTimeOutCountDownRunning == false)
             {
                 _isTimeOutCountDownRunning = true;
@@ -516,12 +515,16 @@ namespace CompassMobileUpdate.ViewModels
                 {
                     await Task.Delay(500);
 
-                    //If the webservices have stopped runnning prior to the timeout
+                    //If the webservices have stopped running prior to the timeout
                     if (!_isWebServiceRunningDictionary.ContainsValue(true))
                     {
                         _isTimeOutCountDownRunning = false;
-                        ErrorMessageText = "All Service Calls Completed";
-                        IsVisibleErrorMessage = true;
+                        //ErrorMessageText = "All Service Calls Completed";
+                        //IsVisibleErrorMessage = true;
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            App.Current.MainPage.DisplayAlert("Service Information", "All Service Calls Completed", "Close");
+                        });
                         break;
                     }
 

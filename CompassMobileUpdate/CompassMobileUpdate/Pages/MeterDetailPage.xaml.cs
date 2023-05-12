@@ -28,7 +28,7 @@ namespace CompassMobileUpdate.Pages
         {
             base.OnDisappearing();
             vm._userState = null;
-            vm.CancelAllServiceCallsAsync(false);
+            //vm.CancelAllServiceCallsAsync(false);
         }
 
         void tapPhone_Tapped(System.Object sender, System.EventArgs e)
