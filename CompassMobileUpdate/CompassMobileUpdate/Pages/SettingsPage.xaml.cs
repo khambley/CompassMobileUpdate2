@@ -14,6 +14,8 @@ namespace CompassMobileUpdate.Pages
             viewModel.Navigation = Navigation;
             BindingContext = viewModel;
 
+            lblVersion.Text = $"App Version: {AppVariables.AppVersion} (Build: {AppVariables.AppBuildNumber})";
+
             pickerEnvironment.SelectedIndex = pickerEnvironment.Items.IndexOf(AppVariables.AppEnvironment.ToString());
             pickerEnvironment.SelectedIndexChanged += pickerEnvironment_SelectedIndexChanged;
 

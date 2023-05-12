@@ -19,7 +19,8 @@ namespace CompassMobileUpdate.Pages
 		public LoginPage (AuthService authService)
 		{
             _authService = authService;
-			InitializeComponent ();           
+			InitializeComponent ();
+            lblVersion.Text = $"App Version: {AppVariables.AppVersion} (Build: {AppVariables.AppBuildNumber})";
         }
 
         async void btnLogin_Clicked(System.Object sender, System.EventArgs e)

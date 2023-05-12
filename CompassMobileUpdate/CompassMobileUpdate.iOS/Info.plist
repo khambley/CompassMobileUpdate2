@@ -27,7 +27,7 @@
 	<key>CFBundleIdentifier</key>
 	<string>com.exeloncorp.comed.aps.compass</string>
 	<key>CFBundleVersion</key>
-	<string>1.0</string>
+	<string>1</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>CFBundleName</key>
@@ -44,5 +44,7 @@
 	<string>Can we use your device&apos;s location?</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Compass Mobile would like access to your camera to scan barcodes.</string>
+	<key>CFBundleShortVersionString</key>
+	<string>2.0</string>
 </dict>
 </plist>

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CompassMobileUpdate.Models;
 using CompassMobileUpdate.Services;
 using Xamarin.Forms.Maps;
+using Xamarin.Essentials;
 
 namespace CompassMobileUpdate
 {
@@ -18,6 +19,9 @@ namespace CompassMobileUpdate
             _defaultFadeMs = 3000;
             Company = Company.ComEd;
             ResetCompanyVariables(Company);
+            AppBuildNumber = $"{VersionTracking.CurrentBuild}";
+            AppVersion = $"{VersionTracking.CurrentVersion}";
+
         }
 		static bool isInitialized = false;
 
@@ -30,6 +34,10 @@ namespace CompassMobileUpdate
         public static App Application { get; set; }
 
         public static AppEnvironment AppEnvironment { get; set; }
+
+        public static string AppBuildNumber { get; set; }
+
+        public static string AppVersion { get; set; }
 
         public static List<BoundingCoords> CachedMapBoundingCoords { get; set; }
 

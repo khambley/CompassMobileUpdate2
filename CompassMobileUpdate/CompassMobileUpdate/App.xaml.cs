@@ -15,6 +15,9 @@ namespace CompassMobileUpdate
             InitializeComponent();
             try
             {
+                // AppVersion - saves the new version code every time the app starts
+                Xamarin.Essentials.VersionTracking.Track();
+
                 AppVariables.StartTime = DateTimeOffset.Now;
                 AppVariables.Application = this;
 
