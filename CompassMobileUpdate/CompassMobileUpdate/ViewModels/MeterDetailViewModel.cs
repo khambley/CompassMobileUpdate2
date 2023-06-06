@@ -18,7 +18,7 @@ namespace CompassMobileUpdate.ViewModels
 	{
         private readonly MeterService _meterService;
 
-        private Dictionary<int, bool> _isWebServiceRunningDictionary;
+        public Dictionary<int, bool> _isWebServiceRunningDictionary;
 
         const int _getMeterAttributes = 1,
                         _getMeterAvailabilityEventOutage = 2,
@@ -30,15 +30,19 @@ namespace CompassMobileUpdate.ViewModels
         private CancellationTokenSource _ctsMeterAttributes, _ctsMeterStatus, _ctsMeterReads, _ctsMeterOutages, _ctsMeterRestores, _ctsGetMeterForDevice;
 
         private bool _isPingActivityRequestCompleted = false;
-        private bool _isPageBeingPushed = false;
-        private bool _isTimeOutCountDownRunning = false;
-        private bool _isFirstPageLoad = true;
+
+        public bool _AppMaintenanceInitiated { get; set; }
+        public bool _isPageBeingPushed { get; set; }
+        public bool _isTimeOutCountDownRunning { get; set; }
+        public bool _isFirstPageLoad { get; set; }
 
         private object _lockMeter = new Object();
-
+        
         public string _userState;
 
         public int? ActivityID { get; set; }
+
+        public List<AvailabilityEvent> AvailabilityEvents { get; set; }
 
         public Color CustomerNameTextColor { get; set; }
 
@@ -183,13 +187,28 @@ namespace CompassMobileUpdate.ViewModels
 
         public ICommand TapOutageRestoreCommand => new Command(async () =>
         {
-            await TapOutageRestore();
+            if (Outages.Events.Count > 0)
+            {
+                await TapOutageRestore();
+            }
+            else
+            {
+                await TapOutageRestore();
+            }
+           
         });
 
         private async Task TapOutageRestore()
         {
-            var availabilityEventsPage = Resolver.Resolve<AvailabilityEventsPage>();
-            await Navigation.PushAsync(availabilityEventsPage);
+            //var availabilityEventsPage = Resolver.Resolve<AvailabilityEventsPage>();
+            if(MeterEventType == MeterAvailabilityEventsEventType.Outages)
+            {
+                await Navigation.PushAsync(new AvailabilityEventsPage(Outages.Events));
+            }
+            else
+            {
+                await Navigation.PushAsync(new AvailabilityEventsPage(Restores.Events));
+            }           
         }
 
         public ICommand CheckStatusButtonCommand => new Command(async () =>
@@ -222,6 +241,14 @@ namespace CompassMobileUpdate.ViewModels
         public MeterDetailViewModel(MeterService meterService)
 		{
             _meterService = meterService;
+
+            _isPageBeingPushed = false;
+            _isTimeOutCountDownRunning = false;
+            _isFirstPageLoad = true;
+            _isLoginPageBeingPushed = false;
+            _isAppMaintenanceBeingPushed = false;
+            _AppMaintenanceInitiated = false;
+
             IsEnabledCheckStatusButton = true;
             IsVisibleErrorMessage = false;
 
@@ -239,6 +266,8 @@ namespace CompassMobileUpdate.ViewModels
             IsVisibleMeterStatusImage = true;
             IsVisiblePingStatusValueImg = true;
             IsVisibleVoltageStatusValueImg = true;
+
+            AvailabilityEvents = new List<AvailabilityEvent>();
         }
 
         private async Task AddOrUpdateMeterLastAccessedTimeAsync()
@@ -505,8 +534,7 @@ namespace CompassMobileUpdate.ViewModels
             }
         }
 
-        protected async void StartTimeOutCountDown()
-        {
+        protected async void StartTimeOutCountDown()        {
             if (_isTimeOutCountDownRunning == false)
             {
                 _isTimeOutCountDownRunning = true;
@@ -516,12 +544,16 @@ namespace CompassMobileUpdate.ViewModels
                 {
                     await Task.Delay(500);
 
-                    //If the webservices have stopped runnning prior to the timeout
+                    //If the webservices have stopped running prior to the timeout
                     if (!_isWebServiceRunningDictionary.ContainsValue(true))
                     {
                         _isTimeOutCountDownRunning = false;
-                        ErrorMessageText = "All Service Calls Completed";
-                        IsVisibleErrorMessage = true;
+                        //ErrorMessageText = "All Service Calls Completed";
+                        //IsVisibleErrorMessage = true;
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            App.Current.MainPage.DisplayAlert("Service Information", "All Service Calls Completed", "Close");
+                        });
                         break;
                     }
 
@@ -755,10 +787,11 @@ public ActivityMessage.PostPQRActivityCompleteRequest GetPostMeterPQRActivityCom
                        if(Outages != null)
                         {
                             OutagesValueText = Outages.Events.Count.ToString();
-                            OutagesValueTextColor = Color.Blue;
-
+                            
                             if(Outages.Events.Count > 0)
                             {
+                                // make it look like a link
+                                OutagesValueTextColor = Color.Blue;
                                 await TapOutageRestore();
                             }
                         }
@@ -768,10 +801,11 @@ public ActivityMessage.PostPQRActivityCompleteRequest GetPostMeterPQRActivityCom
                         if(Restores != null)
                         {
                             RestoresValueText = Restores.Events.Count.ToString();
-                            RestoresValueTextColor = Color.Blue;
-
+                            
                            if(Restores.Events.Count > 0)
                             {
+                                // make it look like a link
+                                RestoresValueTextColor = Color.Blue;
                                 await TapOutageRestore();
                             }
                         }
@@ -1242,7 +1276,7 @@ public ActivityMessage.PostPQRActivityCompleteRequest GetPostMeterPQRActivityCom
                 //PhaseA
                 if (MeterReads.VoltagePhaseA.HasValue)
                 {
-                    VoltageAValueText = MeterReads.VoltagePhaseA.Value.ToString();
+                    VoltageAValueText = Convert.ToInt32(MeterReads.VoltagePhaseA.Value).ToString();
 
                     if (IsVoltagePhaseAInRange.HasValue)
                     {
@@ -1271,7 +1305,7 @@ public ActivityMessage.PostPQRActivityCompleteRequest GetPostMeterPQRActivityCom
                 //Phase B
                 if (MeterReads.VoltagePhaseB.HasValue)
                 {
-                    VoltageBValueText = MeterReads.VoltagePhaseB.Value.ToString();
+                    VoltageBValueText = Convert.ToInt32(MeterReads.VoltagePhaseB.Value).ToString();
 
                     if (IsVoltagePhaseBInRange.HasValue)
                     {
@@ -1300,7 +1334,7 @@ public ActivityMessage.PostPQRActivityCompleteRequest GetPostMeterPQRActivityCom
                 //Phase C
                 if (MeterReads.VoltagePhaseC.HasValue)
                 {
-                    VoltageCValueText = MeterReads.VoltagePhaseC.Value.ToString();
+                    VoltageCValueText = Convert.ToInt32(MeterReads.VoltagePhaseC.Value).ToString();
 
                     if (IsVoltagePhaseCInRange.HasValue)
                     {
