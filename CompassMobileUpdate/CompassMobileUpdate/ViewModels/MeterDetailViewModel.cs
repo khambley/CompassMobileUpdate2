@@ -42,6 +42,8 @@ namespace CompassMobileUpdate.ViewModels
 
         public int? ActivityID { get; set; }
 
+        public List<AvailabilityEvent> AvailabilityEvents { get; set; }
+
         public Color CustomerNameTextColor { get; set; }
 
         public string ErrorMessageText { get; set; }
@@ -185,7 +187,15 @@ namespace CompassMobileUpdate.ViewModels
 
         public ICommand TapOutageRestoreCommand => new Command(async () =>
         {
-            await TapOutageRestore();
+            if (Outages.Events.Count > 0)
+            {
+                await TapOutageRestore();
+            }
+            else
+            {
+                await TapOutageRestore();
+            }
+           
         });
 
         private async Task TapOutageRestore()
@@ -256,6 +266,8 @@ namespace CompassMobileUpdate.ViewModels
             IsVisibleMeterStatusImage = true;
             IsVisiblePingStatusValueImg = true;
             IsVisibleVoltageStatusValueImg = true;
+
+            AvailabilityEvents = new List<AvailabilityEvent>();
         }
 
         private async Task AddOrUpdateMeterLastAccessedTimeAsync()
@@ -775,10 +787,11 @@ public ActivityMessage.PostPQRActivityCompleteRequest GetPostMeterPQRActivityCom
                        if(Outages != null)
                         {
                             OutagesValueText = Outages.Events.Count.ToString();
-                            OutagesValueTextColor = Color.Blue;
-
+                            
                             if(Outages.Events.Count > 0)
                             {
+                                // make it look like a link
+                                OutagesValueTextColor = Color.Blue;
                                 await TapOutageRestore();
                             }
                         }
@@ -788,10 +801,11 @@ public ActivityMessage.PostPQRActivityCompleteRequest GetPostMeterPQRActivityCom
                         if(Restores != null)
                         {
                             RestoresValueText = Restores.Events.Count.ToString();
-                            RestoresValueTextColor = Color.Blue;
-
+                            
                            if(Restores.Events.Count > 0)
                             {
+                                // make it look like a link
+                                RestoresValueTextColor = Color.Blue;
                                 await TapOutageRestore();
                             }
                         }

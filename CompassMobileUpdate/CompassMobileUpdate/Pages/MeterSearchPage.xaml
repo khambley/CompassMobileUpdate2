@@ -50,7 +50,10 @@
                                              FontSize="Small" />                          
                             </StackLayout>
 
-                            <ImageButton x:Name="btnFavorite" Padding="0,0,20,0" WidthRequest="50" HorizontalOptions="EndAndExpand" Source="{Binding IsFavoriteImage}" />
+                            <ImageButton x:Name="btnFavorite"
+                                                    Padding="0,0,20,0" WidthRequest="50"
+                                                    HorizontalOptions="EndAndExpand"
+                                                    Source="{Binding IsFavoriteImage}" />
                     </StackLayout>
                     </ViewCell>
                 </DataTemplate>

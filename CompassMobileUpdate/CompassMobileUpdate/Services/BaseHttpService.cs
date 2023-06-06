@@ -42,6 +42,7 @@ namespace CompassMobileUpdate.Services
 				using (var response = await client.SendAsync(request, HttpCompletionOption.ResponseContentRead))
 				{
 					var content = response.Content == null ? null : await response.Content.ReadAsStringAsync();
+					
 
 					if (response.IsSuccessStatusCode)
 					{

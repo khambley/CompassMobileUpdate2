@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="2.0" package="com.exeloncorp.comed.aps.compassmobileupdate">
 	<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="33" />
-	<application android:label="CompassMobileUpdate.Android" android:theme="@style/MainTheme" android:icon="@mipmap/icon">
+	<application android:label="CompassMobileUpdate.Android" android:theme="@style/MainTheme" android:icon="@drawable/icon">
 		<meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyAC5ORotPJ_Dnk31kv_boip5jsJ8mBu_qs" />
 		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
 		<uses-library android:name="org.apache.http.legacy" android:required="false" />
